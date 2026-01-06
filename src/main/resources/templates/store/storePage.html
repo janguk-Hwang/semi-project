@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/landing.css}">
+    <title>store/storePage.html</title>
+    <style>
+        .item-list {
+            width: 100%;
+            margin: 20px auto;
+            background-color: #cfd8dc;
+        }
+        .store-title h2{
+            font-size: 28px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .category{
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .category button {
+            padding: 6px 14px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            cursor: pointer;
+        }
+        .category button:hover{
+            background-color: #eee;
+        }
+        .count{
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        .product-list {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .pagination{
+            margin-top: 40px;
+            text-align: center;
+        }
+        .pagination a{
+            margin: 0 5px;
+            text-decoration: none;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+<!--헤더삽입-->
+<div th:replace="~{fragments/layout::header}"></div>
+
+<!-- 메인 콘텐츠 영역: th:block으로 감싸서 중복 출력을 방지합니다 -->
+<th:block th:replace="~{fragments/layout::getMain(~{::content})}">
+    <div th:fragment="content" class="item-list">
+        <section class="store-title">
+            <h2>선택한 아티스트 이름</h2>
+        </section>
+        <section class="category">
+            <button class="allitems">전체보기</button>
+            <button class="album">ALBUM</button>
+            <button class="md">MD</button>
+        </section>
+        <section class="count">
+            <p>카테고리별 아이템수 카운팅 <span>"items"</span></p>
+        </section>
+        <hr>
+        <section class="product-list">
+            <div class="product-card">
+                <a th:href="@{/store/storeItem}"> <!--storeItem : {productId}로 넣을예정-->
+                    <img src="" alt="상품img">상품사진
+                    <p class="name">상품이름</p>
+                    <p class="price">상품가격</p>
+                </a>
+            </div>
+        </section>
+        <section class="pagination">
+            <a href="">페이지표시</a>
+        </section>
+    </div>
+</th:block>
+<!--푸터삽입-->
+<div th:replace="~{fragments/layout::footer}"></div>
+</body>
+</html>
