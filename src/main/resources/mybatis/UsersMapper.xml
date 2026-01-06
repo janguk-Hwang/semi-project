@@ -7,4 +7,7 @@
         insert into users(member_id,id,pwd,email,name,phone,sign_in_date,profile,gender)
             values(seq_users.nextval,#{id},#{pwd},#{email},#{name},#{phone},sysdate,#{profile},#{gender})
     </insert>
+    <select id="isMembers" parameterType="map" resultType="UsersDto">
+        select * from users where id=#{id} and pwd=${pwd}
+    </select>
 </mapper>

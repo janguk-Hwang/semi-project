@@ -5,6 +5,8 @@ import com.example.demo.mapper.UsersMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class UsersService {
@@ -12,5 +14,8 @@ public class UsersService {
 
     public int insertUser(UsersDto dto){
         return mapper.insertUser(dto);
+    }
+    public UsersDto isMembers(Map<String,Object> map){
+        return mapper.isMembers(map);
     }
 }
