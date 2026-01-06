@@ -5,18 +5,73 @@
     <link rel="stylesheet" th:href="@{/landing.css}">
     <title>auth/signup.html</title>
     <style>
-        .signup-container {
-            max-width: 600px;
+        .signup-container { /*전체카드*/
+            max-width: 800px;
             margin: 40px auto;
+            padding: 40px;
+            border-radius: 20px;
         }
-        .page-title {
+        .page-title { /*제목 - 회원가입*/
             text-align: center;
             margin-bottom: 30px;
+            font-size: 30px;
+            font-weight: 700;
+        }
+        .section{ /*섹션공통*/
+            margin-bottom: 40px;
+        }
+        .section h3{
+            font-size: 18px;
+            font-weight: 550;
+            margin-bottom: 20px;
+        }
+        .section input{
+            width: 100%;
+            height: 44px;
+            border-radius: 10px;
+            border: none;
+            background: #f2f2f2;
+            padding: 0 15px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .label{
+            width: 90px;
+            font-weight: 500;
         }
         .signup-form {
             background: white;
             padding: 30px;
             border-radius: 10px;
+        }
+        .signup-form span { /*유효성메시지*/
+            display: block;
+            font-size: 12px;
+            color: #e74c3c;
+            margin-bottom: 10px;
+            min-height: 14px;
+        }
+        .signup-btn{
+            width: 140px;
+            height: 45px;
+            display: block;
+            margin: 0 auto;
+            background: #fff;
+            border: 1px solid #333;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .required-text{
+            font-size: 12px;
+            color: #d32f2f;
+            font-weight: normal;
+            margin-left: 8px;
         }
     </style>
 </head>
@@ -28,34 +83,49 @@
 <th:block th:replace="~{fragments/layout::getMain(~{::content})}">
     <div th:fragment="content" class="signup-container">
         <h2 class="page-title">회원가입</h2>
-        <form th:action="@{/signup}" method="post" class="signup-form">
+        <form th:action="@{/signup}" method="post" class="signup-form" th:object="${signupRequestDto}"
+              enctype="application/x-www-form-urlencoded">
             <div class="section">
-                <h3>기본정보</h3>
-                아이디 <input type="text" name="id" placeholder="아이디" required>
-                비밀번호 <input type="password" name="pwd" placeholder="비밀번호" required>
-                비밀번호 확인 <input type="password" name="pwdCheck" placeholder="비밀번호 확인">
-                이름 <input type="text" name="name" placeholder="이름">
-                주소 <input type="text" name="address" placeholder="주소">
-                휴대전화 <input type="text" name="phone" placeholder="휴대전화">
-                이메일 <input type="email" name="email" placeholder="이메일">
+                <h3>기본정보
+                    <span class="required-text">* 필수입력사항 입니다.</span>
+                </h3>
+                아이디 <button type="button" id="idcheck-btn">중복검사</button>
+                <span id="msg-idcheck"></span>
+                <input type="text" th:field="*{id}" placeholder="아이디" required>
+                <span th:if="${#fields.hasErrors('id')}" th:errors="*{id}"></span>
+                비밀번호 <input type="password" th:field="*{pwd}" placeholder="비밀번호" required>
+                <span th:if="${#fields.hasErrors('pwd')}" th:errors="*{pwd}"></span>
+                비밀번호 확인 <input type="password" th:field="*{pwdCheck}" placeholder="비밀번호 확인">
+                <span th:if="${#fields.hasErrors('passwordMatched')}" th:errors="*{passwordMatched}"></span>
+                이름 <input type="text" th:field="*{name}" placeholder="이름">
+                <span th:if="${#fields.hasErrors('name')}" th:errors="*{pwd}"></span>
+                주소 <input type="text" th:field="*{addr}" placeholder="주소">
+                <span th:if="${#fields.hasErrors('addr')}" th:errors="*{addr}"></span>
+                휴대전화 <input type="text" th:field="*{phone}" placeholder="휴대전화 : 010-0000-0000">
+                <span th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></span>
+                이메일 <input type="email" th:field="*{email}" placeholder="이메일">
+                <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
             </div>
             <div class="section">
                 <h3>추가정보</h3>
                 <div class="row">
-                    <span class="label">성별</span>
-                    <label><input type="radio" name="gender" value="0">남</label>
-                    <label><input type="radio" name="gender" value="1">여</label>
+                    <span class="label" style="color: black">성별</span>
+                    <label><input type="radio" th:field="*{gender}" value="0">남</label>
+                    <label><input type="radio" th:field="*{gender}" value="1">여</label>
+                    <span th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"></span>
                 </div>
                 <div class="row">
-                    <span class="label">환불계좌정보</span>
-                    <input type="text" placeholder="예금주" name="name" style="width: 60px;">
-                    <select name="bank">
+                    <span class="label" style="color: black">환불계좌정보</span>
+                    <input type="text" placeholder="예금주" th:field="*{accountName}" style="width: 60px;">
+                    <span th:if="${#fields.hasErrors('accountName')}" th:errors="*{accountName}"></span>
+                    <select th:field="*{bank}">
                         <option value="">은행선택</option>
                         <option value="국민">국민은행</option>
                         <option value="농협">농협은행</option>
                         <option value="신한">신한은행</option>
                     </select>
-                    <input type="text" name="account" placeholder="계좌번호">
+                    <input type="text" th:field="*{account}" placeholder="계좌번호">
+                    <span th:if="${#fields.hasErrors('account')}" th:errors="*{account}"></span>
                 </div>
             </div>
             <button type="submit" class="signup-btn">회원가입</button>
@@ -65,5 +135,22 @@
 
 <!--footer삽입-->
 <div th:replace="~{fragments/layout::footer}"></div>
+
+<script>
+    const id=document.getElementById("id");
+    const idcheck=document.getElementById("msg-idcheck");
+
+    document.getElementById("idcheck-btn").addEventListener('click',function (){
+        fetch(`/existId?id=${id.value}`)
+            .then(resp=>resp.json())
+            .then(data=>{
+                if(data.result==true){
+                    idcheck.innerHTML="사용중인 아이디입니다.";
+                }else{
+                    idcheck.innerHTML="사용가능한 아이디입니다.";
+                }
+            })
+    })
+</script>
 </body>
 </html>

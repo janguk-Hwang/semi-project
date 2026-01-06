@@ -8,9 +8,13 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class UsersService {
-    private final UsersMapper mapper;
+    private final UsersMapper usersMapper;
 
     public int insertUser(UsersDto dto){
-        return mapper.insertUser(dto);
+        return usersMapper.insertUser(dto);
+    }
+
+    public UsersDto selectOne(String id){
+        return usersMapper.selectOne(id);
     }
 }
