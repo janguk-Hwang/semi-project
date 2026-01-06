@@ -10,7 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,10 +32,6 @@ public class AuthController {
     public String joinPage() {
         return "auth/signup";
     }
-//    @PostMapping("/signup")
-//    public String signup(){
-//
-//    }
 
     @PostMapping("/login")
     public String login(HttpServletRequest request, HttpSession session, Model model) {
@@ -42,7 +40,7 @@ public class AuthController {
         Map<String, Object> map = new HashMap<>();
         map.put("id", id);
         map.put("pwd", pwd);
-        UsersDto dto =userservice.isMembers(map);
+        UsersDto dto = userservice.isMembers(map);
         if (dto == null) {
             model.addAttribute("error", "아이디또는 비밀번호가 틀립니다.");
             return "auth/loginPage";
@@ -51,15 +49,32 @@ public class AuthController {
             return "redirect:/";
         }
     }
+
     @PostMapping("/signup")
-    public String signup(AccountDto accountDto,UsersDto usersDto,Model model){
-        int user=userservice.insertUser(usersDto);
-        int account=accountService.insertAccount(accountDto);
-        if (user==0 || account==0){
-            model.addAttribute("result","회원가입 실패");
-        }else{
-            model.addAttribute("result","회원가입 완료");
+    public String signup(@RequestParam String pwdCheck,
+                         @ModelAttribute("account") AccountDto accountDto,
+                         @ModelAttribute("users") UsersDto usersDto, Model model) {
+        String pwd=usersDto.getPwd();
+        if (!pwd.equals(pwdCheck)|| pwd == null) {
+            model.addAttribute("result", "비밀번호를 다시 확인해 주십시오");
+            return "redirect:/auth/signup";
         }
+
+        int user = userservice.insertUser(usersDto);
+        if (user == 0){
+            model.addAttribute("result", "회원가입 실패");
+            return "redirect:/auth/signup";
+        }
+
+        int mnum= usersDto.getMember_id();
+        accountDto.setMember_id(mnum);
+
+        int account = accountService.insertAccount(accountDto);
+        if (account == 0) {
+            model.addAttribute("result", "회원가입 실패");
+        }
+
+        model.addAttribute("result", "회원가입 완료");
         return "auth/loginPage";
     }
 }
