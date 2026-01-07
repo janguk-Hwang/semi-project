@@ -4,6 +4,8 @@ import com.example.demo.dto.SignupRequestDto;
 import com.example.demo.dto.UsersDto;
 import com.example.demo.service.SignupService;
 import com.example.demo.service.UsersService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -27,6 +29,18 @@ public class AuthController {
     @GetMapping("/login")
     public String loginPage(){
         return "auth/loginPage";
+    }
+
+    @PostMapping("/login")
+    public String login(UsersDto usersDto, HttpSession httpSession,Model model){
+        UsersDto dto=usersService.isUser(usersDto);
+        if(dto==null){
+            model.addAttribute("errorMsg","아이디 또는 비밀번호가 맞지 않습니다.");
+            return "auth/loginPage";
+        }else{
+            httpSession.setAttribute("loginUser", dto);
+            return "redirect:/";
+        }
     }
 
     @GetMapping("/signup")

@@ -8,7 +8,7 @@
 
 <div th:fragment="header" id="header">
     <div class="container">
-        <div class="logo"><a th:href="@{/}">Logo</a> </div>
+        <div class="logo"><a th:href="@{/}">Logo</a></div>
         <ul class="nav-links">
             <li><a th:href="@{/artist}">Artist</a></li>
             <li><a th:href="@{/board}">Board</a></li>
@@ -16,9 +16,10 @@
             <li><a th:href="@{/community}">Community</a></li>
         </ul>
         <div class="auth-buttons">
-            <a th:href="@{/login}" class="btn-auth">로그인</a>
-            <a th:href="@{/signup}" class="btn-auth" style="background:#888; color:white;">회원가입</a>
-<!-- 마이페이지, 관리자 페이지 로그인시 추가 로그인유무추가-->
+            <a th:unless="${session.loginUser}" th:href="@{/login}" class="btn-auth">로그인</a>
+            <a th:if="${session.loginUser}" th:href="@{/logout}" class="btn-auth">로그아웃</a>
+            <a th:unless="${session.loginUser}" th:href="@{/signup}" class="btn-auth" style="background:#888; color:white;">회원가입</a>
+            <a th:if="${session.loginUser}" th:href="@{/mypage}" class="btn-auth" style="background:#888; color:white;">마이페이지</a>
         </div>
     </div>
 </div>
