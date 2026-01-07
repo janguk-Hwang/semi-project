@@ -19,7 +19,7 @@ public class UsersService {
     public UsersDto selectOne(String id){
         return usersMapper.selectOne(id);
     }
-    public UsersDto isMembers(Map<String,Object> map){
-        return mapper.isMembers(map);
+    public UsersDto isMembers(UsersDto dto){
+        return usersMapper.isMembers(dto);
     }
 }

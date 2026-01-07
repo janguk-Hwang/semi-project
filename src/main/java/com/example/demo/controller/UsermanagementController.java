@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class UsermanagementController {
     @GetMapping("/adminmain")
     public String adminmain(){
-        return "admin/"
+        return "admin/";
     }
 }
