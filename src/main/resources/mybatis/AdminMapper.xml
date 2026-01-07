@@ -2,8 +2,50 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.demo.mapper.AccountMapper">
-    <select id="memberList" resultType="UsersDto">
-        select * from users;
+<mapper namespace="com.example.demo.mapper.AdminMapper">
+    <select id="userlist" resultType="UsersDto" parameterType="map">
+        select * from
+        (
+        select u.*, row_number() over(order by u.member_id desc)rnum from users u
+        <include refid="search"/>
+        )
+        <![CDATA[
+            where rnum>=#{startRow} and rnum<=#{endRow}
+        ]]>
     </select>
+    <select id="prev" parameterType="int" resultType="UsersDto">
+        <![CDATA[
+        select * from(
+        select u.*, row_number() over(order by member_id desc) rnum from users u where member_id=#{member_id}
+        )
+        where rnum=1
+        ]]>
+    </select>
+    <select id="next" parameterType="int" resultType="UsersDto">
+        <![CDATA[ select * from users
+        where member_id=(select min(member_id) from users where member_id>${member_id})]]>
+    </select>
+    <select id="count" resultType="int" parameterType="map">
+        select NVL(count(*),0) from users u
+        <include refid="search"/>
+    </select>
+    <select id="isadmin" parameterType="int" resultType="UsersDto">
+        select * from user_roles where member_id =#{member_id}
+    </select>
+    <update id="roleupdate" parameterType="UsersDto">
+        update users set role=#{role} where member_id=#{member_id}
+    </update>
+    <delete id="admindelete" parameterType="int">
+        delete from users where member_id=#{member_id}
+    </delete>
+    <sql id="search">
+        <if test="field!=null and field.length>0 and keyword != null and keyword !=''">
+            <where>
+                <foreach collection="field" item="f" separator="or">
+                    ${f} like '%'||#{keyword}||'%'
+                </foreach>
+            </where>
+        </if>
+    </sql>
+
 </mapper>

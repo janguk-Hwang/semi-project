@@ -4,11 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
-public class UserroleDto {
-    private int role_id;
-    private int member_id;
-    private String role;
+public class Musician_memberDto {
+    private Integer membernum;
+    private String member_name;
+    private Integer artist_id;
 }

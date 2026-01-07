@@ -29,7 +29,7 @@ public class SignupService {
         usersDto.setRole("USER");
         usersMapper.insertUser(usersDto);
 
-        Integer member_id=usersDto.getMember_id();
+        Integer member_id=accountMapper.selectmid(dto.getId());
 
         //account
         AccountDto accountDto=new AccountDto();

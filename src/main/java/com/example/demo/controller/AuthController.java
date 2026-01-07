@@ -1,10 +1,11 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.SignupRequestDto;
+import com.example.demo.dto.User_rolesDto;
 import com.example.demo.dto.UsersDto;
 import com.example.demo.service.SignupService;
+import com.example.demo.service.UsermanagementService;
 import com.example.demo.service.UsersService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import java.util.Map;
 public class AuthController {
     private final SignupService signupService;
     private final UsersService usersService;
+    private final UsermanagementService usermanagementService;
 
     @GetMapping("/login")
     public String loginPage(){
@@ -34,6 +36,7 @@ public class AuthController {
     @PostMapping("/login")
     public String login(UsersDto usersDto, HttpSession httpSession,Model model){
         UsersDto dto=usersService.isUser(usersDto);
+        User_rolesDto adminDto=usermanagementService.isadmin(dto.getMember_id());
         if(dto==null){
             model.addAttribute("errorMsg","아이디 또는 비밀번호가 맞지 않습니다.");
             return "auth/loginPage";
@@ -73,5 +76,10 @@ public class AuthController {
         Map<String,Object> map=new HashMap<>();
         map.put("result",exist);
         return map;
+    }
+    @GetMapping("/logout")
+    public String logout(HttpSession httpSession){
+        httpSession.invalidate();
+        return "redirect:/";
     }
 }
