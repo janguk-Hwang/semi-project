@@ -11,10 +11,10 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class AccountService {
-    private final AccountMapper mapper;
+    private final AccountMapper accountMapper;
 
     public int insertAccount(AccountDto dto){
-        return mapper.insertAccount(dto);
+        return accountMapper.insertAccount(dto);
     }
 
 }

@@ -4,10 +4,13 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.UsersMapper">
     <insert id="insertUser" parameterType="UsersDto">
-        insert into users(member_id,id,pwd,email,name,phone,sign_in_date,profile,gender)
-            values(seq_users.nextval,#{id},#{pwd},#{email},#{name},#{phone},sysdate,#{profile},#{gender})
+        <selectKey keyProperty="member_id" resultType="int" order="BEFORE">
+            select seq_users.nextval from dual
+        </selectKey>
+        insert into users(member_id,id,pwd,email,name,phone,sign_in_date,role,gender,addr)
+            values(#{member_id},#{id},#{pwd},#{email},#{name},#{phone},sysdate,#{role},#{gender},#{addr})
     </insert>
-    <select id="isMembers" parameterType="map" resultType="UsersDto">
-        select * from users where id=#{id} and pwd=${pwd}
+    <select id="selectOne" parameterType="String" resultType="UsersDto">
+        select * from users where id=#{value}
     </select>
 </mapper>
