@@ -84,6 +84,7 @@
                 <img th:if="${product.savefilename!=null}" th:src="@{'/images/'+${product.savefilename}}" alt="대표이미지">
             </div>
             <form method="post" th:action="@{/cart/add}">
+                <input type="hidden" name="product_id" th:value="${product.product_id}">
                 <div class="product-info"> <!--상품정보-->
                     <h2 th:text="${product.product_name}">상품명</h2>
                     <p class="price" th:text="${#numbers.formatInteger(product.price,0,'COMMA')}+' 원'">상품가격</p>
@@ -96,7 +97,7 @@
                     <input type="hidden" id="productStock" th:if="${product.has_option=='N'}" th:value="${product.stock}">
                     <div class="option" th:if="${product.has_option=='Y'}"> <!--옵션 있는 경우-->
                         <label for="productOption">옵션선택</label>
-                        <select id="productOption" name="option_Id">
+                        <select id="productOption" name="option_id">
                             <option value="">옵션을 선택하세요</option> <!--DB연동 - Product_Option테이블이용-->
                             <option th:each="opt:${options}" th:value="${opt.option_id}" th:text="${opt.option_name}"
                                     th:data-stock="${opt.stock}" th:disabled="${opt.stock==0}">옵션</option>
@@ -104,7 +105,7 @@
                     </div>
                     <div class="buttons"> <!--버튼영역-->
                         <button type="submit" name="action" value="order">주문하기</button>
-                        <button type="button" name="action" value="cart">장바구니</button>
+                        <button type="submit" name="action" value="cart">장바구니</button>
                     </div>
                 </div>
             </form>
@@ -182,6 +183,9 @@
             quantityInput.value=count-1;
         }
     })
+</script>
+<script th:inline="javascript" th:if="${msg!=null}">
+    alert([[${msg}]])
 </script>
 </body>
 </html>

@@ -26,6 +26,13 @@ public class AuthController {
     private final SignupService signupService;
     private final UsersService usersService;
 
+    @GetMapping("/logout")
+    public String logout(HttpSession httpSession, RedirectAttributes ra){
+        httpSession.invalidate();
+        ra.addFlashAttribute("msg","로그아웃 되었습니다.");
+        return "redirect:/login";
+    }
+
     @GetMapping("/login")
     public String loginPage(){
         return "auth/loginPage";
@@ -39,6 +46,7 @@ public class AuthController {
             return "auth/loginPage";
         }else{
             httpSession.setAttribute("loginUser", dto);
+            httpSession.setAttribute("member_id",dto.getMember_id());
             return "redirect:/";
         }
     }

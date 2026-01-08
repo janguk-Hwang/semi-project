@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.CartMapper">
+    <insert id="insertCart" parameterType="CartDto">
+        insert into cart(cart_id,quantity,created_at,member_id,product_id
+        <if test="option_id != null">
+            ,option_id
+        </if>
+        )
+        values(seq_cart.nextval,#{quantity},sysdate,#{member_id},#{product_id}
+        <if test="option_id != null">
+            ,#{option_id}
+        </if>
+        )
+    </insert>
+</mapper>
