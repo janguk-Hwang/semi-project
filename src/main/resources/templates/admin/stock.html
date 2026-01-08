@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>stock</title>
+    <link rel="stylesheet" th:href="@{/landing.css}">
+    <link rel="stylesheet" th:href="@{/admin-stock.css}">
+</head>
+<body>
+<!-- header -->
+<div th:replace="fragments/layout :: header"></div>
+<div id="homeContent" class="sm-page">
+
+    <!-- 상단 탭 -->
+    <nav class="sm-tabs">
+        <a class="tab" th:href="@{/admin/main}">전체관리</a>
+        <a class="tab" th:href="@{/admin/board}">게시물관리</a>
+        <a class="tab" th:href="@{/admin/product}">상품관리</a>
+        <a class="tab is-active" th:href="@{/admin/stock}">재고관리</a>
+        <a class="tab" th:href="@{/admin/usermanagement}">회원관리</a>
+    </nav>
+
+    <h2 class="sm-title">재고 관리</h2>
+
+    <!-- 테이블 카드 -->
+    <section class="sm-card">
+        <table class="sm-table">
+            <thead>
+            <tr>
+                <th class="col-check"></th>
+                <th class="col-img">상품 이미지</th>
+                <th class="col-name">상품명</th>
+                <th class="col-price">가격</th>
+                <th class="col-control"></th>
+                <th class="col-stock">재고</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <!-- 예시 1행 (보여주기용) -->
+            <tr>
+                <td class="col-check"><input type="checkbox"></td>
+                <td class="col-img"><div class="img-box"></div></td>
+                <td class="col-name"><div class="text-skeleton w-70"></div></td>
+                <td class="col-price"><div class="text-skeleton w-50"></div></td>
+
+                <td class="col-control">
+                    <div class="qty-wrap">
+                        <button type="button" class="qty-btn disabled">‹</button>
+                        <span class="qty-val">6</span>
+                        <button type="button" class="qty-btn">›</button>
+                    </div>
+                    <div class="qty-actions">
+                        <button type="button" class="mini">입고</button>
+                        <button type="button" class="mini">출고</button>
+                    </div>
+                </td>
+
+                <td class="col-stock"><span class="stock-val">6</span></td>
+            </tr>
+
+            <!-- 빈 행들(레이아웃용) -->
+            <tr>
+                <td class="col-check"><input type="checkbox"></td>
+                <td class="col-img"><div class="img-box"></div></td>
+                <td class="col-name"></td>
+                <td class="col-price"></td>
+                <td class="col-control"></td>
+                <td class="col-stock"></td>
+            </tr>
+            <tr>
+                <td class="col-check"><input type="checkbox"></td>
+                <td class="col-img"><div class="img-box"></div></td>
+                <td class="col-name"></td>
+                <td class="col-price"></td>
+                <td class="col-control"></td>
+                <td class="col-stock"></td>
+            </tr>
+            <tr>
+                <td class="col-check"><input type="checkbox"></td>
+                <td class="col-img"><div class="img-box"></div></td>
+                <td class="col-name"></td>
+                <td class="col-price"></td>
+                <td class="col-control"></td>
+                <td class="col-stock"></td>
+            </tr>
+            <tr>
+                <td class="col-check"><input type="checkbox"></td>
+                <td class="col-img"><div class="img-box"></div></td>
+                <td class="col-name"></td>
+                <td class="col-price"></td>
+                <td class="col-control"></td>
+                <td class="col-stock"></td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 필터 라디오 -->
+    <div class="sm-filter">
+        <label class="radio">
+            <input type="radio" name="stockFilter" checked>
+            상품명
+        </label>
+        <label class="radio">
+            <input type="radio" name="stockFilter">
+            가격이상
+        </label>
+        <label class="radio">
+            <input type="radio" name="stockFilter">
+            가격이하
+        </label>
+        <label class="radio">
+            <input type="radio" name="stockFilter">
+            재고 이상
+        </label>
+        <label class="radio">
+            <input type="radio" name="stockFilter">
+            재고 이하
+        </label>
+    </div>
+
+    <!-- 검색 바 -->
+    <form class="sm-search" action="#" method="get" onsubmit="return false;">
+        <span class="search-ico">⌕</span>
+        <input class="search-input" type="text" placeholder="Search">
+        <button class="search-btn" type="submit">검색</button>
+    </form>
+
+    <!-- 페이지네이션 -->
+    <nav class="sm-pager" aria-label="Pagination">
+        <button class="page-btn disabled" type="button">‹</button>
+        <button class="page-num is-active" type="button">1</button>
+        <button class="page-num" type="button">2</button>
+        <button class="page-num" type="button">3</button>
+        <button class="page-num" type="button">4</button>
+        <button class="page-num" type="button">5</button>
+        <button class="page-btn" type="button">›</button>
+    </nav>
+
+</div>
+<!-- footer -->
+<div th:replace="fragments/layout :: footer"></div>
+</body>
+</html>

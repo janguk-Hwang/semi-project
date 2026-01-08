@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>admin/board.html</title>
+  <link rel="stylesheet" th:href="@{/landing.css}">
+  <link rel="stylesheet" th:href="@{/admin-board.css}">
+</head>
+<body>
+<!-- header -->
+<div th:replace="fragments/layout :: header"></div>
+<div id="homeContent" class="post-admin-page">
+
+  <!-- 상단 탭(게시판 선택) -->
+  <nav class="board-tabs" aria-label="Board tabs">
+    <a href="#" class="tab">게시판 1</a>
+    <a href="#" class="tab">게시판 2</a>
+    <a href="#" class="tab is-active">게시판 3</a>
+  </nav>
+
+  <!-- 테이블 카드 -->
+  <section class="post-card">
+    <table class="post-table">
+      <thead>
+      <tr>
+        <th class="c-no">글번호</th>
+        <th class="c-title">제목</th>
+        <th class="c-no2">글번호</th>
+        <th class="c-read">조회수</th>
+        <th class="c-writer">작성자</th>
+        <th class="c-del"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <!-- 보여주기용 더미 행(연동 시 th:each로 교체) -->
+      <tr>
+        <td class="c-no">글번호</td>
+        <td class="c-title">제목</td>
+        <td class="c-no2">글번호</td>
+        <td class="c-read">조회수</td>
+        <td class="c-writer">작성자</td>
+        <td class="c-del">
+          <button type="button" class="del-btn" title="삭제">□</button>
+        </td>
+      </tr>
+
+      <tr>
+        <td>글번호</td><td>제목</td><td>글번호</td><td>조회수</td><td>작성자</td>
+        <td class="c-del"><button type="button" class="del-btn">□</button></td>
+      </tr>
+
+      <tr>
+        <td>글번호</td><td>제목</td><td>글번호</td><td>조회수</td><td>작성자</td>
+        <td class="c-del"><button type="button" class="del-btn">□</button></td>
+      </tr>
+
+      <tr>
+        <td>글번호</td><td>제목</td><td>글번호</td><td>조회수</td><td>작성자</td>
+        <td class="c-del"><button type="button" class="del-btn">□</button></td>
+      </tr>
+
+      <tr>
+        <td>글번호</td><td>제목</td><td>글번호</td><td>조회수</td><td>작성자</td>
+        <td class="c-del"><button type="button" class="del-btn">□</button></td>
+      </tr>
+
+      <tr>
+        <td>글번호</td><td>제목</td><td>글번호</td><td>조회수</td><td>작성자</td>
+        <td class="c-del"><button type="button" class="del-btn">□</button></td>
+      </tr>
+
+      <tr>
+        <td>글번호</td><td>제목</td><td>글번호</td><td>조회수</td><td>작성자</td>
+        <td class="c-del"><button type="button" class="del-btn">□</button></td>
+      </tr>
+
+      <tr>
+        <td>글번호</td><td>제목</td><td>글번호</td><td>조회수</td><td>작성자</td>
+        <td class="c-del"><button type="button" class="del-btn">□</button></td>
+      </tr>
+
+      <tr>
+        <td>글번호</td><td>제목</td><td>글번호</td><td>조회수</td><td>작성자</td>
+        <td class="c-del"><button type="button" class="del-btn">□</button></td>
+      </tr>
+
+      <tr>
+        <td>글번호</td><td>제목</td><td>글번호</td><td>조회수</td><td>작성자</td>
+        <td class="c-del"><button type="button" class="del-btn">□</button></td>
+      </tr>
+
+      <tr>
+        <td>글번호</td><td>제목</td><td>글번호</td><td>조회수</td><td>작성자</td>
+        <td class="c-del"><button type="button" class="del-btn">□</button></td>
+      </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 검색 옵션(라디오) -->
+  <div class="search-options">
+    <label class="opt">
+      <input type="radio" name="field" value="title" checked>
+      제목
+    </label>
+    <label class="opt">
+      <input type="radio" name="field" value="writer">
+      작성자
+    </label>
+    <label class="opt">
+      <input type="radio" name="field" value="content">
+      내용
+    </label>
+  </div>
+
+  <!-- 검색 바 -->
+  <div class="search-bar">
+    <input type="text" class="search-input" placeholder="Search">
+    <button type="button" class="search-btn">검색</button>
+  </div>
+
+  <!-- 페이지네이션 -->
+  <nav class="pager" aria-label="Pagination">
+    <button type="button" class="pbtn disabled">‹</button>
+    <a href="#" class="pnum is-active">1</a>
+    <a href="#" class="pnum">2</a>
+    <a href="#" class="pnum">3</a>
+    <a href="#" class="pnum">4</a>
+    <a href="#" class="pnum">5</a>
+    <button type="button" class="pbtn">›</button>
+  </nav>
+
+</div>
+<!-- footer -->
+<div th:replace="fragments/layout :: footer"></div>
+
+</body>
+</html>
