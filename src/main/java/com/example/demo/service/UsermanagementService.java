@@ -40,4 +40,7 @@ public class UsermanagementService {
     public int admindelete(int member_id){
         return adminMapper.admindelete(member_id);
     }
+    public int countmembers(){
+        return adminMapper.countmembers();
+    }
 }
