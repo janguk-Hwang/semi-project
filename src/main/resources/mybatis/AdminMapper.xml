@@ -39,13 +39,17 @@
         delete from users where member_id=#{member_id}
     </delete>
     <sql id="search">
-        <if test="field!=null and field.length>0 and keyword != null and keyword !=''">
-            <where>
-                <foreach collection="field" item="f" separator="or">
-                    ${f} like '%'||#{keyword}||'%'
-                </foreach>
-            </where>
+        <if test="field != null and field != '' and keyword != null and keyword != ''">
+            <choose>
+                <when test="field == 'id'">
+                    where u.id like '%' || #{keyword} || '%'
+                </when>
+                <when test="field == 'role'">
+                    where u.role like '%' || #{keyword} || '%'
+                </when>
+            </choose>
         </if>
     </sql>
+
 
 </mapper>
