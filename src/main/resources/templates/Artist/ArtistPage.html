@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Artist Profile</title>
+  <link rel="stylesheet" th:href="@{/landing.css}">
+  <link rel="stylesheet" th:href="@{/ArtistPage.css}">
+</head>
+<body>
+
+<!-- 공통 헤더 -->
+<div th:replace="~{fragments/layout :: header}"></div>
+
+<!-- 메인 컨텐츠 -->
+<div th:replace="~{fragments/layout :: getMain(~{::#artistContent})}">
+  <div id="artistContent">
+
+    <!-- 1. 아티스트 선택 탭 (DB 연동 시 사용) -->
+    <nav class="artist-nav">
+      <ul>
+        <li th:each="artist : ${artistList}">
+          <a th:href="@{/artist(name=${artist})}"
+             th:text="${artist}"
+             th:classappend="${artist == artistName} ? 'active'">Artist Name</a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- 2. 아티스트 프로필 영역 (DB 정보 + MusicBrainz 이름) -->
+    <section class="artist-profile-section" th:if="${artistInfo != null}">
+      <div class="profile-img-container">
+        <img th:src="${artistInfo.musicianPhoto}" alt="Artist">
+      </div>
+      <div class="profile-info-container">
+        <h2 th:text="${artistInfo.musicianName}">이하이</h2>
+        <div class="artist-eng-name" th:text="${artistName} + ' Profile'">LEEHI Profile</div>
+        <p th:text="${artistInfo.musicianDescription}">아티스트 소개 글이 여기에 들어갑니다.</p>
+      </div>
+    </section>
+
+    <!-- 3. 하단 앨범 및 곡 정보 (API 연동 데이터) -->
+    <h2 class="album-section-title">ALBUM / SINGLE</h2>
+    <div th:if="${albumList.isEmpty()}" style="text-align: center; padding: 50px;">
+      <p>등록된 공식 앨범 정보가 없습니다.</p>
+    </div>
+
+    <div class="album-grid">
+      <div th:each="album : ${albumList}" class="album-card">
+        <span class="badge" th:text="${album.type}">Album</span>
+        <img th:src="${album.coverImageUrl}"
+             onerror="this.src='https://via.placeholder.com/300?text=No+Image'"
+             class="album-img">
+
+        <h3 th:text="${album.title}" style="margin: 10px 0 5px; font-size: 1.1em;">앨범 제목</h3>
+        <p th:text="${album.releaseDate}" style="font-size: 0.8em; color: #999;">2024-01-01</p>
+
+        <ul class="track-list">
+          <li th:each="track : ${album.tracks}" class="track-item">
+            <span th:text="${track.number}" style="font-weight: bold; width: 20px; display: inline-block;">1</span>
+            <span th:text="${track.title}">곡 제목</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 공통 푸터 -->
+<div th:replace="~{fragments/layout :: footer}"></div>
+
+</body>
+</html>
