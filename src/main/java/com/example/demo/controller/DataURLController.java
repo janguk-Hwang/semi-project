@@ -11,8 +11,8 @@ import java.net.MalformedURLException;
 public class DataURLController {
     private String fileDir="c:/web/team1/upload/";
 
-    @GetMapping("/images/{filename}")
-    public UrlResource showImage(@PathVariable("filename") String fileName) throws MalformedURLException {
+    @GetMapping("/images/{fileName}")
+    public UrlResource showImage(@PathVariable("fileName") String fileName) throws MalformedURLException {
         return new UrlResource("file:"+fileDir+fileName);
     }
 }

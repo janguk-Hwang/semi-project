@@ -8,7 +8,7 @@
         #{bank},#{member_id})
     </insert>
 
-    <select id="selectmid" parameterType="string" resultType="int">
+    <select id="selectmid" parameterType="String" resultType="int">
         select member_id from users where id=#{id}
     </select>
 </mapper>
