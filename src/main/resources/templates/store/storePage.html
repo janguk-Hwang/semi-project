@@ -50,6 +50,28 @@
             text-decoration: none;
             color: #333;
         }
+        .artist-list ul{
+            display: flex;
+            flex-wrap: wrap; /*가로가 넘치면 줄바꿈 허용*/
+            gap: 12px 20px;
+            padding: 0;
+            margin-top: 10px;
+        }
+        .artist-list li{
+            list-style: none;
+        }
+        .artist-list a{
+            display: inline-block;
+            padding: 6px 12px;
+            border: 1px solid #bbb;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #333;
+            text-decoration: none;
+        }
+        .artist-list a:hover{
+            background-color: #eee;
+        }
     </style>
 </head>
 <body>
@@ -60,28 +82,60 @@
 <th:block th:replace="~{fragments/layout::getMain(~{::content})}">
     <div th:fragment="content" class="item-list">
         <section class="store-title">
-            <h2>선택한 아티스트 이름</h2>
+            <h2 th:if="${mode=='artist' and artist_name!=null}" th:text="${artist_name}">선택한 아티스트 이름</h2>
         </section>
         <section class="category">
-            <button class="allitems">전체보기</button>
-            <button class="album">ALBUM</button>
-            <button class="md">MD</button>
+            <a th:href="@{/store}"><button class="allitems">전체보기</button></a>
+            <a th:href="@{/store/category/album(pageNum=1)}"><button class="album">ALBUM</button></a>
+            <a th:href="@{/store/category/md(pageNum=1)}"><button class="md">MD</button></a>
+            <a th:href="@{/store(mode='artist')}"><button class="artist" >ARTIST</button></a>
+        </section>
+        <section class="artist-list" th:if="${mode=='artist'}">
+            <ul>
+                <li th:each="artist:${artists}">
+                    <a th:href="@{/store/artist/{id}(id=${artist.artist_id})}"
+                       th:text="${artist.artist_name}"></a>
+                </li>
+            </ul>
         </section>
         <section class="count">
-            <p>카테고리별 아이템수 카운팅 <span>"items"</span></p>
+            <p>total <span th:text="${totalCount}">0</span> items</p>
         </section>
         <hr>
         <section class="product-list">
-            <div class="product-card">
-                <a th:href="@{/store/storeItem}"> <!--storeItem : {productId}로 넣을예정-->
-                    <img src="" alt="상품이미지">
-                    <p class="name">상품이름</p>
-                    <p class="price">상품가격</p>
+            <div class="product-card" th:each="products:${products}">
+                <a th:href="@{/store/storeItem/{product_id}(product_id=${products.product_id})}">
+                    <img th:src="@{'/images/' + ${products.savefilename}}" alt="상품이미지">
+                    <p class="name" th:text="${products.product_name}"></p>
+                    <p class="price" th:text="${products.price}"></p>
                 </a>
             </div>
         </section>
-        <section class="pagination">
-            <a href="">페이지표시</a>
+        <section class="pagination" th:if="${pageInfo!=null}">
+            <!-- 전체 / album / md용 -->
+            <th:block th:if="${mode==null}">
+                <li th:if="${pageInfo.startPageNum>1}">
+                    <a th:href="@{/store/{product_type}(product_type=${product_type}, pageNum=${pageInfo.startPageNum - 1})}">[이전]</a>
+                </li>
+                <li th:each="pagenum:${#numbers.sequence(pageInfo.startPageNum,pageInfo.endPageNum)}">
+                    <a th:href="@{/store/{product_type}(product_type=${product_type}, pageNum=${pagenum})}">[[${pagenum}]]</a>
+                </li>
+                <li th:if="${pageInfo.endPageNum<pageInfo.totalPageCount}">
+                    <a th:href="@{/store/{product_type}(product_type=${product_type}, pageNum=${pageInfo.endPageNum + 1})}">[다음]</a>
+                </li>
+            </th:block>
+            <!-- 아티스트용 -->
+            <th:block th:if="${mode=='artist'}">
+                <li th:if="${pageInfo.startPageNum>1}">
+                    <a th:href="@{/store/artist/{artist_id}(artist_id=${artist_id}, pageNum=${pageInfo.startPageNum - 1})}">[이전]</a>
+                </li>
+                <li th:each="pagenum:${#numbers.sequence(pageInfo.startPageNum,pageInfo.endPageNum)}">
+                    <a th:href="@{/store/artist/{artist_id}(artist_id=${artist_id}, pageNum=${pagenum})}">[[${pagenum}]]</a>
+                </li>
+                <li th:if="${pageInfo.endPageNum<pageInfo.totalPageCount}">
+                    <a th:href="@{/store/artist/{artist_id}(artist_id=${artist_id},pageNum=${pageInfo.endPageNum + 1})}">[다음]</a>
+                </li>
+            </th:block>
         </section>
     </div>
 </th:block>
