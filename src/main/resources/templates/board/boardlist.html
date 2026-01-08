@@ -2,9 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/landing.css}">
     <title>board/boardlist.html</title>
 </head>
 <body>
+<div th:replace="~{fragments/layout::header}"></div>
+<th:block>
 <h1>공지사항</h1>
     <table>
         <tr>
@@ -29,6 +32,7 @@
         </tr>
 
     </table>
-
+</th:block>
+<div th:replace="~{fragments/layout::footer}"></div>
 </body>
 </html>

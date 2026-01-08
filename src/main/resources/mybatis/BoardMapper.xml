@@ -17,9 +17,11 @@
     </select>
 
     <sql id="search">
-        <if test="field != null and field != ''">
-            where ${field} like '%' || #{keyword} || '%'
+        <where>
+        <if test="field != null and field != ''  and keyword != null">
+             ${field} like '%' || #{keyword} || '%'
         </if>
+        </where>
     </sql>
     <select id="count" resultType="int" parameterType="map">
         select NVL(count(*),0) cnt from board
