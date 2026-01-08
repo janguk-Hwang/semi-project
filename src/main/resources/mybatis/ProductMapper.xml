@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.ProductMapper">
+    <select id="allProductList" parameterType="map" resultType="ProductListDto">
+        select * from
+        (
+        select ROWNUM rnum, p.product_id,p.product_name, p.price,f.savefilename, p.product_type
+        from product p
+        left join fileinfo f on ref_type='product' and ref_id=product_id
+        order by p.product_id desc
+        )
+        <![CDATA[
+            where rnum>=#{startRow} and rnum<=#{endRow}
+        ]]>
+    </select>
+
+    <select id="selectProductType" parameterType="map" resultType="ProductListDto">
+        select * from
+        (
+        select ROWNUM rnum, p.product_id,p.product_name, p.price,f.savefilename
+        from product p
+        left join fileinfo f on f.ref_type='product' and f.ref_id=p.product_id
+        where p.product_type=#{product_type}
+        order by p.product_id desc
+        ) where rnum between #{startRow} and #{endRow}
+    </select>
+
+    <select id="selectProductByArtist" parameterType="map" resultType="ProductListDto">
+        select * from(
+        select ROWNUM rnum, p.product_id as product_id, p.product_name as product_name, p.price as price, f.savefilename as savefilename
+        from product p
+        left join fileinfo f on f.ref_type='product' and f.ref_id=product_id
+        where p.artist_id=#{artist_id}
+        order by p.product_id desc
+        ) where rnum between #{startRow} and #{endRow}
+    </select>
+
+    <select id="countByArtist" parameterType="int" resultType="int">
+        select count(*) from product where artist_id=#{artist_id}
+    </select>
+
+    <select id="countAll" resultType="int">
+        select count(*) from product
+    </select>
+
+    <select id="countByType" parameterType="String" resultType="int">
+        select count(*) from product where product_type=#{product_type}
+    </select>
+</mapper>

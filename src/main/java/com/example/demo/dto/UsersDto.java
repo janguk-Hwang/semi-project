@@ -4,14 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-
-@AllArgsConstructor
+import java.sql.Date;
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
-
 public class UsersDto {
-    private int member_id;
+    private Integer member_id;
     private String id;
     private String pwd;
     private String email;
@@ -20,6 +18,6 @@ public class UsersDto {
     private Date sign_in_date;
     private String role;
     private String profile;
-    private int gender;
-
+    private Integer gender;
+    private String addr;
 }

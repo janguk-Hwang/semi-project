@@ -1,10 +1,28 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>home.html</title>
+    <link rel="stylesheet" th:href="@{/landing.css}">
 </head>
 <body>
-<h1><a th:href="@{/board/boardlist}">공지사항</a></h1>
+
+<!-- header -->
+<div th:replace="fragments/layout :: header"></div>
+
+<!-- main content -->
+<div th:replace="fragments/layout :: getMain(~{::#homeContent})">
+    <div id="homeContent">
+        <h1>메인 홈 화면</h1>
+        <p>여기는 home.html의 본문 영역입니다.</p>
+    </div>
+</div>
+
+<!-- footer -->
+<div th:replace="fragments/layout :: footer"></div>
+
+<!-- 이 부분이 getMain(content)에 들어감 -->
+
+
 </body>
 </html>
