@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>usermanagement.html</title>
+  <link rel="stylesheet" th:href="@{/landing.css}">
+</head>
+<body>
+
+<!-- header -->
+<div th:replace="fragments/layout :: header"></div>
+
+<div th:replace="fragments/layout :: getMain(~{::#homeContent})">
+  <div id="homeContent">
+    <h1>회원 목록</h1>
+    <table>
+      <tr>
+        <th>회원번호</th><th>회원ID</th><th>권한</th><th>가입일</th><th>권한변경</th><th>회원삭제</th>
+      </tr>
+      <tr th:each="t:${list}">
+        <td th:text="${t.member_id}"></td>
+        <td th:text="${t.id}"></td>
+        <td th:text="${t.role}"></td>
+        <td th:text="${t.sign_in_date}"></td>
+        <td><select name="role">
+          <option value="user">일반회원</option>
+          <option value="arists">뮤지션</option>
+        </select>
+          <input type="button" value="변경" onclick="rolechg()"></td>
+        <td><input type="button" value="회원삭제"></td>
+      </tr>
+    </table>
+    <div>
+      <ul>
+        <li th:if="${pageInfo.startPageNum>1}">
+          <a th:href="@{/admin/usermanagement(pageNum=${pageInfo.startPageNum-1},field=${field},keyword=${keyword})}"
+             class="page-link">[이전]</a>
+        </li>
+
+        <li th:each="num:${#numbers.sequence(pageInfo.startPageNum,pageInfo.endPageNum)}">
+          <a th:href="@{/admin/usermanagement(pageNum=${num},field=${field},keyword=${keyword})}">[[${num}]]</a>
+        </li>
+
+        <li th:if="${pageInfo.endPageNum<pageInfo.totalPageCount}">
+          <a th:href="@{/admin/usermanagement(pageNum=${pageInfo.endPageNum+1},field=${field},keyword=${keyword})}"
+             class="page-link">[다음]</a>
+        </li>
+      </ul>
+    </div>
+    <div>
+      <form th:action="@{/admin/usermanagement}" method="get">
+        <label>
+          <input type="radio" name="field" value="id"
+                 th:checked="${field == 'id'}">
+          회원ID
+        </label>
+
+        <label>
+          <input type="radio" name="field" value="role"
+                 th:checked="${field == 'role'}">
+          권한
+        </label>
+
+        <input type="text" name="keyword" th:value="${keyword}">
+        <input type="submit" value="검색">
+      </form>
+    </div>
+    <a th:href="@{/admin/usermanagement}">전체회원보기</a>
+
+  </div>
+</div>
+
+<!-- footer -->
+<div th:replace="fragments/layout :: footer"></div>
+</body>
+<script>
+
+</script>
+</html>
