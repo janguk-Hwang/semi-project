@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/landing.css}">
+    <title>store/storeItemPage.html</title>
+    <style>
+        .store-item {
+            width: 100%;
+            margin: 40px auto;
+            background-color: bisque;
+        }
+        .product-top{
+            display: flex;
+            gap: 50px;
+            margin-bottom: 50px;
+        }
+        .product-image{
+            width: 450px;
+            border: 1px solid black;
+            border-radius: 8px;
+        }
+        .product-info{
+            flex: 1;
+        }
+        .quantity{
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .quantity button{
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+        }
+        .quantity.count{
+            width: 20px;
+            text-align: center;
+        }
+        .option{
+            margin-bottom: 20px;
+        }
+        .buttons{
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .buttons button{
+            padding: 2px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .product-tabs{
+            padding-top: 30px;
+        }
+        .tab-menu{
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+        .tab-menu button{
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+
+        }
+        .tab-content{
+
+        }
+    </style>
+</head>
+<body>
+<!-- 헤더삽입 -->
+<div th:replace="~{fragments/layout::header}"></div>
+
+<!-- 메인 콘텐츠 영역: th:block으로 감싸서 중복 출력을 방지합니다 -->
+<th:block th:replace="~{fragments/layout::getMain(~{::content})}">
+    <div th:fragment="content" class="store-item">
+        <section class="product-top"> <!-- 상품상단 영역 -->
+            <div class="product-image"> <!-- 상품이미지 -->
+                <img src="" alt="상품이미지"> <!-- th:src로 변경 DB반영예정 -->
+            </div>
+
+            <div class="product-info"> <!--상품정보-->
+                <h2>2025 FT Live</h2> <!--상품명-->
+                <p class="price">0 won</p> <!--상품가격-->
+                <div class="quantity"> <!--수량선택-->
+                    <span>수량</span>
+                    <button type="button">-</button>
+                    <span class="count">0</span>
+                    <button type="button">+</button>
+                </div>
+                <div class="option"> <!--옵션선택-->
+                    <label for="productOption">옵션선택</label>
+                    <select id="productOption" name="optionId">
+                        <option value="">옵션을 선택하세요</option> <!--DB연동 - Product_Option테이블이용-->
+                        <option value="1">사이즈 M</option>
+                        <option value="2">사이즈 L</option>
+                        <option value="3" disabled>사이즈 XL(품절)</option>
+                    </select>
+                </div>
+                <div class="buttons"> <!--버튼영역-->
+                    <button type="button" class="order-btn">주문하기</button>
+                    <button type="button" class="cart-btn">장바구니</button>
+                </div>
+            </div>
+        </section>
+        <!--탭영역 '상품상세 / 리뷰 / Q&A' -->
+        <section class="product-tabs">
+            <div class="tab-menu">
+                <button type="button">상품상세보기</button>
+                <button type="button">상품리뷰</button>
+                <button type="button">상품Q&A</button>
+            </div>
+            <hr>
+            <div class="tab-content">
+                <h3>상품상세설명</h3>
+                <p>
+                    상품상세정보 설명....................
+                </p>
+            </div>
+        </section>
+    </div>
+</th:block>
+
+<!-- footer삽입 -->
+<div th:replace="~{fragments/layout::footer}"></div>
+</body>
+</html>

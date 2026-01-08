@@ -1,0 +1,24 @@
+package com.example.demo.service;
+
+import com.example.demo.dto.UsersDto;
+import com.example.demo.mapper.UsersMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class UsersService {
+    private final UsersMapper usersMapper;
+
+    public int insertUser(UsersDto dto){
+        return usersMapper.insertUser(dto);
+    }
+
+    public UsersDto selectOne(String id){
+        return usersMapper.selectOne(id);
+    }
+
+    public UsersDto isUser(UsersDto dto){
+        return usersMapper.isUser(dto);
+    }
+}
