@@ -15,4 +15,5 @@ public interface AdminMapper {
     int roleupdate(UsersDto dto);
     User_rolesDto isadmin(int member_id);
     int countmembers();
+    int countboard();
 }

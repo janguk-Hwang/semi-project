@@ -41,6 +41,9 @@
     <select id="countmembers" resultType="int">
         select count(*) from users
     </select>
+    <select id="countboard" resultType="int">
+        select count(*) from board
+    </select>
     <sql id="search">
         <if test="field != null and field != '' and keyword != null and keyword != ''">
             <choose>

@@ -18,7 +18,9 @@ public class AdminController {
     @GetMapping("/admin/main")
     public String adminmain(Model model){
         int membercount=usermanagementService.countmembers();
+        int boardcount=usermanagementService.countboard();
         model.addAttribute("membercount",membercount);
+        model.addAttribute("boardcount",boardcount);
         return "admin/adminmain";
     }
     @GetMapping("/admin/usermanagement")

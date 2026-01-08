@@ -43,4 +43,7 @@ public class UsermanagementService {
     public int countmembers(){
         return adminMapper.countmembers();
     }
+    public int countboard(){
+        return adminMapper.countboard();
+    }
 }
