@@ -4,11 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
-public class User_rolesDto {
-    private Integer role_id;
-    private Integer member_id;
-    private String role;
+public class ProductDto {
+    private Integer product_id;
+    private String product_name;
+    private Integer price;
 }

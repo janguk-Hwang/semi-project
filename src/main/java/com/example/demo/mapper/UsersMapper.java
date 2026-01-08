@@ -8,5 +8,6 @@ import java.util.Map;
 @Mapper
 public interface UsersMapper {
     int insertUser(UsersDto dto);
-    UsersDto isMembers(Map<String,Object> map);
+    UsersDto selectOne(String id);
+    UsersDto isUser(UsersDto dto);
 }

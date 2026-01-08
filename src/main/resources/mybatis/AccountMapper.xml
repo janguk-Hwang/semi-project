@@ -4,7 +4,11 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.AccountMapper">
     <insert id="insertAccount" parameterType="AccountDto">
-        insert into account(account_id,account,name,bank,member_id) values(seq_account.nextval,#{account},#{accountName},
+        insert into account(account_id,account,name,bank,member_id) values(seq_account.nextval,#{account},#{name},
         #{bank},#{member_id})
     </insert>
+
+    <select id="selectmid" parameterType="string" resultType="int">
+        select member_id from users where id=#{id}
+    </select>
 </mapper>

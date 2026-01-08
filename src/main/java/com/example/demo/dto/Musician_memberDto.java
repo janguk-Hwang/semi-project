@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class User_rolesDto {
-    private Integer role_id;
-    private Integer member_id;
-    private String role;
+public class Musician_memberDto {
+    private Integer membernum;
+    private String member_name;
+    private Integer artist_id;
 }

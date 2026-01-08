@@ -35,18 +35,14 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login(HttpServletRequest request, HttpSession session, Model model) {
-        String id = request.getParameter("id");
-        String pwd = request.getParameter("pwd");
-        Map<String, Object> map = new HashMap<>();
-        map.put("id", id);
-        map.put("pwd", pwd);
-        UsersDto dto = userservice.isMembers(map);
+    public String login(UsersDto usersdto, HttpSession session, Model model) {
+
+        UsersDto dto = userservice.isUser(usersdto);
         if (dto == null) {
             model.addAttribute("error", "아이디또는 비밀번호가 틀립니다.");
             return "auth/loginPage";
         } else {
-            session.setAttribute("login", dto);
+            session.setAttribute("loginUser", dto);
             return "redirect:/";
         }
     }
