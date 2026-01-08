@@ -1,22 +1,18 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.SignupRequestDto;
-import com.example.demo.dto.User_rolesDto;
+import com.example.demo.dto.AccountDto;
 import com.example.demo.dto.UsersDto;
-import com.example.demo.service.SignupService;
-import com.example.demo.service.UsermanagementService;
+import com.example.demo.service.AccountService;
 import com.example.demo.service.UsersService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,62 +21,63 @@ import java.util.Map;
 @Controller
 @RequiredArgsConstructor
 public class AuthController {
-    private final SignupService signupService;
-    private final UsersService usersService;
-    private final UsermanagementService usermanagementService;
+    private final UsersService userservice;
+    private final AccountService accountService;
 
     @GetMapping("/login")
-    public String loginPage(){
+    public String loginPage() {
         return "auth/loginPage";
     }
 
+    @GetMapping("/signup")
+    public String joinPage() {
+        return "auth/signup";
+    }
+
     @PostMapping("/login")
-    public String login(UsersDto usersDto, HttpSession httpSession,Model model){
-        UsersDto dto=usersService.isUser(usersDto);
-        User_rolesDto adminDto=usermanagementService.isadmin(dto.getMember_id());
-        if(dto==null){
-            model.addAttribute("errorMsg","아이디 또는 비밀번호가 맞지 않습니다.");
+    public String login(HttpServletRequest request, HttpSession session, Model model) {
+        String id = request.getParameter("id");
+        String pwd = request.getParameter("pwd");
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", id);
+        map.put("pwd", pwd);
+        UsersDto dto = userservice.isMembers(map);
+        if (dto == null) {
+            model.addAttribute("error", "아이디또는 비밀번호가 틀립니다.");
             return "auth/loginPage";
-        }else{
-            httpSession.setAttribute("loginUser", dto);
+        } else {
+            session.setAttribute("login", dto);
             return "redirect:/";
         }
     }
 
-    @GetMapping("/signup")
-    public String joinPage(Model model){
-        model.addAttribute("signupRequestDto",new SignupRequestDto());
-        return "auth/signup";
-    }
-
     @PostMapping("/signup")
-    public String signup(@Valid SignupRequestDto dto,
-                         BindingResult bindingResult, RedirectAttributes redirectAttributes ,Model model){
-        if(!dto.getPwd().equals(dto.getPwdCheck())){
-            model.addAttribute("signupRequestDto", dto);
-            return "auth/signup";
+    public String signup(@RequestParam String pwdCheck,
+                         @ModelAttribute("account") AccountDto accountDto,
+                         @ModelAttribute("users") UsersDto usersDto, Model model) {
+        String pwd=usersDto.getPwd();
+        if (!pwd.equals(pwdCheck)|| pwd == null) {
+            model.addAttribute("result", "비밀번호를 다시 확인해 주십시오");
+            return "redirect:/auth/signup";
         }
 
-        if(bindingResult.hasErrors()){
-            return "auth/signup";
+        int user = userservice.insertUser(usersDto);
+        if (user == 0){
+            model.addAttribute("result", "회원가입 실패");
+            return "redirect:/auth/signup";
         }
-        signupService.signup(dto);
-        redirectAttributes.addFlashAttribute("msg","회원가입이 완료되었습니다.");
-        return "redirect:/login";
-    }
 
-    @GetMapping("/existId")
-    @ResponseBody
-    public Map<String,Object> existId(@RequestParam("id") String id){
-        UsersDto usersDto=usersService.selectOne(id);
-        boolean exist=usersDto!=null;
-        Map<String,Object> map=new HashMap<>();
-        map.put("result",exist);
-        return map;
-    }
-    @GetMapping("/logout")
-    public String logout(HttpSession httpSession){
-        httpSession.invalidate();
-        return "redirect:/";
+        int mnum= usersDto.getMember_id();
+        accountDto.setMember_id(mnum);
+
+        int account = accountService.insertAccount(accountDto);
+        if (account == 0) {
+            model.addAttribute("result", "회원가입 실패");
+        }
+
+        model.addAttribute("result", "회원가입 완료");
+        return "auth/loginPage";
     }
 }
+
+
