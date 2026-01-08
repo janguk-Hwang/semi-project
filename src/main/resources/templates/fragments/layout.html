@@ -21,9 +21,9 @@
             <a th:unless="${session.loginUser}" th:href="@{/signup}" class="btn-auth" style="background:#888; color:white;">회원가입</a>
             <a th:if="${session.loginUser == null}" th:href="@{/login}">로그인</a>
             <a th:if="${session.loginUser != null}" th:href="@{/logout}">로그아웃</a>
-            <a th:if="${session.loginUser != null and session.loginUser.role != 'admin'}"
+            <a th:if="${session.loginUser != null and session.loginUser.role != 'ADMIN'}"
                th:href="@{/mypage}">마이페이지</a>
-            <a th:if="${session.loginUser != null and session.loginUser.role == 'admin'}"
+            <a th:if="${session.loginUser != null and session.loginUser.role == 'ADMIN'}"
                th:href="@{/admin/main}">관리자페이지</a>
 
         </div>
