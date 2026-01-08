@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Controller
@@ -19,7 +18,7 @@ public class AdminController {
     private final UsermanagementService usermanagementService;
     @GetMapping("/admin/main")
     public String adminmain(){
-        return "admin/adminmain";
+        return "adminMain";
     }
     @GetMapping("/admin/usermanagement")
     public String usermanagementpage(@RequestParam(value = "pageNum",defaultValue = "1")int pageNum,
