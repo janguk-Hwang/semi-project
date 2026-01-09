@@ -15,4 +15,38 @@
         </if>
         )
     </insert>
+    
+    <select id="selectCartItem" parameterType="map" resultType="CartDto">
+        select cart_id,quantity,created_at,member_id,option_id,product_id from cart
+        where member_id=#{member_id} and product_id=#{product_id}
+        <if test="option_id != null">
+            and option_id=#{option_id}
+        </if>
+        <if test="option_id == null">
+            and option_id is null
+        </if>
+    </select>
+
+    <update id="updateCartQuantity" parameterType="CartDto">
+        update cart set quantity=quantity + #{quantity}
+        where cart_id=#{cart_id}
+    </update>
+
+    <select id="selectCartList" parameterType="int" resultType="CartListDto">
+        select c.cart_id, c.quantity,
+        p.product_id, p.product_name, p.price as product_price,
+        o.option_id, o.option_name,
+        f.savefilename as savefilename
+
+        from cart c join product p on c.product_id=p.product_id
+        left join product_option o on c.option_id=o.option_id
+        left join fileinfo f on f.ref_type='product' and f.ref_id=p.product_id and f.file_role='THUMB'
+
+        where c.member_id=#{member_id}
+        order by c.cart_id desc
+    </select>
+
+    <select id="countCartItems" parameterType="int" resultType="int">
+        select count(*) from cart where member_id=#{member_id}
+    </select>
 </mapper>
