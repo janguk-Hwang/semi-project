@@ -1,31 +1,29 @@
-<!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-</head>
-<body>
-<!-- header -->
-<div th:replace="fragments/layout :: header"></div>
-
+<!-- fragments/layout.html -->
 <div th:fragment="header" id="header">
     <div class="container">
         <div class="logo"><a th:href="@{/}">Logo</a></div>
+
         <ul class="nav-links">
             <li><a th:href="@{/artist}">Artist</a></li>
             <li><a th:href="@{/board}">Board</a></li>
             <li><a th:href="@{/store}">Store</a></li>
             <li><a th:href="@{/community}">Community</a></li>
         </ul>
+
         <div class="auth-buttons">
-            <a th:unless="${session.loginUser}" th:href="@{/signup}" class="btn-auth" style="background:#888; color:white;">회원가입</a>
+            <a th:unless="${session.loginUser}"
+               th:href="@{/signup}"
+               class="btn-auth"
+               style="background:#888; color:white;">회원가입</a>
+
             <a th:if="${session.loginUser == null}" th:href="@{/login}">로그인</a>
             <a th:if="${session.loginUser != null}" th:href="@{/logout}">로그아웃</a>
+
             <a th:if="${session.loginUser != null and session.loginUser.role != 'ADMIN'}"
                th:href="@{/mypage}">마이페이지</a>
+
             <a th:if="${session.loginUser != null and session.loginUser.role == 'ADMIN'}"
                th:href="@{/admin/main}">관리자페이지</a>
-
         </div>
     </div>
 </div>
@@ -36,12 +34,14 @@
     </div>
 </div>
 
+
 <div th:fragment="footer" id="footer">
     <div class="container">
         <div class="footer-info">
             <div class="logo">Logo</div>
             <p>Copyright © 2026 Nexcent ltd. All rights reserved</p>
         </div>
+
         <div class="footer-subscribe">
             <h4>뉴스 구독하기</h4>
             <div class="subscribe-box">
@@ -51,6 +51,3 @@
         </div>
     </div>
 </div>
-
-</body>
-</html>
