@@ -13,4 +13,5 @@ public class FileinfoDto {
     private String savefilename;
     private String ref_type;
     private Integer ref_id;
+    private String file_role;
 }

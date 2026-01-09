@@ -16,4 +16,6 @@ public class ProductDto {
     private String product_type;
     private Date create_at;
     private Integer artist_id;
+    private Integer stock;
+    private String has_option;
 }

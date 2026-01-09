@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.ProductDetailDto;
 import com.example.demo.dto.ProductDto;
 import com.example.demo.dto.ProductListDto;
 import com.example.demo.mapper.ProductMapper;
@@ -15,6 +16,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductMapper productMapper;
+
+//    //상품하나의 정보 조회
+//    public ProductDetailDto selectProduct(int product_id){
+//        return productMapper.selectProduct(product_id);
+//    }
 
     //전체,album,md 카테고리 전용
     public Map<String,Object> allProductList(String product_type,int pageNum){
@@ -35,6 +41,7 @@ public class ProductService {
         return result;
     }
 
+    //artist 카테고리 전용
     public Map<String,Object> productListByArtist(int artist_id, int pageNum){
         int totalRowCount=productMapper.countByArtist(artist_id);
         PageInfo pageInfo=new PageInfo(pageNum,9,3,totalRowCount);

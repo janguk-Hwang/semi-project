@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.ProductListDto;
 import com.example.demo.service.MusicianService;
+import com.example.demo.service.ProductOptionService;
 import com.example.demo.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -18,6 +19,19 @@ import java.util.Map;
 public class StoreController {
     private final ProductService productService;
     private final MusicianService musicianService;
+    private final ProductOptionService productOptionService;
+
+    @GetMapping("/store/storeItem/{product_id}")
+    public String storeProductDetail(@PathVariable int product_id,Model model){
+        Map<String,Object> result=productOptionService.getProductDetail(product_id);
+
+        model.addAttribute("product",result.get("product"));
+        model.addAttribute("options",result.get("options"));
+        model.addAttribute("detailImages",result.get("detailImages"));
+
+        return "store/storeItemPage";
+    }
+
     //전체상품보기
     @GetMapping("/store")
     public String storeHome(@RequestParam(value = "pageNum",defaultValue = "1") int pageNum,
