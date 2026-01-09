@@ -19,7 +19,7 @@
     <nav class="artist-nav">
       <ul>
         <li th:each="artist : ${artistList}">
-          <a th:href="@{/artist(name=${artist})}"
+          <a th:href="@{/artist/{name}(name=${artist})}"
              th:text="${artist}"
              th:classappend="${artist == artistName} ? 'active'">Artist Name</a>
         </li>

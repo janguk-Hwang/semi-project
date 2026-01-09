@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Artist/insertArtist.html</title>
+</head>
+<body>
+<form id="artistForm">
+    <input type="text" id="artistName" placeholder="가수 이름" required>
+    <button type="submit">검색</button>
+</form>
+<script>
+    document.getElementById("artistForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const name = document.getElementById("artistName").value.trim();
+        if (!name) return;
+
+        // 한글/공백 대비 인코딩
+        location.href = "/artist/" + encodeURIComponent(name);
+    });
+</script>
+</body>
+</html>

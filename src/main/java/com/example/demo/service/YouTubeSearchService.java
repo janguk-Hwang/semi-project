@@ -47,8 +47,7 @@ public class YouTubeSearchService {
                 return (videoId == null || videoId.isBlank()) ? null : videoId;
             }
         } catch (Exception e) {
-            // 필요하면 로그
-            // e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         return null;
     }
