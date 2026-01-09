@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원관리</title>
+
+    <!-- 기존 테마(landing.css) 유지해도 되고, 아래 전용 CSS만 써도 됨 -->
+    <link rel="stylesheet" th:href="@{/admin-usermanagement.css}">
+    <link rel="stylesheet" th:href="@{/landing.css}">
+</head>
+<body>
+
+<!-- header -->
+<div th:replace="fragments/layout :: header"></div>
+
+<!-- main (layout의 getMain에 중앙 콘텐츠 주입) -->
+<div th:replace="fragments/layout :: getMain(~{::#homeContent})">
+    <div id="homeContent" class="admin-page">
+
+        <!-- 상단 탭 -->
+        <nav class="admin-tabs">
+            <a class="tab" th:href="@{/admin/main}">전체관리</a>
+            <a class="tab" href="#">게시물관리</a>
+            <a class="tab" href="#">상품관리</a>
+            <a class="tab" href="#">재고관리</a>
+            <a class="tab is-active" th:href="@{/admin/usermanagement}">회원관리</a>
+        </nav>
+
+        <section class="panel">
+
+            <!-- 검색 바 -->
+            <form class="search-bar" th:action="@{/admin/usermanagement}" method="get">
+                <div class="search-left">
+                    <label class="radio">
+                        <input type="radio" name="field" value="id" th:checked="${field == 'id'}">
+                        회원ID
+                    </label>
+                    <label class="radio">
+                        <input type="radio" name="field" value="role" th:checked="${field == 'role'}">
+                        권한
+                    </label>
+                </div>
+
+                <input class="search-input" type="text" name="keyword" placeholder="Search"
+                       th:value="${keyword}">
+                <button class="btn btn-primary" type="submit">검색</button>
+            </form>
+
+            <!-- 테이블 카드 -->
+            <div class="table-card">
+                <table class="user-table">
+                    <thead>
+                    <tr>
+                        <th>회원번호</th>
+                        <th>아이디</th>
+                        <th>권한</th>
+                        <th>가입일</th>
+                        <th>관리</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="t : ${list}">
+                        <td th:text="${t.member_id}">1</td>
+                        <td th:text="${t.id}">HELLO</td>
+                        <td th:text="${t.role}">ARTIST</td>
+                        <td th:text="${#dates.format(t.sign_in_date,'yyyy-MM-dd')}">[[${t.sign_in_date}]]</td>
+
+                        <td class="actions">
+                            <!-- 권한 변경 -->
+                            <form th:action="@{/admin/rolechg}" method="post" class="inline">
+                                <input type="hidden" name="member_id" th:value="${t.member_id}">
+                                <select name="role" class="select">
+                                    <option value="USER"   th:selected="${t.role == 'USER'}">USER</option>
+                                    <option value="ARTIST" th:selected="${t.role == 'ARTIST'}">ARTIST</option>
+                                </select>
+                                <button type="submit" class="pill pill-gray">변경</button>
+                            </form>
+
+                            <!-- 회원 삭제 -->
+                            <form th:action="@{/admin/user/delete}" method="post" class="inline"
+                                  onsubmit="return confirm('정말 삭제할까요?');">
+                                <input type="hidden" name="member_id" th:value="${t.member_id}">
+                                <button type="submit" class="pill pill-dark">삭제</button>
+                            </form>
+                        </td>
+                    </tr>
+
+                    <!-- 데이터 없을 때 -->
+                    <tr th:if="${list == null or #lists.isEmpty(list)}">
+                        <td colspan="5" class="empty">검색 결과가 없습니다.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 페이지네이션 -->
+            <nav class="pager" aria-label="Pagination">
+                <a class="page-btn"
+                   th:classappend="${pageInfo.startPageNum <= 1} ? ' disabled' : ''"
+                   th:href="@{/admin/usermanagement(pageNum=${pageInfo.startPageNum-1},field=${field},keyword=${keyword})}">
+                    ‹
+                </a>
+
+                <a class="page-num"
+                   th:each="num : ${#numbers.sequence(pageInfo.startPageNum, pageInfo.endPageNum)}"
+                   th:text="${num}"
+                   th:classappend="${num == pageNum} ? ' is-active' : ''"
+                   th:href="@{/admin/usermanagement(pageNum=${num},field=${field},keyword=${keyword})}">
+                    1
+                </a>
+
+                <a class="page-btn"
+                   th:classappend="${pageInfo.endPageNum >= pageInfo.totalPageCount} ? ' disabled' : ''"
+                   th:href="@{/admin/usermanagement(pageNum=${pageInfo.endPageNum+1},field=${field},keyword=${keyword})}">
+                    ›
+                </a>
+            </nav>
+
+        </section>
+    </div>
+</div>
+
+<!-- footer -->
+<div th:replace="fragments/layout :: footer"></div>
+
+</body>
+</html>
