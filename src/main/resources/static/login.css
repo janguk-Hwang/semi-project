@@ -1,0 +1,114 @@
+/* content only (header/footer 제외) */
+.login-wrap{
+    min-height: 620px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 80px 16px 120px;
+}
+
+.login-card{
+    width: 100%;
+    max-width: 760px;
+    background: transparent;
+    text-align: center;
+}
+
+/* logo */
+.login-brand{
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 70px;
+}
+
+.brand-icon{
+    font-size: 44px;
+    line-height: 1;
+}
+
+.brand-text{
+    font-size: 54px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: #111;
+}
+
+/* form */
+.login-form{
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+}
+
+.login-input{
+    height: 74px;
+    border-radius: 10px;
+    border: 1px solid #d7d7d7;
+    padding: 0 22px;
+    font-size: 22px;
+    outline: none;
+    background: #fff;
+}
+
+.login-input::placeholder{
+    color: #b8b8b8;
+    font-weight: 600;
+}
+
+.login-input:focus{
+    border-color: #bdbdbd;
+}
+
+/* error msg */
+.login-error{
+    text-align: left;
+    font-size: 14px;
+    color: #d0342c;
+    margin-top: -10px;
+}
+
+/* button */
+.login-btn{
+    height: 72px;
+    border: none;
+    border-radius: 10px;
+    background: #111;
+    color: #fff;
+    font-size: 24px;
+    font-weight: 800;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.login-btn:hover{
+    background: #000;
+}
+
+/* links */
+.login-links{
+    margin-top: 26px;
+    font-size: 18px;
+    color: #b0b0b0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+}
+
+.login-links .link{
+    color: #b0b0b0;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-links .link:hover{
+    color: #777;
+}
+
+.login-links .divider{
+    color: #cfcfcf;
+}

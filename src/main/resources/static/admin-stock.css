@@ -1,0 +1,248 @@
+/* ===== 재고관리 콘텐츠 전용 ===== */
+.sm-page{
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 26px 16px 90px;
+}
+
+/* tabs */
+.sm-tabs{
+    display: flex;
+    justify-content: center;
+    gap: 34px;
+    border-bottom: 1px solid #d7d7d7;
+    padding-bottom: 12px;
+    margin-bottom: 18px;
+}
+.sm-tabs .tab{
+    font-size: 14px;
+    color: #333;
+    text-decoration: none;
+    padding: 6px 4px;
+    position: relative;
+}
+.sm-tabs .tab.is-active{ font-weight: 800; }
+.sm-tabs .tab.is-active::after{
+    content:"";
+    position:absolute;
+    left:0; bottom:-13px;
+    width:100%; height:2px;
+    background:#111;
+}
+
+.sm-title{
+    font-size: 18px;
+    font-weight: 800;
+    color: #111;
+    margin: 10px 0 14px;
+}
+
+/* card + table */
+.sm-card{
+    background:#fff;
+    border-radius:16px;
+    box-shadow: 0 0 0 1px #ececec inset;
+    overflow:hidden;
+}
+
+.sm-table{
+    width:100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.sm-table thead th{
+    height:48px;
+    font-size:13px;
+    font-weight:700;
+    color:#666;
+    text-align:center;
+    border-bottom:1px solid #ededed;
+}
+.sm-table thead th:not(:last-child){
+    border-right:1px solid #f2f2f2;
+}
+
+.sm-table tbody td{
+    height:70px;
+    border-bottom:1px solid #f0f0f0;
+    border-right:1px solid #f2f2f2;
+    vertical-align: middle;
+}
+.sm-table tbody td:last-child{ border-right:none; }
+
+.col-check{ width:48px; text-align:center; }
+.col-img{ width:110px; text-align:center; }
+.col-name{ width:280px; padding: 0 14px; }
+.col-price{ width:120px; text-align:center; }
+.col-control{ width:160px; text-align:center; }
+.col-stock{ width:90px; text-align:center; }
+
+.col-check input{
+    width:14px;
+    height:14px;
+}
+
+.img-box{
+    width:44px;
+    height:44px;
+    margin:0 auto;
+    border-radius:10px;
+    border:1px solid #e8e8e8;
+    background: linear-gradient(180deg,#fafafa,#f2f2f2);
+}
+
+/* skeleton (보여주기용) */
+.text-skeleton{
+    height: 12px;
+    border-radius: 8px;
+    background: #f2f2f2;
+    margin: 0 auto;
+}
+.w-70{ width: 70%; }
+.w-50{ width: 50%; }
+
+/* control box */
+.qty-wrap{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    margin-bottom: 8px;
+}
+.qty-btn{
+    width:26px; height:26px;
+    border:none;
+    border-radius:4px;
+    background:#d9d9d9;
+    color:#666;
+    font-weight:900;
+    cursor:pointer;
+}
+.qty-btn.disabled{
+    opacity:.6;
+    cursor: default;
+}
+.qty-val{
+    width:30px;
+    height:26px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:1px solid #8e7bff;
+    color:#6d5dff;
+    border-radius:4px;
+    font-weight:800;
+    background:#fff;
+}
+
+.qty-actions{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+}
+.mini{
+    height:24px;
+    padding:0 10px;
+    border-radius:4px;
+    border:1px solid #8e7bff;
+    background:#fff;
+    color:#6d5dff;
+    font-weight:800;
+    font-size:12px;
+    cursor:pointer;
+}
+
+.stock-val{
+    font-weight: 800;
+    color:#111;
+}
+
+/* filter radios */
+.sm-filter{
+    display:flex;
+    gap: 18px;
+    align-items:center;
+    margin: 18px 2px 12px;
+    color:#444;
+    font-size: 12px;
+}
+.sm-filter .radio{
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+.sm-filter input[type="radio"]{
+    accent-color: #2d7ff0;
+}
+
+/* search bar */
+.sm-search{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:#fff;
+    border-radius: 999px;
+    box-shadow: 0 0 0 1px #ececec inset;
+    padding: 10px 12px;
+}
+.search-ico{
+    width: 22px;
+    text-align:center;
+    color:#999;
+}
+.search-input{
+    flex:1;
+    border:none;
+    outline:none;
+    font-size: 13px;
+    color:#333;
+    background: transparent;
+}
+.search-btn{
+    height: 32px;
+    padding: 0 16px;
+    border: none;
+    border-radius: 16px;
+    background: #2d7ff0;
+    color: #fff;
+    font-weight: 800;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+/* pager */
+.sm-pager{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+    margin-top: 18px;
+}
+.page-btn{
+    width:34px;
+    height:34px;
+    border:none;
+    border-radius:4px;
+    background:#e6e6e6;
+    color:#666;
+    font-weight:900;
+    cursor:pointer;
+}
+.page-btn.disabled{
+    opacity:.6;
+    cursor: default;
+}
+.page-num{
+    width:30px;
+    height:30px;
+    border-radius:3px;
+    border:1px solid #8e7bff;
+    background:#fff;
+    color:#6d5dff;
+    font-weight:800;
+    cursor:pointer;
+}
+.page-num.is-active{
+    background:#f3f1ff;
+}
