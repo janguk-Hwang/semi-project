@@ -3,59 +3,202 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.AdminMapper">
-    <select id="userlist" resultType="UsersDto" parameterType="map">
-        select * from
-        (
-        select u.*, row_number() over(order by u.member_id desc)rnum from users u
-        <include refid="search"/>
-        )
-        <![CDATA[
-            where rnum>=#{startRow} and rnum<=#{endRow}
-        ]]>
-    </select>
-    <select id="prev" parameterType="int" resultType="UsersDto">
-        <![CDATA[
-        select * from(
-        select u.*, row_number() over(order by member_id desc) rnum from users u where member_id=#{member_id}
-        )
-        where rnum=1
-        ]]>
-    </select>
-    <select id="next" parameterType="int" resultType="UsersDto">
-        <![CDATA[ select * from users
-        where member_id=(select min(member_id) from users where member_id>${member_id})]]>
-    </select>
-    <select id="count" resultType="int" parameterType="map">
-        select NVL(count(*),0) from users u
-        <include refid="search"/>
-    </select>
-    <select id="isadmin" parameterType="int" resultType="UsersDto">
-        select * from user_roles where member_id =#{member_id}
-    </select>
-    <update id="roleupdate" parameterType="UsersDto">
-        update users set role=#{role} where member_id=#{member_id}
-    </update>
-    <delete id="admindelete" parameterType="int">
-        delete from users where member_id=#{member_id}
-    </delete>
-    <select id="countmembers" resultType="int">
-        select count(*) from users
-    </select>
-    <select id="countboard" resultType="int">
-        select count(*) from board
-    </select>
+
+    <!-- 검색 조건: WHERE 만들지 말고 AND 조건만 추가 -->
     <sql id="search">
         <if test="field != null and field != '' and keyword != null and keyword != ''">
             <choose>
                 <when test="field == 'id'">
-                    where u.id like '%' || #{keyword} || '%'
+                    AND u.id LIKE '%' || #{keyword} || '%'
                 </when>
                 <when test="field == 'role'">
-                    where u.role like '%' || #{keyword} || '%'
+                    AND u.role LIKE '%' || #{keyword} || '%'
                 </when>
             </choose>
         </if>
     </sql>
 
+    <!-- 회원 목록 + 페이징 (검색조건 먼저 적용 후 row_number) -->
+    <select id="userlist" resultType="UsersDto" parameterType="map">
+        SELECT *
+        FROM (
+        SELECT
+        u.*,
+        ROW_NUMBER() OVER (ORDER BY u.member_id DESC) AS rnum
+        FROM users u
+        <where>
+            1=1
+            <include refid="search"/>
+        </where>
+        )
+        WHERE rnum <![CDATA[ >= ]]> #{startRow}
+        AND rnum <![CDATA[ <= ]]> #{endRow}
+    </select>
+
+    <!-- 회원 수 (검색조건 포함) -->
+    <select id="count" resultType="int" parameterType="map">
+        SELECT NVL(COUNT(*), 0)
+        FROM users u
+        <where>
+            1=1
+            <include refid="search"/>
+        </where>
+    </select>
+
+    <!-- 이전 회원: 현재 member_id 보다 작은 것 중 가장 큰 것 -->
+    <!-- parameterType을 map으로 바꿈: #{member_id} 사용 가능 -->
+    <select id="prev" parameterType="map" resultType="UsersDto">
+        SELECT *
+        FROM users
+        WHERE member_id = (
+        SELECT MAX(member_id)
+        FROM users
+        WHERE member_id <![CDATA[ < ]]> #{member_id}
+        )
+    </select>
+
+    <!-- 다음 회원: 현재 member_id 보다 큰 것 중 가장 작은 것 -->
+    <select id="next" parameterType="map" resultType="UsersDto">
+        SELECT *
+        FROM users
+        WHERE member_id = (
+        SELECT MIN(member_id)
+        FROM users
+        WHERE member_id <![CDATA[ > ]]> #{member_id}
+        )
+    </select>
+
+    <!-- admin 여부 체크 (가장 실용적인 형태: 존재하면 1, 없으면 0) -->
+    <select id="isadmin" parameterType="int" resultType="int">
+        SELECT COUNT(*)
+        FROM user_roles
+        WHERE member_id = #{value}
+        AND role = 'ADMIN'
+    </select>
+
+    <!-- 역할 변경 -->
+    <update id="roleupdate" parameterType="UsersDto">
+        UPDATE users
+        SET role = #{role}
+        WHERE member_id = #{member_id}
+    </update>
+
+    <!-- 회원 삭제 -->
+    <delete id="admindelete" parameterType="int">
+        DELETE FROM users
+        WHERE member_id = #{value}
+    </delete>
+
+    <!-- 전체 회원 수 -->
+    <select id="countmembers" resultType="int">
+        SELECT COUNT(*) FROM users
+    </select>
+
+    <!-- 전체 게시글 수 -->
+    <select id="countboard" resultType="int">
+        SELECT COUNT(*) FROM board
+    </select>
+        <!-- =========================
+             Board Management (fixed)
+             ========================= -->
+
+    <!-- 검색 조건 SQL 조각: WHERE를 만들지 말고 AND 조건만 추가 -->
+    <sql id="boardSearch">
+        <if test="field != null and field != '' and keyword != null and keyword != ''">
+            <choose>
+                <when test="field == 'title'">
+                    AND b.title LIKE '%' || #{keyword} || '%'
+                </when>
+                <when test="field == 'content'">
+                    AND b.content LIKE '%' || #{keyword} || '%'
+                </when>
+                <when test="field == 'id'">
+                    AND u.id LIKE '%' || #{keyword} || '%'
+                </when>
+            </choose>
+        </if>
+    </sql>
+    <select id="boardselectlist" resultType="String">
+        select distinct board_type from board order by board_type
+    </select>
+    <!-- 목록 + 페이징 -->
+    <select id="boardlist" resultType="BoardDto" parameterType="map">
+        SELECT *
+        FROM (
+        SELECT
+        b.*,
+        ROW_NUMBER() OVER(ORDER BY b.board_id DESC) AS rnum
+        FROM board b
+        LEFT JOIN users u ON u.member_id = b.member_id
+        <where>
+            b.board_type = #{board_type}
+            <include refid="boardSearch"/>
+        </where>
+        )
+        WHERE rnum <![CDATA[ >= ]]> #{startRow}
+        AND rnum <![CDATA[ <= ]]> #{endRow}
+    </select>
+
+    <!-- 관리자 목록 count -->
+    <select id="board_management_count" resultType="int" parameterType="map">
+        SELECT NVL(COUNT(*), 0)
+        FROM board b
+        LEFT JOIN users u ON u.member_id = b.member_id
+        <where>
+            b.board_type = #{board_type}
+            <include refid="boardSearch"/>
+        </where>
+    </select>
+
+    <!-- 이전글: 현재 글보다 작은 board_id 중 가장 큰 값 -->
+    <select id="boardprev" parameterType="map" resultType="BoardDto">
+        SELECT b.*
+        FROM board b
+        WHERE b.board_id = (
+        SELECT MAX(b2.board_id)
+        FROM board b2
+        WHERE b2.board_type = #{board_type}
+        AND b2.board_id <![CDATA[ < ]]> #{board_id}
+        )
+    </select>
+
+    <!-- 다음글: 현재 글보다 큰 board_id 중 가장 작은 값 -->
+    <select id="boardnext" parameterType="map" resultType="BoardDto">
+        SELECT b.*
+        FROM board b
+        WHERE b.board_id = (
+        SELECT MIN(b2.board_id)
+        FROM board b2
+        WHERE b2.board_type = #{board_type}
+        AND b2.board_id <![CDATA[ > ]]> #{board_id}
+        )
+    </select>
+    <select id="boardrequestlist" resultType="AdminBoardRequestDto" parameterType="map">
+        SELECT *
+        FROM (
+        SELECT
+        b.board_id,
+        b.title,
+        b.content,
+        b.board_type,
+        b.like_count,
+        b.read_count,
+        b.created_at,
+        b.member_id,
+        u.id AS id,
+        ROW_NUMBER() OVER(ORDER BY b.board_id DESC) AS rnum
+        FROM board b
+        JOIN users u ON u.member_id = b.member_id
+        <where>
+            b.board_type = #{board_type}
+            <include refid="boardSearch"/>
+        </where>
+        )
+        WHERE rnum <![CDATA[ >= ]]> #{startRow}
+        AND rnum <![CDATA[ <= ]]> #{endRow}
+    </select>
+    <delete id="adminboarddelete" parameterType="int">
+    delete from board where board_id=#{board_id}
+    </delete>
 
 </mapper>

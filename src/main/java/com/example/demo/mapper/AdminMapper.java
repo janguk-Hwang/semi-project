@@ -1,5 +1,7 @@
 package com.example.demo.mapper;
 
+import com.example.demo.dto.AdminBoardRequestDto;
+import com.example.demo.dto.BoardDto;
 import com.example.demo.dto.User_rolesDto;
 import com.example.demo.dto.UsersDto;
 import org.apache.ibatis.annotations.Mapper;
@@ -16,4 +18,10 @@ public interface AdminMapper {
     User_rolesDto isadmin(int member_id);
     int countmembers();
     int countboard();
+    int board_management_count(Map<String,Object> map);
+    List<BoardDto> boardlist(Map<String,Object> map);
+    BoardDto boardprev(Map<String,Object> map);
+    List<String> boardselectlist();
+    List<AdminBoardRequestDto> boardrequestlist(Map<String,Object> map);
+    int adminboarddelete(int board_id);
 }
