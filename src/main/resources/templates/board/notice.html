@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>notice.html</title>
+  <link rel="stylesheet" th:href="@{/notice.css}">
+  <link rel="stylesheet" th:href="@{/landing.css}">
+</head>
+<body>
+<!-- header -->
+<div th:replace="fragments/layout :: header"></div>
+<div class="board-wrap">
+
+  <!-- 제목 -->
+  <div class="board-head">
+    <h2 class="board-title">공지 사항</h2>
+  </div>
+
+  <!-- 테이블 카드 -->
+  <section class="board-card">
+    <table class="board-table">
+      <thead>
+      <tr>
+        <th class="col-no">글번호</th>
+        <th class="col-title">제목</th>
+        <th class="col-view">조회수</th>
+        <th class="col-writer">작성자</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <!-- 더미 행 -->
+      <tr>
+        <td>—</td>
+        <td class="title-cell"><span class="dummy-text"></span></td>
+        <td>—</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td>—</td>
+        <td class="title-cell"><span class="dummy-text"></span></td>
+        <td>—</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td>—</td>
+        <td class="title-cell"><span class="dummy-text"></span></td>
+        <td>—</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td>—</td>
+        <td class="title-cell"><span class="dummy-text"></span></td>
+        <td>—</td>
+        <td>—</td>
+      </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 페이지네이션 (동작 없음) -->
+  <nav class="pager">
+    <span class="pager-btn disabled">‹</span>
+    <span class="pager-num is-active">1</span>
+    <span class="pager-num">2</span>
+    <span class="pager-num">3</span>
+    <span class="pager-num">4</span>
+    <span class="pager-num">5</span>
+    <span class="pager-btn">›</span>
+  </nav>
+
+</div>
+
+<!-- footer -->
+<div th:replace="fragments/layout :: footer"></div>
+</body>
+</html>

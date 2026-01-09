@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>admin/product.html</title>
+  <link rel="stylesheet" th:href="@{/landing.css}">
+  <link rel="stylesheet" th:href="@{/admin-product.css}">
+</head>
+<body>
+<!-- header -->
+<div th:replace="fragments/layout :: header"></div>
+<div id="homeContent" class="pm-page">
+
+  <!-- 상단 탭(관리자 메뉴) -->
+  <nav class="pm-tabs">
+    <a class="tab" th:href="@{/admin/main}">전체관리</a>
+    <a class="tab" th:href="@{/admin/board}">게시물관리</a>
+    <a class="tab is-active" th:href="@{/admin/product}">상품관리</a>
+    <a class="tab" th:href="@{/admin/stock}">재고관리</a>
+    <a class="tab" th:href="@{/admin/usermanagement}">회원관리</a>
+  </nav>
+
+  <!-- 타이틀 + 버튼 -->
+  <div class="pm-head">
+    <h2 class="pm-title">상품 관리</h2>
+
+    <!-- 실제 이동 경로는 네 프로젝트에 맞게 수정 -->
+    <a class="pm-add-btn" th:href="@{/admin/product/new}">
+      + 상품 등록
+    </a>
+  </div>
+
+  <!-- 테이블 카드 -->
+  <section class="pm-card">
+    <table class="pm-table">
+      <thead>
+      <tr>
+        <th class="col-check"></th>
+        <th class="col-img">상품 이미지</th>
+        <th class="col-name">상품명</th>
+        <th class="col-cat">카테고리</th>
+        <th class="col-price">가격</th>
+        <th class="col-stock">재고</th>
+      </tr>
+      </thead>
+
+      <!-- 보여주기용 빈 행(디자인용) -->
+      <tbody>
+      <tr>
+        <td class="col-check"><input type="checkbox"></td>
+        <td class="col-img"><div class="img-box"></div></td>
+        <td class="col-name"></td>
+        <td class="col-cat"></td>
+        <td class="col-price"></td>
+        <td class="col-stock"></td>
+      </tr>
+      <tr>
+        <td class="col-check"><input type="checkbox"></td>
+        <td class="col-img"><div class="img-box"></div></td>
+        <td class="col-name"></td>
+        <td class="col-cat"></td>
+        <td class="col-price"></td>
+        <td class="col-stock"></td>
+      </tr>
+      <tr>
+        <td class="col-check"><input type="checkbox"></td>
+        <td class="col-img"><div class="img-box"></div></td>
+        <td class="col-name"></td>
+        <td class="col-cat"></td>
+        <td class="col-price"></td>
+        <td class="col-stock"></td>
+      </tr>
+      <tr>
+        <td class="col-check"><input type="checkbox"></td>
+        <td class="col-img"><div class="img-box"></div></td>
+        <td class="col-name"></td>
+        <td class="col-cat"></td>
+        <td class="col-price"></td>
+        <td class="col-stock"></td>
+      </tr>
+      <tr>
+        <td class="col-check"><input type="checkbox"></td>
+        <td class="col-img"><div class="img-box"></div></td>
+        <td class="col-name"></td>
+        <td class="col-cat"></td>
+        <td class="col-price"></td>
+        <td class="col-stock"></td>
+      </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 페이지네이션(보여주기용) -->
+  <nav class="pm-pager" aria-label="Pagination">
+    <button class="page-btn disabled" type="button">‹</button>
+
+    <button class="page-num is-active" type="button">1</button>
+    <button class="page-num" type="button">2</button>
+    <button class="page-num" type="button">3</button>
+    <button class="page-num" type="button">4</button>
+    <button class="page-num" type="button">5</button>
+
+    <button class="page-btn" type="button">›</button>
+  </nav>
+
+</div>
+<!-- footer -->
+<div th:replace="fragments/layout :: footer"></div>
+</body>
+</html>
