@@ -43,25 +43,28 @@
     <div th:if="${albumList.isEmpty()}" style="text-align: center; padding: 50px;">
       <p>등록된 공식 앨범 정보가 없습니다.</p>
     </div>
-
     <div class="album-grid">
-      <div th:each="album : ${albumList}" class="album-card">
-        <span class="badge" th:text="${album.type}">Album</span>
-        <img th:src="${album.coverImageUrl}"
-             onerror="this.src='https://via.placeholder.com/300?text=No+Image'"
-             class="album-img">
-
-        <h3 th:text="${album.title}" style="margin: 10px 0 5px; font-size: 1.1em;">앨범 제목</h3>
-        <p th:text="${album.releaseDate}" style="font-size: 0.8em; color: #999;">2024-01-01</p>
-
-        <ul class="track-list">
-          <li th:each="track : ${album.tracks}" class="track-item">
-            <span th:text="${track.number}" style="font-weight: bold; width: 20px; display: inline-block;">1</span>
-            <span th:text="${track.title}">곡 제목</span>
-          </li>
-        </ul>
-      </div>
+      <a th:each="album : ${albumList}"
+         th:href="@{/artist/album/{mbid}(mbid=${album.albumMBID})}"
+         class="album-link"
+         style="text-decoration:none; color:inherit;">
+        <div class="album-card">
+          <span class="badge" th:text="${album.type}">Album</span>
+          <img th:src="${album.coverImageUrl}"
+               onerror="this.src='https://via.placeholder.com/300?text=No+Image'"
+               class="album-img">
+          <h3 th:text="${album.title}" style="margin: 10px 0 5px; font-size: 1.1em;">앨범 제목</h3>
+          <p th:text="${album.releaseDate}" style="font-size: 0.8em; color: #999;">2024-01-01</p>
+          <ul class="track-list">
+            <li th:each="track : ${album.tracks}" class="track-item">
+              <span th:text="${track.number}" style="font-weight: bold; width: 20px; display: inline-block;">1</span>
+              <span th:text="${track.title}">곡 제목</span>
+            </li>
+          </ul>
+        </div>
+      </a>
     </div>
+
   </div>
 </div>
 

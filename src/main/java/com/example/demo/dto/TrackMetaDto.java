@@ -4,11 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TrackDto {
-    private String number;
-    private String title;
-    private String youtubeVideoId;
+@Data
+public class TrackMetaDto {
+    private String artistName;
+    private String trackTitle;
 }
