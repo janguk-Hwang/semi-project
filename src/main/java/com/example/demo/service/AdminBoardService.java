@@ -36,7 +36,7 @@ public class AdminBoardService {
         return adminMapper.boardselectlist();
     }
     public int adminboarddelete(int board_id){
-        return adminMapper.admindelete(board_id);
+        return adminMapper.adminboarddelete(board_id);
     }
 
 }

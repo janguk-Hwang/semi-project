@@ -198,7 +198,7 @@
         AND rnum <![CDATA[ <= ]]> #{endRow}
     </select>
     <delete id="adminboarddelete" parameterType="int">
-    delete from board where board_id=#{board_id}
+    delete from board where board_id=#{value}
     </delete>
 
 </mapper>

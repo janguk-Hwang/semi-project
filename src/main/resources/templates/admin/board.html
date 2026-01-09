@@ -10,130 +10,137 @@
 <!-- header -->
 <div th:replace="fragments/layout :: header"></div>
 <div id="homeContent" class="post-admin-page">
-  <!-- 상단 탭(관리자 메뉴) -->
-  <nav class="pm-tabs">
-    <a class="tab" th:href="@{/admin/main}">전체관리</a>
-    <a class="tab is-active" th:href="@{/admin/board}">게시물관리</a>
-    <a class="tab" th:href="@{/admin/product}">상품관리</a>
-    <a class="tab" th:href="@{/admin/stock}">재고관리</a>
-    <a class="tab" th:href="@{/admin/usermanagement}">회원관리</a>
-  </nav>
 
-  <!-- 상단 탭(게시판 선택) -->
-<!--  게시판 타입 컬럼으로 게시판 이름 추가 -->
-  <nav class="board-tabs" aria-label="Board tabs">
-    <a th:each="type : ${boardselectlist}"
-       th:href="@{/admin/board(board_type=${type})}"
-       th:text="${type}"
-       class="tab"
-       th:classappend="${type == board_type} ? ' is-active' : ''">
-    </a>
-  </nav>
+  <th:block th:replace="~{fragments/layout :: getMain(~{::#Content})}">
+    <div id="Content">
+      <!-- 상단 탭(관리자 메뉴) -->
+      <nav class="pm-tabs">
+        <a class="tab" th:href="@{/admin/main}">전체관리</a>
+        <a class="tab is-active" th:href="@{/admin/board}">게시물관리</a>
+        <a class="tab" th:href="@{/admin/product}">상품관리</a>
+        <a class="tab" th:href="@{/admin/stock}">재고관리</a>
+        <a class="tab" th:href="@{/admin/usermanagement}">회원관리</a>
+      </nav>
 
-
-  <!-- 테이블 카드 -->
-  <section class="post-card">
-    <table class="post-table">
-      <thead>
-      <tr>
-        <th class="c-no">글번호</th>
-        <th class="c-title">제목</th>
-        <th class="c-no2">글번호</th>
-        <th class="c-read">조회수</th>
-        <th class="c-writer">작성자</th>
-        <th class="c-del"></th>
-      </tr>
-      </thead>
-
-      <tbody>
-      <tr th:each="l :${list}">
-        <td class="c-no" th:text="${l.board_id}"></td>
-        <td class="c-title" th:text="${l.title}"></td>
-        <td class="c-create_at" th:text="${#dates.format(l.created_at,'yyyy-mm-dd')}"></td>
-        <td class="c-read" th:text="${l.read_count}"></td>
-        <td class="c-id" th:text="${l.id}"></td>
-        <td class="c-del">
-          <button type="button" class="del-btn" th:attr="data-board-id=${l.board_id}" title="삭제">□</button>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-  </section>
-
-  <form th:action="@{/admin/board}" method="get">
-
-    <!-- board_type 유지 (탭 유지) -->
-    <input type="hidden" name="board_type" th:value="${board_type}">
-    <!-- 검색하면 보통 1페이지부터 -->
-    <input type="hidden" name="pageNum" value="1">
-
-    <!-- 검색 옵션(라디오) -->
-    <div class="search-options">
-      <label class="opt">
-        <input type="radio" name="field" value="title"
-               th:checked="${field == null || field == 'title'}">
-        제목
-      </label>
-      <label class="opt">
-        <input type="radio" name="field" value="id"
-               th:checked="${field == 'id'}">
-        작성자
-      </label>
-      <label class="opt">
-        <input type="radio" name="field" value="content"
-               th:checked="${field == 'content'}">
-        내용
-      </label>
-    </div>
-
-    <!-- 검색 바 -->
-    <div class="search-bar">
-      <input type="text" class="search-input" name="keyword"
-             th:value="${keyword}" placeholder="Search">
-      <button type="submit" class="search-btn">검색</button>
-    </div>
-
-  </form>
+      <!-- 상단 탭(게시판 선택) -->
+      <!--  게시판 타입 컬럼으로 게시판 이름 추가 -->
+      <nav class="board-tabs" aria-label="Board tabs">
+        <a th:each="type : ${boardselectlist}"
+           th:href="@{/admin/board(board_type=${type})}"
+           th:text="${type}"
+           class="tab"
+           th:classappend="${type == board_type} ? ' is-active' : ''">
+        </a>
+      </nav>
 
 
+      <!-- 테이블 카드 -->
+      <section class="post-card">
+        <table class="post-table">
+          <thead>
+          <tr>
+            <th class="c-no">글번호</th>
+            <th class="c-title">제목</th>
+            <th class="c-create_at">글번호</th>
+            <th class="c-read">조회수</th>
+            <th class="c-writer">작성자</th>
+            <th class="c-del"></th>
+          </tr>
+          </thead>
 
-  <!-- 페이지네이션 -->
-  <nav class="pager" aria-label="Pagination" th:if="${pageInfo.totalPageCount > 0}">
+          <tbody>
+          <tr th:each="l :${list}">
+            <td class="c-no" th:text="${l.board_id}"></td>
+            <td class="c-title" th:text="${l.title}"></td>
+            <td class="c-create_at" th:text="${#dates.format(l.created_at,'yyyy-mm-dd')}"></td>
+            <td class="c-read" th:text="${l.read_count}"></td>
+            <td class="c-id" th:text="${l.id}"></td>
+            <td class="c-del">
+              <button type="button" class="del-btn" th:attr="data-board-id=${l.board_id}" title="삭제">□</button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </section>
 
-    <!-- 이전 블록(‹) : startPageNum-1 로 이동 -->
-    <a class="pbtn"
-       th:classappend="${pageInfo.startPageNum == 1} ? ' disabled' : ''"
-       th:href="${pageInfo.startPageNum == 1} ? '#' :
+      <form th:action="@{/admin/board}" method="get">
+
+        <!-- board_type 유지 (탭 유지) -->
+        <input type="hidden" name="board_type" th:value="${board_type}">
+        <!-- 검색하면 보통 1페이지부터 -->
+        <input type="hidden" name="pageNum" value="1">
+
+        <!-- 검색 옵션(라디오) -->
+        <div class="search-options">
+          <label class="opt">
+            <input type="radio" name="field" value="title"
+                   th:checked="${field == null || field == 'title'}">
+            제목
+          </label>
+          <label class="opt">
+            <input type="radio" name="field" value="id"
+                   th:checked="${field == 'id'}">
+            작성자
+          </label>
+          <label class="opt">
+            <input type="radio" name="field" value="content"
+                   th:checked="${field == 'content'}">
+            내용
+          </label>
+        </div>
+
+        <!-- 검색 바 -->
+        <div class="search-bar">
+          <input type="text" class="search-input" name="keyword"
+                 th:value="${keyword}" placeholder="Search">
+          <button type="submit" class="search-btn">검색</button>
+        </div>
+
+      </form>
+
+
+
+      <!-- 페이지네이션 -->
+      <nav class="pager" aria-label="Pagination" th:if="${pageInfo.totalPageCount > 0}">
+
+        <!-- 이전 블록(‹) : startPageNum-1 로 이동 -->
+        <a class="pbtn"
+           th:classappend="${pageInfo.startPageNum == 1} ? ' disabled' : ''"
+           th:href="${pageInfo.startPageNum == 1} ? '#' :
               @{/admin/board(pageNum=${pageInfo.startPageNum - 1},
                             board_type=${board_type},
                             field=${field},
                             keyword=${keyword})}">
-      ‹
-    </a>
+          ‹
+        </a>
 
-    <!-- 페이지 번호 -->
-    <a class="pnum"
-       th:each="p : ${#numbers.sequence(pageInfo.startPageNum, pageInfo.endPageNum)}"
-       th:text="${p}"
-       th:classappend="${p == pageInfo.pageNum} ? ' is-active' : ''"
-       th:href="@{/admin/board(pageNum=${p},
+        <!-- 페이지 번호 -->
+        <a class="pnum"
+           th:each="p : ${#numbers.sequence(pageInfo.startPageNum, pageInfo.endPageNum)}"
+           th:text="${p}"
+           th:classappend="${p == pageInfo.pageNum} ? ' is-active' : ''"
+           th:href="@{/admin/board(pageNum=${p},
                              board_type=${board_type},
                              field=${field},
                              keyword=${keyword})}">
-    </a>
+        </a>
 
-    <!-- 다음 블록(›) : endPageNum+1 로 이동 -->
-    <a class="pbtn"
-       th:classappend="${pageInfo.endPageNum == pageInfo.totalPageCount} ? ' disabled' : ''"
-       th:href="${pageInfo.endPageNum == pageInfo.totalPageCount} ? '#' :
+        <!-- 다음 블록(›) : endPageNum+1 로 이동 -->
+        <a class="pbtn"
+           th:classappend="${pageInfo.endPageNum == pageInfo.totalPageCount} ? ' disabled' : ''"
+           th:href="${pageInfo.endPageNum == pageInfo.totalPageCount} ? '#' :
               @{/admin/board(pageNum=${pageInfo.endPageNum + 1},
                             board_type=${board_type},
                             field=${field},
                             keyword=${keyword})}">
-      ›
-    </a>
+          ›
+        </a>
 
-  </nav>
+      </nav>
+    </div>
+  </th:block>
+
+
 
 </div>
 <!-- footer -->
