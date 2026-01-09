@@ -6,6 +6,7 @@
     <link rel="stylesheet" th:href="@{/landing.css}">
     <link rel="stylesheet" th:href="@{/login.css}">
 </head>
+<body>
 <!-- header -->
 <div th:replace="fragments/layout :: header"></div>
 
@@ -38,15 +39,10 @@
             <span class="divider">|</span>
             <a class="link" th:href="@{/signup}">회원가입</a>
         </div>
-
-        <!-- 알림 -->
-        <script th:inline="javascript" th:if="${msg}">
-            alert([[${msg}]]);
-        </script>
-
-    </section>
-
+</section>
 </div>
-<!-- footer -->
-<div th:replace="fragments/layout :: footer"></div>
+<script th:inline="javascript" th:if="${msg}">
+    alert([[${msg}]]);
+</script>
+</body>
 </html>
