@@ -17,7 +17,7 @@ import java.util.List;
 public class ArtistController {
     private final ArtistService artistService;
     @GetMapping("/artist")
-    public String Artist(@RequestParam(value = "name", defaultValue = "YUDABINBAND") String name, Model model){
+    public String Artist(@RequestParam(value = "name", defaultValue = "Nerd Connection") String name, Model model){
         List<ArtistAlbumDto> albums = artistService.getArtistAlbums(name);
         model.addAttribute("albumList", albums);
         model.addAttribute("artistName", name);
