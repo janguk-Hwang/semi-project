@@ -4,7 +4,6 @@ import com.example.demo.dto.SignupRequestDto;
 import com.example.demo.dto.UsersDto;
 import com.example.demo.service.SignupService;
 import com.example.demo.service.UsersService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

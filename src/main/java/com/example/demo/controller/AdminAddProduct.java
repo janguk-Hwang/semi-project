@@ -24,15 +24,19 @@ public class AdminAddProduct {
     }
     @PostMapping("/admin/product/new")
     public String addProduct(@Valid AdminProductDto dto,
-                             BindingResult bindingResult){
-        int product=adminProductService.product_insert(dto);
-        if (product<=0){
+                             BindingResult bindingResult,Model model){
+        if (bindingResult.hasErrors()){
             return "admin/addproduct";
         }
+        int product=adminProductService.product_insert(dto);
+
         int stocklog=adminProductService.stock_insert(dto);
 
         int productoption=adminProductService.product_option_insert(dto);
-
-
+        int total=productoption+stocklog+product;
+        if(total==3){
+            model.addAttribute("tatal",total);
+        }
+    return "admin/product";
     }
 }
