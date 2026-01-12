@@ -28,4 +28,9 @@ public class UsersServiceTest {
             System.out.println(l);
         });
     }
+//    @Test
+//    public void deleteCart(){
+//        int n=cartService.deleteCartItem(62,61);
+//        System.out.println("n====>"+n);
+//    }
 }

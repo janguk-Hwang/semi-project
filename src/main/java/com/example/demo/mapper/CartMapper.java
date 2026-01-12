@@ -16,4 +16,5 @@ public interface CartMapper {
     List<CartListDto> selectCartList(int member_id);
     int countCartItems(int member_id);
     int updateUserCartQuantity(CartListDto dto);
+    int deleteCartItem(CartListDto dto);
 }

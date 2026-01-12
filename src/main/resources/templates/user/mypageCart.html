@@ -187,16 +187,43 @@
 <div th:replace="~{fragments/layout::footer}"></div>
 
 <script>
-  function getCheckedCartIds(){
-    const ids=[];
-    document.querySelectorAll('.cart-check:checked').forEach(chk=>{
-      ids.push(chk.value);
-    });
-    console.log(ids);
-    return ids;
-  }
-
   document.addEventListener("DOMContentLoaded", function (){ //html이 다 만들어진 뒤 function실행
+    //선택삭제 이벤트
+    document.getElementById('deleteBtn').addEventListener('click',()=>{
+      const checked=document.querySelectorAll('.cart-check:checked');
+      if(checked.length==0){
+        alert("삭제할 상품을 선택하세요.");
+        return;
+      }
+      if(!confirm("선택한 상품을 삭제하시겠습니까?")){
+        return;
+      }
+      //cart_id배열
+      const params=new URLSearchParams();
+      checked.forEach(chk=>{
+        params.append('cart_id',chk.value);
+      });
+
+      fetch('/cart/deleteSelected',{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/x-www-form-urlencoded'
+        },
+        body:params.toString()
+      }).then(resp=>resp.text())
+              .then(result=>{
+                if(result=='ok'){
+                  alert("상품이 삭제되었습니다.");
+                  location.reload(); //화면+DB동기화
+                }else if (result=='login_required'){
+                  alert("로그인이 필요합니다.");
+                  location.href="/login";
+                }else if (result=='no_item'){
+                  alert("삭제할 상품이 없습니다.");
+                }
+              });
+    })
+
     //체크박스 기본세팅 - 전체선택
     const checkAll=document.getElementById('checkAll');
     checkAll.checked=true;

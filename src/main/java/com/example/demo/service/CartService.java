@@ -45,4 +45,12 @@ public class CartService {
 
         cartMapper.updateUserCartQuantity(dto);
     }
+
+    public int deleteCartItem(int cart_id, int member_id){
+        CartListDto dto=new CartListDto();
+        dto.setCart_id(cart_id);
+        dto.setMember_id(member_id);
+
+        return cartMapper.deleteCartItem(dto);
+    }
 }
