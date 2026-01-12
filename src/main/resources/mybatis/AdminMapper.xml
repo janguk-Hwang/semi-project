@@ -204,8 +204,15 @@
     </insert>
 
     <insert id="stock_insert" parameterType="Stock_logDto">
-        insert into product values(seq_stock_log.nextVal,#{change_type},#{quantity},sysdate,#{option_id})
+        insert into product values(seq_stock_log.nextVal,'Stock In',#{quantity},sysdate,#{option_id})
     </insert>
-
-
+    <insert id="product_option_insert" parameterType="ProductOptionDto">
+        insert into product_option values(seq_product_option.nextval,#{option_name},#{stock},#{product_id})
+    </insert>
+    <select id="product_select_id" parameterType="String" resultType="int">
+    select product_id from product where product_name=#{value}
+    </select>
+    <select id="musician_allselect" resultType="MusicianDto">
+        select * from musician
+    </select>
 </mapper>

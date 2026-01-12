@@ -12,9 +12,11 @@
 }
 
 /* 상단 관리자 탭 */
+
 #content .container #homeContent .pm-tabs{
     display: flex;
     gap: 18px;
+    justify-content: center;
     align-items: center;
     padding: 10px 0 14px;
     border-bottom: 1px solid #e6e6e6;

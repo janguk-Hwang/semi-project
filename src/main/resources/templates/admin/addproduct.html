@@ -20,6 +20,7 @@
       <a class="tab is-active" th:href="@{/admin/product}">상품관리</a>
       <a class="tab" th:href="@{/admin/stock}">재고관리</a>
       <a class="tab" th:href="@{/admin/usermanagement}">회원관리</a>
+      <a class="tab" th:href="@{/admin/artistmanagement}">아티스트관리</a>
     </nav>
 
     <!-- 페이지 타이틀 -->
@@ -27,14 +28,14 @@
 
     <!-- 상품 등록 폼 (이미지 업로드 포함) -->
     <form class="product-form"
-          th:action="@{/admin/product/insert}"
+          th:action="@{/admin/product/new}"
           method="post"
           enctype="multipart/form-data">
 
       <!-- Product Name -->
       <div class="form-row">
-        <label class="form-label" for="productName">Product Name :</label>
-        <input class="form-input" id="productName" name="product_name" type="text" required>
+        <label class="form-label" for="product_Name">Product Name :</label>
+        <input class="form-input" id="product_Name" name="product_name" type="text" required>
       </div>
 
       <!-- Description -->
@@ -67,10 +68,6 @@
           <input class="form-input small" id="price" name="price" type="number" min="0" step="1" required>
         </div>
 
-        <div class="form-row">
-          <label class="form-label" for="discountPrice">할인 판매가 :</label>
-          <input class="form-input small" id="discountPrice" name="discount_price" type="number" min="0" step="1">
-        </div>
 
         <div class="form-row">
           <label class="form-label" for="stock">재고수량 :</label>
@@ -83,20 +80,31 @@
         <div class="section-title">Category &amp; Options</div>
 
         <div class="form-row">
-          <label class="form-label" for="category">카테고리 :</label>
-          <input class="form-input small" id="category" name="category" type="text">
+          <label class="form-label" for="product_type">카테고리 :</label>
+          <input class="form-input small" id="product_type" name="product_type" type="text">
         </div>
+
+        <div class="form-row">
+          <label class="form-label" for="artistOption">뮤지션 옵션 :</label>
+
+          <select class="form-input small"
+                  id="artistOption"
+                  name="artist_id">
+            <option value="">뮤지션 선택</option>
+
+            <option th:each="artist : ${musician}"
+                    th:value="${artist.artist_id}"
+                    th:text="${artist.artist_name}">
+            </option>
+          </select>
+        </div>
+
 
         <div class="form-row">
           <label class="form-label" for="colorOptions">색상 옵션 :</label>
           <input class="form-input small" id="colorOptions" name="color_options" type="text" placeholder="예: BLACK, WHITE">
         </div>
 
-        <div class="form-row">
-          <label class="form-label" for="status">상품상태 :</label>
-          <input class="form-input small" id="status" name="status" type="text" placeholder="예: 판매중 / 품절 / 비공개">
-        </div>
-      </div>
 
       <!-- 버튼 -->
       <div class="form-actions">

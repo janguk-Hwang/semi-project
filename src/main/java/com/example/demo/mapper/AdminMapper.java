@@ -1,9 +1,6 @@
 package com.example.demo.mapper;
 
-import com.example.demo.dto.AdminBoardRequestDto;
-import com.example.demo.dto.BoardDto;
-import com.example.demo.dto.User_rolesDto;
-import com.example.demo.dto.UsersDto;
+import com.example.demo.dto.*;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -24,4 +21,9 @@ public interface AdminMapper {
     List<String> boardselectlist();
     List<AdminBoardRequestDto> boardrequestlist(Map<String,Object> map);
     int adminboarddelete(int board_id);
+    int product_insert(ProductDto dto);
+    int stock_insert(Stock_logDto dto);
+    int product_option_insert(ProductOptionDto dto);
+    int product_select_id(String product_name);
+    MusicianDto musician_allselect();
 }
