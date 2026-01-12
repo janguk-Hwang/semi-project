@@ -36,7 +36,12 @@
         select c.cart_id, c.quantity,
         p.product_id, p.product_name, p.price as product_price,
         o.option_id, o.option_name,
-        f.savefilename as savefilename
+        f.savefilename as savefilename,
+
+        case
+        when c.option_id is not null then o.stock
+        else p.stock
+        end as stock
 
         from cart c join product p on c.product_id=p.product_id
         left join product_option o on c.option_id=o.option_id
@@ -45,6 +50,10 @@
         where c.member_id=#{member_id}
         order by c.cart_id desc
     </select>
+
+    <update id="updateUserCartQuantity" parameterType="CartListDto">
+        update cart set quantity=#{quantity} where cart_id=#{cart_id}
+    </update>
 
     <select id="countCartItems" parameterType="int" resultType="int">
         select count(*) from cart where member_id=#{member_id}

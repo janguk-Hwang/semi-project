@@ -8,6 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
@@ -29,5 +32,19 @@ public class UserCartController {
         model.addAttribute("cartCount",cartList.size());
 
         return "user/mypageCart";
+    }
+
+    @PostMapping("/cart/updateCartQuantity")
+    @ResponseBody
+    public String updateUserCartQuantity(@RequestParam int cart_id,@RequestParam int quantity, HttpSession httpSession){
+        UsersDto loginUser=(UsersDto) httpSession.getAttribute("loginUser");
+        if(loginUser==null){
+            return "login_required";
+        }
+        if(quantity<=0){
+            return "invalid_quantity";
+        }
+        cartService.updateUserCartQuantity(cart_id,quantity);
+        return "ok";
     }
 }

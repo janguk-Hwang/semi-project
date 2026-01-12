@@ -37,4 +37,12 @@ public class CartService {
             cartMapper.insertCart(dto);
         }
     }
+
+    public void updateUserCartQuantity(int cart_id, int quantity){
+        CartListDto dto=new CartListDto();
+        dto.setCart_id(cart_id);
+        dto.setQuantity(quantity);
+
+        cartMapper.updateUserCartQuantity(dto);
+    }
 }

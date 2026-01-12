@@ -24,6 +24,7 @@ public class CartListDto {
     private Integer total_price;
     //장바구니 개수
     private Integer cartCount;
+    private Integer stock;
 
 //    private Integer member_id;
 }
