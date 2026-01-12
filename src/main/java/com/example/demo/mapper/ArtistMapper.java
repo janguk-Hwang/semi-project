@@ -1,6 +1,7 @@
 package com.example.demo.mapper;
 
 import com.example.demo.dto.ArtistAlbumDto;
+import com.example.demo.dto.ArtistProfileDto;
 import com.example.demo.dto.TrackDto;
 import com.example.demo.dto.TrackMetaDto;
 import org.apache.ibatis.annotations.Mapper;
@@ -17,17 +18,15 @@ public interface ArtistMapper {
     List<String> selectAllArtists();
     ArtistAlbumDto selectAlbumByMbid(String albumMbid);
     List<TrackDto> selectTracksByAlbum(String albumMBID);
-
-    // ✅ 추가
     String selectYoutubeVideoId(@Param("albumMbid") String albumMbid,
                                 @Param("trackNo") int trackNo);
 
-    // ✅ 추가 (TrackMetaDto로)
     TrackMetaDto selectTrackMeta(@Param("albumMbid") String albumMbid,
                                  @Param("trackNo") int trackNo);
 
-    // ✅ 기존 update는 시그니처 통일 추천
     int updateYoutubeVideoId(@Param("albumMbid") String albumMbid,
                              @Param("trackNo") int trackNo,
                              @Param("youtubeVideoId") String youtubeVideoId);
+    ArtistProfileDto selectArtistProfile(String artistName);
+    int upsertArtistProfile(ArtistProfileDto dto);
 }

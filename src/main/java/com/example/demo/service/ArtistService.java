@@ -129,7 +129,7 @@ public class ArtistService {
             String encodedName = URLEncoder.encode(artistName, StandardCharsets.UTF_8);
             String artistUrl = BASE_URL + "/artist?query=" + encodedName + "&fmt=json";
 
-            Thread.sleep(1100); // Rate Limit 준수
+            Thread.sleep(1100);
             ResponseEntity<String> artistResponse = restTemplate.exchange(artistUrl, HttpMethod.GET, entity, String.class);
             JsonNode artistsNode = objectMapper.readTree(artistResponse.getBody()).path("artists");
 
