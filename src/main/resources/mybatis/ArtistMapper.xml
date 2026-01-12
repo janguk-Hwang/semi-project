@@ -54,5 +54,50 @@
         AND track_number = #{trackNo}
     </update>
 
+    <select id="selectArtistProfile" resultType="com.example.demo.dto.ArtistProfileDto">
+        SELECT
+        artist_name    AS artistName,
+        artist_mbid    AS artistMbid,
+        photo_url      AS photoUrl,
+        fanart_url     AS fanartUrl,
+        bio_raw_en     AS bioRawEn,
+        bio_summary_en AS bioSummaryEn,
+        bio_summary_ko AS bioSummaryKo
+        FROM artist_profile
+        WHERE artist_name = #{artistName}
+    </select>
+
+    <update id="upsertArtistProfile">
+        MERGE INTO artist_profile t
+        USING (
+        SELECT
+        #{artistName, jdbcType=VARCHAR}      AS artist_name,
+        #{artistMbid, jdbcType=VARCHAR}      AS artist_mbid,
+
+        #{photoUrl, jdbcType=VARCHAR}        AS photo_url,
+        #{fanartUrl, jdbcType=VARCHAR}       AS fanart_url,
+
+        #{bioRawEn, jdbcType=CLOB}           AS bio_raw_en,
+        #{bioSummaryEn, jdbcType=VARCHAR}    AS bio_summary_en,
+        #{bioSummaryKo, jdbcType=VARCHAR}    AS bio_summary_ko
+        FROM dual
+        ) s
+        ON (t.artist_name = s.artist_name)
+        WHEN MATCHED THEN UPDATE SET
+        t.artist_mbid = s.artist_mbid,
+        t.photo_url = s.photo_url,
+        t.fanart_url = s.fanart_url,
+        t.bio_raw_en = s.bio_raw_en,
+        t.bio_summary_en = s.bio_summary_en,
+        t.bio_summary_ko = s.bio_summary_ko
+        WHEN NOT MATCHED THEN INSERT
+        (artist_name, artist_mbid, photo_url, fanart_url,
+        bio_raw_en, bio_summary_en, bio_summary_ko)
+        VALUES
+        (s.artist_name, s.artist_mbid, s.photo_url, s.fanart_url,
+        s.bio_raw_en, s.bio_summary_en, s.bio_summary_ko)
+    </update>
+
+
 
 </mapper>

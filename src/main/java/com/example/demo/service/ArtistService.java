@@ -70,9 +70,8 @@ public class ArtistService {
         album.setTracks(tracks);
 
         // 3) (선택) youtubeVideoId 자동 채우기 + DB 저장(캐싱)
-        //    - 이미 DB에 값이 있으면 호출 안 함
         if (tracks != null && !tracks.isEmpty()) {
-            String artistName = album.getArtistName(); // 너 DTO에 이 필드가 있어야 함
+            String artistName = album.getArtistName();
             if (artistName == null) artistName = "";
 
             for (TrackDto t : tracks) {
@@ -130,7 +129,7 @@ public class ArtistService {
             String encodedName = URLEncoder.encode(artistName, StandardCharsets.UTF_8);
             String artistUrl = BASE_URL + "/artist?query=" + encodedName + "&fmt=json";
 
-            Thread.sleep(1100); // Rate Limit 준수
+            Thread.sleep(1100);
             ResponseEntity<String> artistResponse = restTemplate.exchange(artistUrl, HttpMethod.GET, entity, String.class);
             JsonNode artistsNode = objectMapper.readTree(artistResponse.getBody()).path("artists");
 

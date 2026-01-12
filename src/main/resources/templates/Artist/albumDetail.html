@@ -75,7 +75,7 @@
                                data-track-no=${t.number},
                                data-artist=${album.artistName},
                                data-title=${t.title}">
-                ▶ 미리듣기
+                ▶
               </button>
             </div>
           </li>
@@ -196,7 +196,7 @@
       videoId = await fetchVideoId(albumMbid, trackNo);
 
       if (!videoId) {
-        alert('미리듣기 영상을 찾지 못했어.');
+        alert('미리듣기 영상을 찾지 못했습니다');
         setNowPlaying('재생 중');
         return;
       }

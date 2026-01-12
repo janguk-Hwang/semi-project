@@ -11,9 +11,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/youtube")
 public class YouTubeApiController {
-
     private final ArtistService artistService;
-
     public YouTubeApiController(ArtistService artistService) {
         this.artistService = artistService;
     }
