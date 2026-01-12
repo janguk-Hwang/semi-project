@@ -7,4 +7,9 @@
         select file_id, originfilename, savefilename, ref_type, ref_id, file_role from fileinfo where ref_type='product'
         and ref_id=#{product_id} and file_role='DETAIL'
     </select>
+
+    <insert id="imginsert" parameterType="FileinfoDto">
+        insert into fileinfo values(seq_fileinfo.nextval,#{originfilename},#{savefilename},#{ref_type},#{ref_id},#{file_role})
+    </insert>
+
 </mapper>

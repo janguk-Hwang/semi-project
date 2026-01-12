@@ -45,8 +45,7 @@
         </where>
     </select>
 
-    <!-- 이전 회원: 현재 member_id 보다 작은 것 중 가장 큰 것 -->
-    <!-- parameterType을 map으로 바꿈: #{member_id} 사용 가능 -->
+
     <select id="prev" parameterType="map" resultType="UsersDto">
         SELECT *
         FROM users
@@ -57,7 +56,6 @@
         )
     </select>
 
-    <!-- 다음 회원: 현재 member_id 보다 큰 것 중 가장 작은 것 -->
     <select id="next" parameterType="map" resultType="UsersDto">
         SELECT *
         FROM users
@@ -200,5 +198,14 @@
     <delete id="adminboarddelete" parameterType="int">
     delete from board where board_id=#{value}
     </delete>
+
+    <insert id="product_insert" parameterType="ProductDto">
+        insert into product values(seq_product.nextVal,#{product_name},#{price},#{description},#{product_type},sysdate,#{artist_id})
+    </insert>
+
+    <insert id="stock_insert" parameterType="Stock_logDto">
+        insert into product values(seq_stock_log.nextVal,#{change_type},#{quantity},sysdate,#{option_id})
+    </insert>
+
 
 </mapper>
