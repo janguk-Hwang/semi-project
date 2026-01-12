@@ -17,6 +17,8 @@ public class UsersServiceTest {
     private ProductService productService;
     @Autowired
     private MusicianService musicianService;
+    @Autowired
+    private BoardService boardService;
 
     @Test
     public void selecttype(){
@@ -26,5 +28,9 @@ public class UsersServiceTest {
     public void selectArtistById(){
         MusicianDto dto=musicianService.selectArtistById(2);
         System.out.println("dto============>"+dto);
+    }
+    @Test
+    public void selectAll(){
+        boardService.selectAll(1,"","");
     }
 }

@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.BoardDto;
 import com.example.demo.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -18,13 +19,13 @@ public class ListController {
                        @RequestParam(value = "field", required = false)String field,
                        @RequestParam(value = "keyword", required = false)String keyword,
                        Model model){
-        System.out.println("list");
         Map<String,Object> map = service.selectAll (pageNum,field,keyword);
         model.addAttribute("list",map.get ("list"));
-        model.addAttribute("pageinfo",map.get("pageinfo"));
+        model.addAttribute("pageInfo",map.get("pageInfo"));
         model.addAttribute("field",field);
         model.addAttribute("keyword",keyword);
         return "board/boardlist";
-
     }
+
+
 }

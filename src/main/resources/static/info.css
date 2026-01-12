@@ -1,0 +1,82 @@
+/* ===== detail 영역만 타겟 (table + 그 주변) ===== */
+table {
+    width: min(980px, 92vw);
+    margin: 40px auto 18px;
+
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+
+/* 행 구분선 */
+table tr td {
+    padding: 16px 18px;
+    font-size: 14px;
+    border-bottom: 1px solid #eee;
+}
+
+/* 왼쪽 라벨 컬럼 */
+table tr td:first-child {
+    width: 140px;
+    background: #f7f7f7;
+    color: #666;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* 오른쪽 값 컬럼 */
+table tr td:last-child {
+    color: #222;
+}
+
+/* 내용(content) 행은 줄바꿈 잘 되게 */
+table tr:nth-child(3) td:last-child {
+    white-space: pre-wrap;
+    line-height: 1.6;
+}
+
+/* 마지막 줄 보더 제거 */
+table tr:last-child td {
+    border-bottom: none;
+}
+
+/* ===== prev/next 버튼 영역 =====
+   네 코드에는 div가 table 안에 있지만, 브라우저가 밖으로 빼서 렌더링할 수 있음.
+   그래서 "div[style*='text-align: center']" 로 안전하게 잡음.
+*/
+div[style*="text-align: center"]{
+    width: min(980px, 92vw);
+    margin: 16px auto 60px;
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+}
+
+/* 버튼 */
+div[style*="text-align: center"] a{
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 2px solid #6b63ff;
+    border-radius: 4px;
+    background: #fff;
+
+    color: #222;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 16px;
+
+    transition: transform .08s ease, background .15s ease, opacity .15s ease;
+}
+
+div[style*="text-align: center"] a:hover{
+    transform: translateY(-1px);
+    background: #f4f3ff;
+}

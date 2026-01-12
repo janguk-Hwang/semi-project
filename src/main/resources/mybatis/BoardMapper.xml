@@ -18,9 +18,9 @@
 
     <sql id="search">
         <where>
-        <if test="field != null and field != ''  and keyword != null">
-             ${field} like '%' || #{keyword} || '%'
-        </if>
+        <if test="field != null and field != '' and keyword != null and keyword != ''">-->
+             ${field} like '%' || #{keyword} || '%'-->
+       </if>
         </where>
     </sql>
     <select id="count" resultType="int" parameterType="map">
@@ -48,5 +48,9 @@
         order by board_id asc
         ) where rownum=1
     </select>
-
+    <update id="read_count" parameterType="int">
+        update board
+        set read_count = read_count + 1
+        where board_id=#{value}
+    </update>
 </mapper>

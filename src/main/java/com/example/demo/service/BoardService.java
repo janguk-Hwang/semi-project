@@ -21,14 +21,14 @@ public class BoardService {
 
     public Map<String,Object> selectAll(int pageNum,String field,String keyword) {
 
-        pageNum = Math.max(1,pageNum);
+
         Map<String,Object> map = new HashMap<>();
         map.put("field",field);
         map.put("keyword",keyword);
         int totalRowCount = mapper.count(map);
         PageInfo pageInfo = new PageInfo(pageNum,
                 5,
-                5,
+                3,
                 totalRowCount);
         map.put("startRow",pageInfo.getStartRow());
         map.put("endRow",pageInfo.getEndRow());
@@ -39,6 +39,21 @@ public class BoardService {
         result.put("pageInfo",pageInfo);
         System.out.println(list);
         return result;
+    }
+    public BoardDto detail(int num){
+        return mapper.detail(num);
+    }
+    public BoardDto prev(int num){
+        return mapper.prev(num);
+    }
+    public BoardDto next(int num){
+        return mapper.next(num);
+    }
+    public int like_count(int num){
+        return mapper.like_count(num);
+    }
+    public int read_count(int num){
+        return mapper.read_count(num);
     }
 }
 

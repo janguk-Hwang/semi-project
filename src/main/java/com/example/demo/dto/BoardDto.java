@@ -3,6 +3,7 @@ package com.example.demo.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -17,6 +18,7 @@ public class BoardDto {
     private String board_type;
     private int like_count;
     private int read_count;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date created_at;
     private int member_id;
 

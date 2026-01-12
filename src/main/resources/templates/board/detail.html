@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+  <link rel="stylesheet" th:href="@{/landing.css}">
+  <link rel="stylesheet" th:href="@{/info.css}">
+    <title>detail.html</title>
+</head>
+<body>
+<div th:replace="~{fragments/layout::header}"></div>
+<table>
+  <tr>
+    <td>글번호</td><td th:text="${detail.board_id}"></td>
+  </tr>
+  <tr>
+    <td>제목</td><td th:text="${detail.title}"></td>
+  </tr>
+  <tr>
+    <td>내용</td><td th:text="${detail.content}"></td>
+  </tr>
+  <tr>
+    <td>조회수</td><td th:text="${detail.read_count}"></td>
+  </tr>
+  <tr>
+   <td>작성일</td> <td th:text="${detail.created_at}"></td>
+  </tr>
+  <div style="text-align: center">
+    <a th:if="${next!=null}" th:href="@{/board/detail(num=${next.board_id})}">
+      ◀
+    </a>
+    <a th:if="${prev!=null}" th:href="@{/board/detail(num=${prev.board_id})}">
+      ▶
+    </a>
+  </div>
+</table>
+<div th:replace="~{fragments/layout::footer}"></div>
+</body>
+</html>

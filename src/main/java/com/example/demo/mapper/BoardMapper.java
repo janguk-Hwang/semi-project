@@ -12,4 +12,9 @@ public interface BoardMapper {
    int insert (BoardDto boardDto);
    List<BoardDto> selectAll(Map<String, Object> map);
    int count(Map<String, Object> map);
+   BoardDto detail(int num);
+   BoardDto prev(int num);
+   BoardDto next(int num);
+   int like_count(int num);
+   int read_count(int num);
 }
