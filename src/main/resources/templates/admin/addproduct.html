@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>addproduct.html</title>
+  <link rel="stylesheet" th:href="@{/landing.css}">
+  <link rel="stylesheet" th:href="@{/admin-addproduct.css}">
+</head>
+<body>
+<!-- header -->
+<div th:replace="~{fragments/layout :: header}"></div>
+
+<th:block th:replace="~{fragments/layout :: getMain(~{::#homeContent})}">
+  <div id="homeContent">
+
+    <!-- 상단 관리자 탭 -->
+    <nav class="pm-tabs">
+      <a class="tab" th:href="@{/admin/main}">전체관리</a>
+      <a class="tab" th:href="@{/admin/board}">게시물관리</a>
+      <a class="tab is-active" th:href="@{/admin/product}">상품관리</a>
+      <a class="tab" th:href="@{/admin/stock}">재고관리</a>
+      <a class="tab" th:href="@{/admin/usermanagement}">회원관리</a>
+    </nav>
+
+    <!-- 페이지 타이틀 -->
+    <h2 class="page-title">상품 추가</h2>
+
+    <!-- 상품 등록 폼 (이미지 업로드 포함) -->
+    <form class="product-form"
+          th:action="@{/admin/product/insert}"
+          method="post"
+          enctype="multipart/form-data">
+
+      <!-- Product Name -->
+      <div class="form-row">
+        <label class="form-label" for="productName">Product Name :</label>
+        <input class="form-input" id="productName" name="product_name" type="text" required>
+      </div>
+
+      <!-- Description -->
+      <div class="form-row">
+        <label class="form-label" for="description">Description :</label>
+        <textarea class="form-textarea" id="description" name="description" rows="8"></textarea>
+      </div>
+
+      <!-- Upload Images -->
+      <div class="form-section">
+        <div class="section-title">Upload Images</div>
+
+        <!-- 드래그/드랍 UI는 CSS로 꾸미고, 실제 업로드는 input(file)로 -->
+        <label class="dropzone" for="images">
+          <div class="dropzone-inner">
+            <div class="dropzone-icon">🖼️</div>
+            <div class="dropzone-text">Drop your files here or <span class="link">browse</span></div>
+            <div class="dropzone-sub">Maximum size: 50MB</div>
+          </div>
+        </label>
+        <input id="images" name="images" type="file" accept="image/*" multiple hidden>
+      </div>
+
+      <!-- Pricing & Stock -->
+      <div class="form-section">
+        <div class="section-title">Pricing &amp; Stock</div>
+
+        <div class="form-row">
+          <label class="form-label" for="price">판매가 :</label>
+          <input class="form-input small" id="price" name="price" type="number" min="0" step="1" required>
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="discountPrice">할인 판매가 :</label>
+          <input class="form-input small" id="discountPrice" name="discount_price" type="number" min="0" step="1">
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="stock">재고수량 :</label>
+          <input class="form-input small" id="stock" name="stock" type="number" min="0" step="1">
+        </div>
+      </div>
+
+      <!-- Category & Options -->
+      <div class="form-section">
+        <div class="section-title">Category &amp; Options</div>
+
+        <div class="form-row">
+          <label class="form-label" for="category">카테고리 :</label>
+          <input class="form-input small" id="category" name="category" type="text">
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="colorOptions">색상 옵션 :</label>
+          <input class="form-input small" id="colorOptions" name="color_options" type="text" placeholder="예: BLACK, WHITE">
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="status">상품상태 :</label>
+          <input class="form-input small" id="status" name="status" type="text" placeholder="예: 판매중 / 품절 / 비공개">
+        </div>
+      </div>
+
+      <!-- 버튼 -->
+      <div class="form-actions">
+        <a class="btn btn-ghost" th:href="@{/admin/product}">취소</a>
+        <button class="btn btn-dark" type="submit">저장</button>
+      </div>
+
+    </form>
+  </div>
+</th:block>
+
+
+
+<!-- footer -->
+<div th:replace="~{fragments/layout :: footer}"></div>
+</body>
+</html>

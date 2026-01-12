@@ -18,7 +18,7 @@
 
             <a th:if="${session.loginUser == null}" th:href="@{/login}">로그인</a>
             <a th:if="${session.loginUser != null}" th:href="@{/logout}">로그아웃</a>
-            <a th:if="${session.loginUser != null and session.loginUser.role != 'ADMIN'}"
+            <a th:if="${session.loginUser != null}"
                th:href="@{/mypage}">마이페이지</a>
 
             <a th:if="${session.loginUser != null and session.loginUser.role == 'ADMIN'}"

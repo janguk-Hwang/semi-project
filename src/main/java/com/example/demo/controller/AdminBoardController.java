@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.BoardDto;
 import com.example.demo.service.AdminBoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

@@ -1,0 +1,214 @@
+/* =========================
+   Admin Product Add - Content Only
+   적용 범위: layout의 getMain() 안쪽 (#content .container) -> #homeContent
+   ========================= */
+
+/* 제목 */
+#content .container #homeContent .page-title{
+    margin: 18px 0 14px;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+}
+
+/* 상단 관리자 탭 */
+#content .container #homeContent .pm-tabs{
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    padding: 10px 0 14px;
+    border-bottom: 1px solid #e6e6e6;
+    margin-bottom: 16px;
+}
+
+#content .container #homeContent .pm-tabs .tab{
+    text-decoration: none;
+    color: #666;
+    font-size: 14px;
+    padding: 6px 2px;
+    border-bottom: 2px solid transparent;
+}
+
+#content .container #homeContent .pm-tabs .tab.is-active{
+    color: #111;
+    font-weight: 700;
+    border-bottom-color: #111;
+}
+
+/* 카드처럼 감싸는 폼 */
+#content .container #homeContent .product-form{
+    max-width: 820px;
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 12px;
+    padding: 18px 18px 16px;
+}
+
+/* 행(라벨+인풋) 기본 */
+#content .container #homeContent .form-row{
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 12px;
+    align-items: start;
+    padding: 10px 0;
+}
+
+#content .container #homeContent .form-label{
+    font-size: 13px;
+    color: #666;
+    padding-top: 8px;
+    white-space: nowrap;
+}
+
+/* input/textarea */
+#content .container #homeContent .form-input,
+#content .container #homeContent .form-textarea{
+    width: 100%;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    outline: none;
+    box-sizing: border-box;
+    background: #fff;
+}
+
+#content .container #homeContent .form-textarea{
+    resize: vertical;
+    min-height: 170px; /* 이미지의 큰 설명 박스 느낌 */
+}
+
+/* focus */
+#content .container #homeContent .form-input:focus,
+#content .container #homeContent .form-textarea:focus{
+    border-color: #7b61ff;          /* 보라 포커스 느낌 */
+    box-shadow: 0 0 0 3px rgba(123,97,255,0.15);
+}
+
+/* 작은 입력(가격/재고/옵션) */
+#content .container #homeContent .form-input.small{
+    max-width: 220px;
+}
+
+/* 섹션 구분 */
+#content .container #homeContent .form-section{
+    margin-top: 10px;
+    padding-top: 14px;
+    border-top: 1px solid #ededed;
+}
+
+#content .container #homeContent .section-title{
+    font-size: 12px;
+    font-weight: 700;
+    color: #666;
+    margin-bottom: 10px;
+    text-transform: none;
+}
+
+/* Dropzone (파일 업로드) */
+#content .container #homeContent .dropzone{
+    display: block;
+    border: 1px solid #d9d9d9;
+    border-radius: 10px;
+    padding: 18px 14px;
+    cursor: pointer;
+    background: #fafafa;
+    transition: border-color .15s ease, background .15s ease;
+}
+
+#content .container #homeContent .dropzone:hover{
+    border-color: #bfbfbf;
+    background: #f7f7f7;
+}
+
+#content .container #homeContent .dropzone-inner{
+    display: grid;
+    place-items: center;
+    text-align: center;
+    gap: 6px;
+}
+
+#content .container #homeContent .dropzone-icon{
+    font-size: 22px;
+    line-height: 1;
+}
+
+#content .container #homeContent .dropzone-text{
+    font-size: 13px;
+    color: #555;
+}
+
+#content .container #homeContent .dropzone-text .link{
+    text-decoration: underline;
+    color: #3b82f6;
+}
+
+#content .container #homeContent .dropzone-sub{
+    font-size: 11px;
+    color: #999;
+}
+
+/* 버튼 영역 */
+#content .container #homeContent .form-actions{
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid #ededed;
+}
+
+/* 버튼 기본 */
+#content .container #homeContent .btn{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    padding: 0 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    text-decoration: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* ghost 버튼 */
+#content .container #homeContent .btn.btn-ghost{
+    background: #fff;
+    border-color: #d9d9d9;
+    color: #444;
+}
+
+#content .container #homeContent .btn.btn-ghost:hover{
+    background: #f6f6f6;
+}
+
+/* dark 버튼 */
+#content .container #homeContent .btn.btn-dark{
+    background: #111;
+    color: #fff;
+}
+
+#content .container #homeContent .btn.btn-dark:hover{
+    background: #000;
+}
+
+/* 반응형 */
+@media (max-width: 720px){
+    #content .container #homeContent .product-form{
+        padding: 14px 12px;
+    }
+
+    #content .container #homeContent .form-row{
+        grid-template-columns: 1fr;
+    }
+
+    #content .container #homeContent .form-label{
+        padding-top: 0;
+    }
+
+    #content .container #homeContent .form-input.small{
+        max-width: 100%;
+    }
+}
