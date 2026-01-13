@@ -55,6 +55,10 @@
         update cart set quantity=#{quantity} where cart_id=#{cart_id}
     </update>
 
+    <delete id="deleteCartItem" parameterType="CartListDto">
+        delete from cart where cart_id=#{cart_id} and member_id=#{member_id}
+    </delete>
+
     <select id="countCartItems" parameterType="int" resultType="int">
         select count(*) from cart where member_id=#{member_id}
     </select>

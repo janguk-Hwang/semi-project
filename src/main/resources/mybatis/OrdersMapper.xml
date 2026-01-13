@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.OrdersMapper">
+    <insert id="insertOrder" parameterType="OrdersDto">
+        insert into orders(order_id,order_status,total_price,address,created_at,member_id)
+        VALUES(seq_orders.nextval,#{order_status},#{total_price},#{address},sysdate,#{member_id})
+    </insert>
+
+    <select id="selectCurrentOrderId" resultType="int">
+        select seq_orders.currval from dual
+    </select>
+</mapper>

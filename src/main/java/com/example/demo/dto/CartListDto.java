@@ -26,5 +26,5 @@ public class CartListDto {
     private Integer cartCount;
     private Integer stock;
 
-//    private Integer member_id;
+    private Integer member_id;
 }

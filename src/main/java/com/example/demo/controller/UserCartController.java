@@ -47,4 +47,21 @@ public class UserCartController {
         cartService.updateUserCartQuantity(cart_id,quantity);
         return "ok";
     }
+
+    @PostMapping("/cart/deleteSelected")
+    @ResponseBody
+    public String deleteSelectedCart(@RequestParam("cart_id") List<Integer> cart_id,HttpSession httpSession){
+        UsersDto loginUser=(UsersDto)httpSession.getAttribute("loginUser");
+        if(loginUser==null){
+            return "login_required";
+        }
+        if(cart_id==null || cart_id.isEmpty()){
+            return "no_item";
+        }
+        int member_id=loginUser.getMember_id();
+        for(Integer cartId : cart_id){
+            cartService.deleteCartItem(cartId,member_id);
+        }
+        return "ok";
+    }
 }

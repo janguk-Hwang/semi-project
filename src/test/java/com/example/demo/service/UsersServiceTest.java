@@ -27,4 +27,9 @@ public class UsersServiceTest {
         MusicianDto dto=musicianService.selectArtistById(2);
         System.out.println("dto============>"+dto);
     }
+//    @Test
+//    public void deleteCart(){
+//        int n=cartService.deleteCartItem(62,61);
+//        System.out.println("n====>"+n);
+//    }
 }
