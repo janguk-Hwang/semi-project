@@ -50,13 +50,20 @@
 
         <!-- 드래그/드랍 UI는 CSS로 꾸미고, 실제 업로드는 input(file)로 -->
         <label class="dropzone" for="images">
-          <div class="dropzone-inner">
+          <div class="dropzone-inner" id="dropzoneText">
             <div class="dropzone-icon">🖼️</div>
-            <div class="dropzone-text">Drop your files here or <span class="link">browse</span></div>
-            <div class="dropzone-sub">Maximum size: 50MB</div>
+            <div class="dropzone-text">
+              Drop your files here or <span class="link">browse</span>
+            </div>
+            <div class="dropzone-sub">Maximum size: 500MB</div>
           </div>
+
+          <!-- ✅ 업로드된 이미지 미리보기 영역 -->
+          <div class="dropzone-preview" id="dropzonePreview"></div>
         </label>
-        <input id="images" name="images" type="file" accept="image/*" multiple hidden>
+
+        <input id="images" name="file1" type="file" accept="image/*" multiple hidden>
+
       </div>
 
       <!-- Pricing & Stock -->
@@ -81,12 +88,17 @@
 
         <div class="form-row">
           <label class="form-label" for="product_type">카테고리 :</label>
-          <input class="form-input small" id="product_type" name="product_type" type="text">
+          <select class="form-input small"
+                  id="product_type"
+                  name="product_type">
+            <option value="">카테고리 설정</option>
+            <option value="md">MD</option>
+            <option value="album">ALBUM</option>
+            </select>
         </div>
 
         <div class="form-row">
           <label class="form-label" for="artistOption">뮤지션 옵션 :</label>
-
           <select class="form-input small"
                   id="artistOption"
                   name="artist_id">
@@ -100,18 +112,21 @@
         </div>
 
 
-        <div class="form-row">
-          <label class="form-label" for="colorOptions">색상 옵션 :</label>
-          <input class="form-input small" id="colorOptions" name="color_options" type="text" placeholder="예: BLACK, WHITE">
+        <div class="form-section">
+          <div class="section-title">추가 옵션</div>
+
+          <div id="optionList"></div>
+
+          <button type="button" class="btn btn-ghost" id="addOptionBtn">옵션 추가</button>
         </div>
 
 
-      <!-- 버튼 -->
+        <!-- 버튼 -->
       <div class="form-actions">
         <a class="btn btn-ghost" th:href="@{/admin/product}">취소</a>
         <button class="btn btn-dark" type="submit">저장</button>
       </div>
-
+      </div>
     </form>
   </div>
 </th:block>
@@ -120,5 +135,126 @@
 
 <!-- footer -->
 <div th:replace="~{fragments/layout :: footer}"></div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+
+    // =========================
+    // 1) 이미지 미리보기
+    // =========================
+    const input = document.getElementById("images");
+    const preview = document.getElementById("dropzonePreview");
+    const dropzone = document.querySelector(".dropzone");
+
+    function render(files) {
+      preview.innerHTML = "";
+
+      if (!files || files.length === 0) {
+        dropzone.classList.remove("has-preview");
+        return;
+      }
+
+      dropzone.classList.add("has-preview");
+
+      Array.from(files).forEach((file) => {
+        if (!file.type.startsWith("image/")) return;
+
+        const url = URL.createObjectURL(file);
+        const item = document.createElement("div");
+        item.className = "dz-item";
+
+        const img = document.createElement("img");
+        img.src = url;
+        img.alt = file.name;
+        img.onload = () => URL.revokeObjectURL(url);
+
+        item.appendChild(img);
+        preview.appendChild(item);
+      });
+    }
+
+    input.addEventListener("change", (e) => render(e.target.files));
+
+    dropzone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropzone.classList.add("is-dragover");
+    });
+
+    dropzone.addEventListener("dragleave", () => {
+      dropzone.classList.remove("is-dragover");
+    });
+
+    dropzone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropzone.classList.remove("is-dragover");
+      input.files = e.dataTransfer.files;
+      render(input.files);
+    });
+
+    // =========================
+    // 2) 옵션 추가/삭제 + 재고 비활성화
+    // =========================
+    const optionList = document.getElementById("optionList");
+    const addBtn = document.getElementById("addOptionBtn");
+    const stockInput = document.getElementById("stock");
+
+    function syncStockState() {
+      // 옵션 입력칸이 하나라도 "값이 있으면" 재고(stock) 비활성화
+      const optionNameInputs = optionList.querySelectorAll('input[name$=".option_name"]');
+      const hasAnyOption = Array.from(optionNameInputs).some(inp => inp.value.trim().length > 0);
+
+      if (hasAnyOption) {
+        stockInput.value = "";        // 기존값 초기화
+        stockInput.disabled = true;
+      } else {
+        stockInput.disabled = false;
+      }
+    }
+
+    function reindexOptions() {
+      Array.from(optionList.children).forEach((row, i) => {
+        row.querySelector("label").textContent = `옵션 ${i + 1}`;
+        row.querySelector('input[name$=".option_name"]').name = `options[${i}].option_name`;
+        row.querySelector('input[name$=".stock"]').name = `options[${i}].stock`;
+      });
+    }
+
+    function addOptionRow() {
+      const idx = optionList.children.length;
+
+      const row = document.createElement("div");
+      row.className = "form-row";
+      row.innerHTML = `
+      <label class="form-label">옵션 ${idx + 1}</label>
+      <div style="display:flex; gap:10px; align-items:center;">
+        <input class="form-input small" name="options[${idx}].option_name"
+               type="text" placeholder="예: BLACK">
+        <input class="form-input small" name="options[${idx}].stock"
+               type="number" min="0" step="1" placeholder="재고">
+        <button type="button" class="btn btn-ghost removeBtn">삭제</button>
+      </div>
+    `;
+
+      // 옵션 값이 바뀌면 재고 disable 체크
+      row.querySelector('input[name$=".option_name"]').addEventListener("input", syncStockState);
+
+      // 삭제 버튼
+      row.querySelector(".removeBtn").addEventListener("click", () => {
+        row.remove();
+        reindexOptions();
+        syncStockState();
+      });
+
+      optionList.appendChild(row);
+      syncStockState();
+    }
+
+    addBtn.addEventListener("click", addOptionRow);
+
+    // 처음 한 줄 기본 생성
+    addOptionRow();
+  });
+</script>
+
+
 </body>
 </html>

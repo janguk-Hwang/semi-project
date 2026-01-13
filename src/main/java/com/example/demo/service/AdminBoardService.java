@@ -3,7 +3,7 @@ package com.example.demo.service;
 import com.example.demo.dto.AdminBoardRequestDto;
 import com.example.demo.dto.BoardDto;
 import com.example.demo.mapper.AdminMapper;
-import com.example.demo.pageinfo.PageInfo;
+import com.example.demo.Page.PageInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;

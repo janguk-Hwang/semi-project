@@ -195,19 +195,23 @@
         WHERE rnum <![CDATA[ >= ]]> #{startRow}
         AND rnum <![CDATA[ <= ]]> #{endRow}
     </select>
+
     <delete id="adminboarddelete" parameterType="int">
     delete from board where board_id=#{value}
     </delete>
 
     <insert id="product_insert" parameterType="ProductDto">
-        insert into product values(seq_product.nextVal,#{product_name},#{price},#{description},#{product_type},sysdate,#{artist_id})
+        insert into product values(seq_product.nextVal,#{product_name},#{price},#{description},#{product_type},sysdate,#{artist_id},#{stock},#{has_option})
     </insert>
 
     <insert id="stock_insert" parameterType="Stock_logDto">
-        insert into product values(seq_stock_log.nextVal,'Stock In',#{quantity},sysdate,#{option_id})
+        insert into stock_log values(seq_stock_log.nextVal,'Stock In',#{quantity},sysdate,#{option_id})
     </insert>
     <insert id="product_option_insert" parameterType="ProductOptionDto">
-        insert into product_option values(seq_product_option.nextval,#{option_name},#{stock},#{product_id})
+        <if test="option_name!=null and option_name !=''">
+        INSERT INTO product_option(option_id, option_name, stock, product_id)
+        VALUES(seq_product_option.nextval, #{option_name}, #{stock}, #{product_id})
+        </if>
     </insert>
     <select id="product_select_id" parameterType="String" resultType="int">
     select product_id from product where product_name=#{value}
@@ -215,4 +219,11 @@
     <select id="musician_allselect" resultType="MusicianDto">
         select * from musician
     </select>
+    <insert id="insert_img" parameterType="AdminFileinfoRequestDto">
+        insert into fileinfo values(fileinfo_seq.nextval,#{originfilename},#{savefilename},#{ref_type},#{ref_id},#{file_role})
+    </insert>
+    <select id="select_option_id" resultType="int" parameterType="int">
+        SELECT option_id from product_option where product_id=#{value}
+    </select>
+
 </mapper>

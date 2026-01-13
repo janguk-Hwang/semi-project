@@ -4,6 +4,7 @@
    ========================= */
 
 /* 제목 */
+
 #content .container #homeContent .page-title{
     margin: 18px 0 14px;
     font-size: 20px;
@@ -214,3 +215,61 @@
         max-width: 100%;
     }
 }
+/* dropzone 내부 미리보기 */
+#content .container #homeContent .dropzone-preview{
+    display: none; /* 기본은 숨김 */
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+}
+
+/* 파일 선택 후 */
+#content .container #homeContent .dropzone.has-preview .dropzone-inner{
+    display: none;
+}
+
+#content .container #homeContent .dropzone.has-preview .dropzone-preview{
+    display: grid;
+}
+
+/* 이미지 카드 */
+#content .container #homeContent .dz-item{
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #e5e5e5;
+}
+
+#content .container #homeContent .dz-item img{
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    display: block;
+}
+
+/* 삭제 버튼 */
+#content .container #homeContent .dz-remove{
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0,0,0,.6);
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+}
+#content .container #homeContent .dropzone-preview{
+    padding: 4px;
+    width: 100%;
+}
+
+#content .container #homeContent .dropzone.has-preview{
+    padding: 10px;
+}
+
+#content .container #homeContent .dz-remove:hover{
+    background: rgba(0,0,0,.8);
+}
+

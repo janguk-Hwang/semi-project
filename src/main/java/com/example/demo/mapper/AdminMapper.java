@@ -26,4 +26,6 @@ public interface AdminMapper {
     int product_option_insert(ProductOptionDto dto);
     int product_select_id(String product_name);
     MusicianDto musician_allselect();
+    int insert_img(AdminFileinfoRequestDto dto);
+    int select_option_id(int product_id);
 }
