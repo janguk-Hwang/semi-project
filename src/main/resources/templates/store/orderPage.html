@@ -2,8 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-
-  <link rel="stylesheet" th:href="@{/landing.css}">
+    <!-- 스크립트 추가 -->
+    <script src="https://js.tosspayments.com/v2/standard"></script>
+    <link rel="stylesheet" th:href="@{/landing.css}">
     <title>store/orderPage.html</title>
     <style>
         .order-container{
@@ -99,17 +100,23 @@
               <input type="hidden" name="quantity" th:value="${order.quantity}">
               <input type="hidden" name="price" th:value="${order.unit_price}">
 
-              <button type="submit" class="order-btn">결제하기</button>
+              <button type="submit" class="order-btn" id="order-btn">결제하기</button>
           </div>
       </form>
-
-
-
-
   </div>
 </th:block>
 
 <!-- footer삽입 -->
 <div th:replace="~{fragments/layout::footer}"></div>
+
+<!--<script th:inline="javascript">-->
+<!--    // &#45;&#45;&#45;&#45;&#45;&#45;  결제위젯 초기화 &#45;&#45;&#45;&#45;&#45;&#45;-->
+<!--    const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";-->
+<!--    const tossPayments = TossPayments(clientKey);-->
+
+<!--    document.getElementById('order-btn').addEventListener('click',function (){-->
+<!--        -->
+<!--    })-->
+<!--</script>-->
 </body>
 </html>
