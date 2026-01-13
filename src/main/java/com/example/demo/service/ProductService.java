@@ -4,7 +4,7 @@ import com.example.demo.dto.ProductDetailDto;
 import com.example.demo.dto.ProductDto;
 import com.example.demo.dto.ProductListDto;
 import com.example.demo.mapper.ProductMapper;
-import com.example.demo.pagination.PageInfo;
+import com.example.demo.Page.PageInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

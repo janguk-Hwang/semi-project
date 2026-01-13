@@ -2,21 +2,26 @@ package com.example.demo.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.sql.Date;
+import java.util.Date;
 
 @AllArgsConstructor
-@RequiredArgsConstructor
+@NoArgsConstructor
 @Data
+
 public class BoardDto {
-    private Integer board_id;
+    private int board_id;
     private String title;
     private String content;
     private String board_type;
-    private Integer like_count;
-    private Integer read_count;
+    private int like_count;
+    private int read_count;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date created_at;
-    private Integer member_id;
+    private int member_id;
+
+    //users 멤버 아이디 참조
 
 }

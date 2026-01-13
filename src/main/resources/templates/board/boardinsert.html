@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>공지사항 게시글 등록</h1>
+<form method="post" th:action="boardinsert">
+    공지번호<br>
+    <input type="text" name="board_id"><br>
+    제목<br>
+    <input type="text" name="title"><br>
+    내용<br>
+    <textarea rows="5" cols="50" name="content"></textarea> <br>
+    <input type="submit" value="등록">
+</form>
+</body>
+</html>

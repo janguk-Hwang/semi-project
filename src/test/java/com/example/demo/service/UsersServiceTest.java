@@ -1,11 +1,11 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.*;
+import com.example.demo.dto.AccountDto;
+import com.example.demo.dto.MusicianDto;
+import com.example.demo.dto.UsersDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.List;
 
 @SpringBootTest
 public class UsersServiceTest {
@@ -17,15 +17,14 @@ public class UsersServiceTest {
     private ProductService productService;
     @Autowired
     private MusicianService musicianService;
-    @Autowired
-    private ProductOptionService productOptionService;
-    @Autowired
-    private CartService cartService;
+
     @Test
-    public void selectList(){
-        List<CartListDto> list=cartService.selectCartList(61);
-        list.forEach(l->{
-            System.out.println(l);
-        });
+    public void selecttype(){
+        musicianService.selectArtist().forEach(l-> System.out.println(l));
+    }
+    @Test
+    public void selectArtistById(){
+        MusicianDto dto=musicianService.selectArtistById(2);
+        System.out.println("dto============>"+dto);
     }
 }

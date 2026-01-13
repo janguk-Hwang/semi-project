@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/landing.css}">
+    <link rel="stylesheet" th:href="@{/notice.css}">
+    <title>board/boardlist.html</title>
+</head>
+<body>
+<div th:replace="~{fragments/layout::header}"></div>
+
+<h1>공지사항</h1>
+    <table>
+        <tr>
+            <th>게시글 번호</th>
+            <th>게시글 제목</th>
+            <th>좋아요 수</th>
+            <th>조회수</th>
+            <th>작성일</th>
+
+        </tr>
+        <tr th:each="board : ${list}">
+            <td th:text="${board.board_id}"></td>
+            <td><a th:href="@{/board/detail(num=${board.board_id})}">[[${board.title}]]</a></td>
+            <td th:text="${board.like_count}"></td>
+            <td th:text="${board.read_count}"></td>
+            <td th:text="${board.created_at}"></td>
+        </tr>
+    </table>
+
+<div style="text-align: center">
+    <ul>
+        <li>
+            <a th:if="${pageInfo.hasPrev}" th:href="@{/board/boardlist(pageNum=${pageInfo.prevPageNum})}">
+                ◀  </a>
+         </li>
+
+        <li th:each="board_id:${#numbers.sequence(pageInfo.startPageNum,pageInfo.endPageNum)}">
+            <a th:href="@{boardlist(pageNum=${board_id}, field=${field}, keyword=${keyword})}">[[${board_id}]]</a>
+
+        <li>
+        <a th:if="${pageInfo.hasNext}" th:href="@{/board/boardlist(pageNum=${pageInfo.nextPageNum})}">
+            ▶  </a>
+        </li>
+    </ul>
+</div>
+
+<div>
+    <form method="get" th:action="@{/board/boardlist}">
+        <select name="field" >
+            <option value="title" th:selected="${field=='title'}">제목</option>
+            <option value="content" th:selected="${field=='content'}">내용</option>
+        </select>
+        <input type="text" name="keyword" th:value="${keyword}">
+        <input type="submit" value="검색">
+    </form>
+    <a th:if="session.loginUser.role=='ADMIN'" th:href="@{/board/insert}">글작성</a>
+</div>
+<div th:replace="~{fragments/layout::footer}"></div>
+</body>
+</html>

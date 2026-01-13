@@ -1,124 +1,147 @@
-/* ===== content only ===== */
-.board-wrap{
-    max-width: 900px;
-    margin: 36px auto 70px;
-    padding: 0 16px;
-}
+/* ====== 공지사항(목록) 영역만 타겟팅 ======
+   구조: h1 -> table -> (text-align:center div) -> (form div)
+   이 구조를 기준으로 스타일을 적용해서 헤더/푸터 영향 최소화
+*/
 
-/* title */
-.board-head{
-    margin-bottom: 14px;
-}
-.board-title{
-    font-size: 20px;
+/* 제목 */
+h1 {
+    width: min(980px, 92vw);
+    margin: 40px auto 16px;
+    font-size: 22px;
     font-weight: 700;
     color: #222;
-    margin: 0;
 }
 
-/* card */
-.board-card{
-    background: #fff;
-    border-radius: 18px;
-    box-shadow: 0 10px 22px rgba(0,0,0,0.06);
-    padding: 18px;
-}
+/* 테이블 카드 */
+h1 + table {
+    width: min(980px, 92vw);
+    margin: 0 auto 22px;
 
-/* table */
-.board-table{
-    width: 100%;
     border-collapse: separate;
     border-spacing: 0;
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
 }
 
-.board-table thead th{
-    font-size: 13px;
-    font-weight: 700;
-    color: #555;
-    padding: 14px 12px;
+/* 테이블 헤더 */
+h1 + table tr:first-child {
     background: #f7f7f7;
+}
+
+h1 + table th,
+h1 + table td {
+    padding: 16px 18px;
+    text-align: center;
+    font-size: 14px;
     border-bottom: 1px solid #eee;
-    text-align: center;
 }
 
-.board-table tbody td{
-    font-size: 13px;
-    color: #999;
-    padding: 14px 12px;
-    border-bottom: 1px solid #f0f0f0;
-    text-align: center;
+h1 + table th {
+    color: #666;
+    font-weight: 600;
 }
 
-.board-table tbody tr:nth-child(even) td{
-    background: #fbfbfb;
+/* 줄무늬 */
+h1 + table tr:nth-child(even) td {
+    background: #fcfcfc;
 }
 
-/* column width */
-.col-no{ width: 100px; }
-.col-view{ width: 120px; }
-.col-writer{ width: 140px; }
-
-.title-cell{
-    text-align: left !important;
+/* 마지막 줄 보더 제거 */
+h1 + table tr:last-child td {
+    border-bottom: none;
 }
 
-/* dummy text bar */
-.dummy-text{
-    display: block;
-    height: 14px;
-    width: 80%;
-    border-radius: 6px;
-    background: linear-gradient(
-            90deg,
-            #ececec 25%,
-            #f4f4f4 37%,
-            #ececec 63%
-    );
-    background-size: 400% 100%;
-    animation: shimmer 1.4s ease infinite;
+/* 제목 컬럼만 왼쪽 정렬(원하면 유지, 싫으면 삭제) */
+h1 + table td:nth-child(2) {
+    text-align: left;
+    padding-left: 80px;
+    font-weight: 500;
 }
 
-@keyframes shimmer {
-    0% { background-position: 100% 0; }
-    100% { background-position: -100% 0; }
+/* ====== 페이지네이션 ====== */
+h1 + table + div[style*="text-align: center"] {
+    width: min(980px, 92vw);
+    margin: 0 auto 22px;
 }
 
-/* pager */
-.pager{
+h1 + table + div[style*="text-align: center"] ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: inline-flex;
+    gap: 12px;
+    align-items: center;
+}
+
+h1 + table + div[style*="text-align: center"] li {
+    display: inline-flex;
+    align-items: center;
+}
+
+/* 버튼 공통(숫자/화살표) */
+h1 + table + div[style*="text-align: center"] a {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 2px solid #6b63ff;
+    border-radius: 4px;
+    background: #fff;
+
+    color: #222;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+
+    transition: transform .08s ease, background .15s ease, opacity .15s ease;
+}
+
+h1 + table + div[style*="text-align: center"] a:hover {
+    transform: translateY(-1px);
+    background: #f4f3ff;
+}
+
+/* ====== 검색 폼 ====== */
+h1 + table + div[style*="text-align: center"] + div form {
+    width: min(980px, 92vw);
+    margin: 16px auto 60px;
+
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 10px;
-    margin-top: 20px;
 }
 
-.pager-btn,
-.pager-num{
-    width: 34px;
-    height: 34px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-}
-
-.pager-btn{
-    background: #efefef;
-    color: #aaa;
-}
-
-.pager-btn.disabled{
-    opacity: 0.4;
-}
-
-.pager-num{
-    border: 1px solid #6c63ff;
-    color: #6c63ff;
+h1 + table + div[style*="text-align: center"] + div form select,
+h1 + table + div[style*="text-align: center"] + div form input[type="text"] {
+    height: 40px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0 12px;
+    font-size: 14px;
     background: #fff;
 }
 
-.pager-num.is-active{
-    background: #6c63ff;
+h1 + table + div[style*="text-align: center"] + div form input[type="text"] {
+    width: min(360px, 60vw);
+}
+
+h1 + table + div[style*="text-align: center"] + div form input[type="submit"] {
+    height: 40px;
+    padding: 0 14px;
+    border: none;
+    border-radius: 8px;
+    background: #111;
     color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+h1 + table + div[style*="text-align: center"] + div form input[type="submit"]:hover {
+    opacity: 0.9;
 }
