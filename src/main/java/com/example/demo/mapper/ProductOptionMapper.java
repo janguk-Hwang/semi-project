@@ -8,4 +8,6 @@ import java.util.List;
 @Mapper
 public interface ProductOptionMapper {
     List<ProductOptionDto> selectProductOption(int product_id);
+    int selectOptionStock(int option_id);
+    ProductOptionDto selectOptionById(int option_id);
 }

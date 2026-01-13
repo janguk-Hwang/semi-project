@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+
+  <link rel="stylesheet" th:href="@{/landing.css}">
+    <title>store/orderPage.html</title>
+    <style>
+        .order-container{
+            max-width: 900px;
+            margin: 40px auto;
+        }
+        .order-box{
+            background: #f9f9f9;
+            padding: 30px;
+            border-radius: 10px;
+        }
+        .order-section{
+            margin-bottom: 30px;
+        }
+        .order-title{
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .order-product{
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .order-product img{
+            width: 100px;
+            border: 1px solid #ccc;
+        }
+        .order-summary{
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        .order-input input{
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+<!-- 헤더삽입 -->
+<div th:replace="~{fragments/layout::header}"></div>
+
+<!-- 메인 콘텐츠 영역: th:block으로 감싸서 중복 출력을 방지합니다 -->
+<th:block th:replace="~{fragments/layout::getMain(~{::content})}">
+  <div th:fragment="content" class="order-container">
+      <h2>ORDER</h2>
+      <hr>
+      <form method="post" th:action="@{/order/direct}">
+          <div class="order-box">
+              <!--주문상품-->
+              <div class="order-section">
+                  <div class="order-title">주문상품</div>
+                  <div class="order-product">
+                      <img th:src="@{'/images/'+${order.savefilename}}" alt="대표이미지">
+                      <div>
+                          <p class="product-name" th:text="${order.product_name}">상품명</p>
+                          <p class="product-option" th:if="${order.option_name!=null}" th:text="${order.option_name}">옵션명</p>
+                          <p class="product-qty">
+                              <span th:text="${order.quantity}">1</span>개 /
+                          </p>
+                          <p class="product-price">
+                              <span th:text="${#numbers.formatInteger(order.total_price,0,'COMMA')}">0</span>원
+                          </p>
+                      </div>
+                  </div>
+                  <div class="order-summary">
+                      <span>상품 합계</span>
+                      <span th:text="${#numbers.formatInteger(order.total_price,0,'COMMA')}">0</span>원
+                  </div>
+              </div>
+              <!--배송정보-->
+              <div class="order-section">
+                  <div class="order-title">배송 정보</div>
+                  <div class="order-input">
+                      <label>수령인</label>
+                      <input type="text" name="receiver" th:value="${order.receiver}" required readonly>
+                  </div>
+                  <div class="order-input">
+                      <label>연락처</label>
+                      <input type="text" name="phone" th:value="${order.phone}" required pattern="[0-9]{10,11}" readonly>
+                  </div>
+                  <div class="order-input">
+                      <label>배송지</label>
+                      <input type="text" name="address" th:value="${order.address}" required>
+                  </div>
+              </div>
+
+              <!--hidden값들-->
+              <input type="hidden" name="product_id" th:value="${order.product_id}">
+              <input type="hidden" name="option_id" th:value="${order.option_id}">
+              <input type="hidden" name="quantity" th:value="${order.quantity}">
+              <input type="hidden" name="price" th:value="${order.unit_price}">
+
+              <button type="submit" class="order-btn">결제하기</button>
+          </div>
+      </form>
+
+
+
+
+  </div>
+</th:block>
+
+<!-- footer삽입 -->
+<div th:replace="~{fragments/layout::footer}"></div>
+</body>
+</html>

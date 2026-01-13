@@ -4,13 +4,19 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.ProductMapper">
     <!--옵션있는 상품 재고 업데이트-->
-    <update id="decreaseOptionStock">
+    <update id="decreaseOptionStock" parameterType="StockUpdateDto">
         update product_option set stock=stock-#{quantity} where option_id=#{option_id}
+        <![CDATA[
+            and stock>=#{quantity}
+        ]]>
     </update>
 
     <!--옵션없는 상품 재고 업데이트-->
-    <update id="decreaseProductStock">
+    <update id="decreaseProductStock" parameterType="StockUpdateDto">
         update product set stock=stock-#{quantity} where product_id=#{product_id}
+        <![CDATA[
+            and stock>=#{quantity}
+        ]]>
     </update>
 
     <select id="selectProduct" parameterType="int" resultType="ProductDetailDto">
@@ -63,5 +69,13 @@
 
     <select id="countByType" parameterType="String" resultType="int">
         select count(*) from product where product_type=#{product_type}
+    </select>
+    
+    <select id="selectProductPrice" parameterType="int" resultType="int">
+        select price from product where product_id=#{product_id}
+    </select>
+
+    <select id="selectProductStock" parameterType="int" resultType="int">
+        select stock from product where product_id=#{product_id}
     </select>
 </mapper>
