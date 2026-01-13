@@ -98,6 +98,4 @@
         s.bio_raw_en, s.bio_summary_en, s.bio_summary_ko)
     </update>
 
-
-
 </mapper>

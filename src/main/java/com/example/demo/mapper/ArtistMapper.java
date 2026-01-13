@@ -13,7 +13,6 @@ import java.util.List;
 public interface ArtistMapper {
     int insertAlbums(@Param("name") String name, @Param("album") ArtistAlbumDto artistAlbumDto);
     int insertTrack(@Param("albumMbid") String albumMbid, @Param("track") TrackDto trackDto);
-
     List<ArtistAlbumDto> selectAlbumsByArtist(String name);
     List<String> selectAllArtists();
     ArtistAlbumDto selectAlbumByMbid(String albumMbid);

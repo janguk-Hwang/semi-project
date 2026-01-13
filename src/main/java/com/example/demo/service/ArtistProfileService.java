@@ -10,23 +10,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class ArtistProfileService {
-
     private final ArtistMapper artistMapper;
-    private final TheAudioDbService theAudioDbClient;
+    private final TheAudioDbService theAudioDbService;
     private final Translator translator;
 
     @Transactional
     public ArtistProfileDto getOrFetch(String artistName) throws Exception {
-
-        // ✅ 저장/조회 키 통일
         artistName = (artistName == null) ? null : artistName.trim();
-
         System.out.println("[PROFILE] getOrFetch start = [" + artistName + "]");
-
         // 1) DB 캐시 조회
         ArtistProfileDto cached = artistMapper.selectArtistProfile(artistName);
         System.out.println("[PROFILE] cached exists = " + (cached != null));
-
         // 캐시가 있고(이미지 2개 + 소개글) 있으면 그대로 반환
         if (cached != null
                 && notBlank(cached.getPhotoUrl())
@@ -37,26 +31,24 @@ public class ArtistProfileService {
         }
 
         // 2) TheAudioDB 수집
-        ArtistProfileDto fetched = theAudioDbClient.fetchByName(artistName);
-        System.out.println("[PROFILE] fetched exists = " + (fetched != null));
-        if (fetched == null) return cached;
+        ArtistProfileDto artistProfileDto = theAudioDbService.fetchByName(artistName);
+        System.out.println("[PROFILE] fetched exists = " + (artistProfileDto != null));
+        if (artistProfileDto == null) return cached;
 
-        // ✅ PK 보정
-        fetched.setArtistName(artistName);
-
-        System.out.println("[PROFILE] fetched.photoUrl = [" + fetched.getPhotoUrl() + "]");
-        System.out.println("[PROFILE] fetched.fanartUrl = [" + fetched.getFanartUrl() + "]");
+        // PK 보정
+        artistProfileDto.setArtistName(artistName);
+        System.out.println("[PROFILE] fetched.photoUrl = [" + artistProfileDto.getPhotoUrl() + "]");
+        System.out.println("[PROFILE] fetched.fanartUrl = [" + artistProfileDto.getFanartUrl() + "]");
         System.out.println("[PROFILE] fetched.bioRawEn length = " +
-                (fetched.getBioRawEn() == null ? "null" : fetched.getBioRawEn().length()));
+                (artistProfileDto.getBioRawEn() == null ? "null" : artistProfileDto.getBioRawEn().length()));
 
         // 3) 요약(EN)
-        String summaryEn = BioSummarizer.summarizeEn(fetched.getBioRawEn());
-        fetched.setBioSummaryEn(summaryEn);
+        String summaryEn = BioSummarizer.summarizeEn(artistProfileDto.getBioRawEn());
+        artistProfileDto.setBioSummaryEn(summaryEn);
         System.out.println("[PROFILE] summaryEn = [" + summaryEn + "]");
 
         // 4) 번역(KO)
         String summaryKo;
-
         if (summaryEn == null || summaryEn.isBlank()) {
             summaryKo = "아티스트 소개 정보가 없습니다.";
             System.out.println("[PROFILE] summaryEn empty -> default ko msg");
@@ -76,11 +68,11 @@ public class ArtistProfileService {
             }
         }
 
-        fetched.setBioSummaryKo(summaryKo);
+        artistProfileDto.setBioSummaryKo(summaryKo);
 
-        // ✅ 5) 저장(UPsert)
-        System.out.println("[PROFILE] upsert run, artistName(final) = [" + fetched.getArtistName() + "]");
-        int n = artistMapper.upsertArtistProfile(fetched);
+        // 5) 저장(UPsert) UPSERT = UPDATE + INSERT, Oracle에서는 MERGE로
+        System.out.println("[PROFILE] upsert run, artistName(final) = [" + artistProfileDto.getArtistName() + "]");
+        int n = artistMapper.upsertArtistProfile(artistProfileDto);
         System.out.println("[PROFILE] upsert result = " + n);
 
         // 6) 재조회 반환
