@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${album.title} + ' - Album Detail'">Album Detail</title>
+
+  <link rel="stylesheet" th:href="@{/landing.css}">
+  <link rel="stylesheet" th:href="@{/albumDetail.css}">
+</head>
+
+<body>
+
+<div th:replace="~{fragments/layout :: header}"></div>
+
+<div th:replace="~{fragments/layout :: getMain(~{:: .albumDetailContent})}">
+  <div class="albumDetailContent">
+    <div class="album-detail-container">
+      <section class="album-detail-header">
+        <div class="album-detail-cover">
+          <img class="album-detail-cover-img"
+               th:src="${album.coverImageUrl}"
+               onerror="this.src='https://via.placeholder.com/300?text=No+Image'"
+               alt="Album Cover">
+        </div>
+        <div class="album-detail-meta">
+          <span class="badge" th:text="${album.type}">Album</span>
+          <h1 class="album-detail-title" th:text="${album.title}"></h1>
+          <div class="album-detail-sub">
+            <div class="album-detail-row">
+              <span class="label">발매일</span>
+              <span class="value" th:text="${album.releaseDate}"></span>
+            </div>
+            <div class="album-detail-row">
+              <span class="label">Artist</span>
+              <a class="value artist-link"
+                 th:href="@{/artist(name=${album.artistName})}"
+                 th:text="${album.artistName}">
+                가수 이름
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="album-detail-divider">
+
+      <section class="album-detail-tracks">
+        <p class="track-count"
+           th:text="'총 ' + ${#lists.size(album.tracks)} + '곡'">
+          총 0곡
+        </p>
+
+        <h2 class="album-detail-tracks-title">TRACK LIST</h2>
+
+        <div class="album-detail-empty"
+             th:if="${album.tracks == null or #lists.isEmpty(album.tracks)}">
+          트랙 정보가 없습니다.
+        </div>
+
+        <ul class="album-detail-track-list"
+            th:if="${album.tracks != null and !#lists.isEmpty(album.tracks)}">
+
+          <li class="album-detail-track-item" th:each="t : ${album.tracks}">
+            <div class="track-left">
+              <span class="track-number" th:text="${t.number}">1</span>
+              <span class="track-title" th:text="${t.title}">곡 제목</span>
+            </div>
+
+            <div class="track-right">
+              <!-- videoId가 없어도 버튼은 항상 표시/활성 -->
+              <button type="button"
+                      class="btn-preview"
+                      th:attr="data-yt=${t.youtubeVideoId},
+                               data-album-mbid=${album.albumMBID},
+                               data-track-no=${t.number},
+                               data-artist=${album.artistName},
+                               data-title=${t.title}">
+                ▶
+              </button>
+            </div>
+          </li>
+        </ul>
+        <div class="yt-player-wrap" id="ytWrap" style="display:none;">
+          <div class="yt-player-header">
+            <span id="ytNowPlaying">재생 중</span>
+            <button type="button" class="btn-close" id="ytClose">닫기 ✕</button>
+          </div>
+          <div class="yt-center">
+            <iframe id="ytPlayer"
+                    width="100%" height="400"
+                    src=""
+                    title="YouTube player"
+                    frameborder="0"
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    allowfullscreen>
+            </iframe>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+
+<script>
+  const wrap = document.getElementById('ytWrap');
+  const iframe = document.getElementById('ytPlayer');
+  const closeBtn = document.getElementById('ytClose');
+  const nowPlaying = document.getElementById('ytNowPlaying');
+
+  function setNowPlaying(text) {
+    if (nowPlaying) nowPlaying.textContent = text || '재생 중';
+  }
+
+  function openPlayer(videoId, titleText) {
+    if (!videoId) return;
+    // start=0은 취향대로 조절 가능
+    const src = `https://www.youtube.com/embed/${videoId}?autoplay=1&start=0&rel=0`;
+    iframe.src = src;
+    setNowPlaying(titleText || '재생 중');
+    wrap.style.display = 'block';
+  }
+
+  function stopPlayer() {
+    iframe.src = '';           // 재생 중지
+    wrap.style.display = 'none';
+    setNowPlaying('재생 중');
+    // 버튼 표시 상태 원복(필요 시)
+    document.querySelectorAll('.btn-preview.is-playing').forEach(b => b.classList.remove('is-playing'));
+  }
+
+  async function fetchVideoId(albumMbid, trackNo) {
+    const url = `/api/youtube/video-id?albumMbid=${encodeURIComponent(albumMbid)}&trackNo=${encodeURIComponent(trackNo)}`;
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' }
+    });
+    if (!res.ok) return null;
+
+    const data = await res.json();
+    const videoId = (data.videoId || '').trim();
+    return videoId || null;
+  }
+
+  function setButtonLoading(btn, loading) {
+    if (!btn) return;
+    if (loading) {
+      btn.dataset.loading = '1';
+      btn.disabled = true;
+      btn.classList.add('disabled');
+      btn.textContent = '찾는 중...';
+    } else {
+      delete btn.dataset.loading;
+      btn.disabled = false;
+      btn.classList.remove('disabled');
+      btn.textContent = '▶ 미리듣기';
+    }
+  }
+
+  function markPlaying(btn) {
+    document.querySelectorAll('.btn-preview.is-playing').forEach(b => b.classList.remove('is-playing'));
+    btn.classList.add('is-playing');
+  }
+
+  document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.btn-preview');
+    if (!btn) return;
+    if (btn.dataset.loading === '1') return;
+
+    const trackTitle = (btn.dataset.title || '').trim();
+    const artistName = (btn.dataset.artist || '').trim();
+    const displayTitle = artistName && trackTitle ? `${artistName} - ${trackTitle}` : (trackTitle || '재생 중');
+
+    // 1) 이미 videoId가 있으면 바로 재생
+    let videoId = (btn.dataset.yt || '').trim();
+    if (videoId) {
+      markPlaying(btn);
+      openPlayer(videoId, displayTitle);
+      return;
+    }
+
+    // 2) 없으면 백엔드에서 받아오기
+    const albumMbid = (btn.dataset.albumMbid || '').trim();
+    const trackNo = (btn.dataset.trackNo || '').trim();
+
+    if (!albumMbid || !trackNo) {
+      alert('albumMbid/trackNo 정보가 없어 미리듣기를 진행할 수 없어.');
+      return;
+    }
+
+    setButtonLoading(btn, true);
+    setNowPlaying(`${displayTitle} (검색 중...)`);
+
+    try {
+      videoId = await fetchVideoId(albumMbid, trackNo);
+
+      if (!videoId) {
+        alert('미리듣기 영상을 찾지 못했습니다');
+        setNowPlaying('재생 중');
+        return;
+      }
+
+      // ✅ 버튼 dataset 갱신 → 다음 클릭부터는 즉시 재생
+      btn.dataset.yt = videoId;
+
+      markPlaying(btn);
+      openPlayer(videoId, displayTitle);
+    } finally {
+      setButtonLoading(btn, false);
+    }
+  });
+
+  closeBtn.addEventListener('click', () => {
+    stopPlayer();
+  });
+</script>
+
+<style>
+  .btn-preview.disabled { opacity: 0.6; cursor: not-allowed; }
+  .btn-preview.is-playing { font-weight: 700; }
+</style>
+
+</body>
+</html>

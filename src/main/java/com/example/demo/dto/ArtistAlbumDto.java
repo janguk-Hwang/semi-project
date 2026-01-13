@@ -11,6 +11,7 @@ import java.util.List;
 @Data
 public class ArtistAlbumDto {
     private String albumMBID;
+    private String artistName;
     private String title;
     private String type;
     private String releaseDate;

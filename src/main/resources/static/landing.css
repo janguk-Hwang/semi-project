@@ -5,8 +5,14 @@
     box-sizing: border-box;
     font-family: 'Pretendard', sans-serif;
 }
+html, body {
+    height: 100%;
+}
 body {
     background-color: #f8f8f8;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 a {
     text-decoration: none;
@@ -61,8 +67,8 @@ li {
 /* 콘텐츠 영역 */
 #content {
     width: 100%;
-    min-height: 600px;
     padding: 40px 0;
+    flex: 1;
 }
 /* content 내부 container는 flex-direction을 세로로 변경 (배너와 그리드가 위아래로 배치되도록) */
 #content .container {
