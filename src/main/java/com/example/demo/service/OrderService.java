@@ -23,17 +23,17 @@ public class OrderService {
 
     //주문페이지에 필요한 정보
     public OrderPageDto makeOrderPage(int product_id, Integer option_id, int quantity, UsersDto loginUser){
-        OrderPageDto dto=new OrderPageDto();
         //상품기본정보
         ProductDetailDto product=productMapper.selectProduct(product_id);
         if(product==null){
             throw new IllegalArgumentException("존재하지 않는 상품입니다.");
         }
-        dto.setProduct_id(product_id);
-        dto.setProduct_name(product.getProduct_name());
-        dto.setSavefilename(product.getSavefilename());
-        dto.setUnit_price(product.getPrice());
-        dto.setQuantity(quantity);
+        OrderPageItemDto item=new OrderPageItemDto();
+        item.setProduct_id(product_id);
+        item.setProduct_name(product.getProduct_name());
+        item.setSavefilename(product.getSavefilename());
+        item.setUnit_price(product.getPrice());
+        item.setQuantity(quantity);
 
         //옵션 있는 경우
         if(option_id!=null){
@@ -41,18 +41,23 @@ public class OrderService {
             if(option==null){
                 throw new IllegalArgumentException("존재하지 않는 옵션입니다.");
             }
-            dto.setOption_id(option_id);
-            dto.setOption_name(option.getOption_name());
+            item.setOption_id(option_id);
+            item.setOption_name(option.getOption_name());
         }
-        int totalPrice=product.getPrice()*quantity;
-        dto.setTotal_price(totalPrice);
-        dto.setOrder_total_price(totalPrice);
-        //배송정보
-        dto.setReceiver(loginUser.getName());
-        dto.setPhone(loginUser.getPhone());
-        dto.setAddress(loginUser.getAddr());
+        //금액계산
+        int itemTotalPrice=product.getPrice()*quantity;
+        item.setTotal_price(itemTotalPrice);
+        //OrderPageDto 구성
+        OrderPageDto pageDto=new OrderPageDto();
+        pageDto.setItems(List.of(item));
+        pageDto.setOrder_total_price(itemTotalPrice);
 
-        return dto;
+        //배송정보(USers테이블 기반)
+        pageDto.setReceiver(loginUser.getName());
+        pageDto.setPhone(loginUser.getPhone());
+        pageDto.setAddress(loginUser.getAddr());
+
+        return pageDto;
     }
 
     //주문페이지 주문하기

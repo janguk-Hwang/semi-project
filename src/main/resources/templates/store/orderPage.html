@@ -59,22 +59,22 @@
               <!--주문상품-->
               <div class="order-section">
                   <div class="order-title">주문상품</div>
-                  <div class="order-product">
-                      <img th:src="@{'/images/'+${order.savefilename}}" alt="대표이미지">
+                  <div class="order-product" th:each="item:${order.items}">
+                      <img th:src="@{'/images/'+${item.savefilename}}" alt="대표이미지">
                       <div>
-                          <p class="product-name" th:text="${order.product_name}">상품명</p>
-                          <p class="product-option" th:if="${order.option_name!=null}" th:text="${order.option_name}">옵션명</p>
+                          <p class="product-name" th:text="${item.product_name}">상품명</p>
+                          <p class="product-option" th:if="${item.option_name!=null}" th:text="${item.option_name}">옵션명</p>
                           <p class="product-qty">
-                              <span th:text="${order.quantity}">1</span>개 /
+                              <span th:text="${item.quantity}">1</span>개 /
                           </p>
                           <p class="product-price">
-                              <span th:text="${#numbers.formatInteger(order.total_price,0,'COMMA')}">0</span>원
+                              <span th:text="${#numbers.formatInteger(item.total_price,0,'COMMA')}">0</span>원
                           </p>
                       </div>
                   </div>
                   <div class="order-summary">
                       <span>상품 합계</span>
-                      <span th:text="${#numbers.formatInteger(order.total_price,0,'COMMA')}">0</span>원
+                      <span th:text="${#numbers.formatInteger(order.order_total_price,0,'COMMA')}">0</span>원
                   </div>
               </div>
               <!--배송정보-->
@@ -95,12 +95,16 @@
               </div>
 
               <!--hidden값들-->
-              <input type="hidden" name="product_id" th:value="${order.product_id}">
-              <input type="hidden" name="option_id" th:value="${order.option_id}">
-              <input type="hidden" name="quantity" th:value="${order.quantity}">
-              <input type="hidden" name="price" th:value="${order.unit_price}">
+              <div th:each="item:${order.items}">
+                  <input type="hidden" name="product_id" th:value="${item.product_id}">
+                  <input type="hidden" name="option_id" th:value="${item.option_id}">
+                  <input type="hidden" name="quantity" th:value="${item.quantity}">
+                  <input type="hidden" name="price" th:value="${item.unit_price}">
+              </div>
+
 
               <button type="submit" class="order-btn" id="order-btn">결제하기</button>
+              <button type="button" class="order-btn" id="paybtn" onclick="requestPayment()">결제하기</button>
           </div>
       </form>
   </div>
@@ -111,12 +115,14 @@
 
 <!--<script th:inline="javascript">-->
 <!--    // &#45;&#45;&#45;&#45;&#45;&#45;  결제위젯 초기화 &#45;&#45;&#45;&#45;&#45;&#45;-->
-<!--    const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";-->
+<!--    const clientKey = "";-->
 <!--    const tossPayments = TossPayments(clientKey);-->
 
-<!--    document.getElementById('order-btn').addEventListener('click',function (){-->
-<!--        -->
+<!--    document.getElementById('order-btn').addEventListener('click',function (e){-->
+<!--        e.preventDefault();-->
+
 <!--    })-->
 <!--</script>-->
+
 </body>
 </html>

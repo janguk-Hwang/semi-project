@@ -4,21 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class OrderPageDto {
-    //상품정보
-    private Integer product_id;
-    private Integer option_id;
-    private String product_name;
-    private String option_name;
-    private String savefilename;
-    private Integer quantity;
-    private Integer unit_price;
-    private Integer total_price;
+public class OrderPageDto { //주문 "페이지 렌더링용" DTO
+    //주문상품 목록
+    private List<OrderPageItemDto> items;
     //주문합계
     private Integer order_total_price;
+
     //배송정보
     private String receiver;
     private String phone;

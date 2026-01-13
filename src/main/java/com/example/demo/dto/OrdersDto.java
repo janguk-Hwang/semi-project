@@ -8,7 +8,7 @@ import java.sql.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class OrdersDto {
+public class OrdersDto { //orders 테이블 DB용 DTO
     private Integer order_id;
     private String order_status;
     private Integer total_price;
