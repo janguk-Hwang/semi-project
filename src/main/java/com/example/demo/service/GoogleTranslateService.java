@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -23,30 +24,25 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class GoogleTranslateService implements Translator {
-
     @Value("${gcp.projectId}")
     private String projectId;
 
     @Value("${gcp.location:global}")
     private String location;
 
-    // 예: classpath:keys/gcp-service-account.json
     @Value("${gcp.serviceAccountKeyPath}")
     private String serviceAccountKeyPath;
 
     private final ResourceLoader resourceLoader;
-
     private final CloseableHttpClient http = HttpClients.createDefault();
     private final ObjectMapper om = new ObjectMapper();
 
     private String getAccessToken() throws Exception {
         Resource resource = resourceLoader.getResource(serviceAccountKeyPath);
-
         try (InputStream is = resource.getInputStream()) {
             GoogleCredentials cred = GoogleCredentials.fromStream(is)
                     .createScoped(List.of("https://www.googleapis.com/auth/cloud-translation"));
             cred.refreshIfExpired();
-
             if (cred.getAccessToken() == null) return null;
             return cred.getAccessToken().getTokenValue();
         }
@@ -55,11 +51,16 @@ public class GoogleTranslateService implements Translator {
     @Override
     public String enToKo(String text) throws Exception {
         if (text == null || text.isBlank()) return null;
-
         // v3 REST: projects/{project}/locations/{location}:translateText
-        String parent = "projects/" + projectId + "/locations/" + location;
-        String url = "https://translate.googleapis.com/v3/" + parent + ":translateText";
-
+        String url = UriComponentsBuilder
+                .fromUriString("https://translate.googleapis.com")
+                .pathSegment(
+                        "v3",
+                        "projects", projectId,
+                        "locations", location
+                )
+                .path(":translateText")
+                .toUriString();
         String token = getAccessToken();
         if (token == null || token.isBlank()) {
             System.out.println("[TRANSLATE] token is null/blank");
@@ -71,7 +72,6 @@ public class GoogleTranslateService implements Translator {
         body.putArray("contents").add(text);
         body.put("sourceLanguageCode", "en");
         body.put("targetLanguageCode", "ko");
-
         HttpPost post = new HttpPost(url);
         post.setHeader("Authorization", "Bearer " + token);
         post.setHeader("Content-Type", "application/json; charset=UTF-8");
@@ -79,7 +79,6 @@ public class GoogleTranslateService implements Translator {
 
         String json;
         int status;
-
         try (var res = http.execute(post)) {
             status = res.getCode();
             json = EntityUtils.toString(res.getEntity(), StandardCharsets.UTF_8);
