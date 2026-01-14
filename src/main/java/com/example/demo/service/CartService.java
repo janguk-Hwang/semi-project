@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.dto.CartDto;
 import com.example.demo.dto.CartListDto;
 import com.example.demo.mapper.CartMapper;
+import com.example.demo.mapper.OrderItemMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

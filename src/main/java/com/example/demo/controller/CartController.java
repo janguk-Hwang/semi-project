@@ -49,6 +49,7 @@ public class CartController {
         //주문하기 버튼인 경우
         if("order".equals(action)){
             OrderPageDto orderPage=orderService.makeOrderPage(product_id,option_id,quantity,loginUser);
+            orderPage.setOrderSource("DIRECT");
             model.addAttribute("order",orderPage);
 
             return "store/orderPage";

@@ -11,6 +11,7 @@ import java.util.Map;
 
 @Mapper
 public interface ProductMapper {
+    int decreaseProductStockByOption(StockUpdateDto dto);
     int decreaseOptionStock(StockUpdateDto dto);
     int decreaseProductStock(StockUpdateDto dto);
     ProductDetailDto selectProduct(int product_id);

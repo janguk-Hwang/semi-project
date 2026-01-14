@@ -21,16 +21,6 @@ public class UsersServiceTest {
     private ProductOptionService productOptionService;
     @Autowired
     private CartService cartService;
-    @Test
-    public void selectList(){
-        List<CartListDto> list=cartService.selectCartList(61);
-        list.forEach(l->{
-            System.out.println(l);
-        });
-    }
-//    @Test
-//    public void deleteCart(){
-//        int n=cartService.deleteCartItem(62,61);
-//        System.out.println("n====>"+n);
-//    }
+
+
 }

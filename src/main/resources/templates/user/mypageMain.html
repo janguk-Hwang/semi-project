@@ -56,5 +56,9 @@
 
 <!--footer-->
 <div th:replace="~{fragments/layout::footer}"></div>
+
+<script th:inline="javascript" th:if="${msg!=null}">
+    alert([[${msg}]]);
+</script>
 </body>
 </html>

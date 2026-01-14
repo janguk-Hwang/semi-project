@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/landing.css}">
+    <title>user/mypageOrderList.html</title>
+</head>
+<body>
+<!--header-->
+<div th:replace="~{fragments/layout::header}"></div>
+
+<!--content-->
+<th:block th:replace="~{fragments/layout::getMain(~{::content})}">
+  <div th:fragment="content">
+
+  </div>
+</th:block>
+
+<!--footer-->
+<div th:replace="~{fragments/layout::footer}"></div>
+</body>
+</html>
