@@ -205,7 +205,7 @@
     </insert>
 
     <insert id="stock_insert" parameterType="Stock_logDto">
-        insert into stock_log values(seq_stock_log.nextVal,'Stock In',#{quantity},sysdate,#{option_id})
+        insert into stock_log values(seq_stock_log.nextVal,'Stock In',#{quantity},sysdate,#{option_id},#{product_id})
     </insert>
     <insert id="product_option_insert" parameterType="ProductOptionDto">
         <if test="option_name!=null and option_name !=''">
@@ -222,8 +222,103 @@
     <insert id="insert_img" parameterType="AdminFileinfoRequestDto">
         insert into fileinfo values(fileinfo_seq.nextval,#{originfilename},#{savefilename},#{ref_type},#{ref_id},#{file_role})
     </insert>
-    <select id="select_option_id" resultType="int" parameterType="int">
-        SELECT option_id from product_option where product_id=#{value}
+    <select id="select_option_id" resultType="int" parameterType="map">
+        SELECT option_id from product_option where product_id=#{product_id} and option_name=#{option_name}
+    </select>
+    <insert id="non_option_stock_log_insert" parameterType="Stock_logDto">
+        insert into stock_log(log_id,change_type,quantity,created_at,product_id)
+        values(seq_stock_log.nextval,'STOCK_IN',#{quantity},sysdate,#{product_id})
+    </insert>
+
+<!--" 상품관리 페이징 "  -->
+<!--                  -->
+<!--                  -->
+    <select id="product_list" resultType="AdminProductRequestDto" parameterType="map">
+        SELECT *
+        FROM (
+        SELECT
+        p.product_id,
+        p.product_name,
+        p.price,
+        p.product_type,
+        p.stock,
+        p.has_option,
+        p.create_at,
+        p.artist_id,
+        f.savefilename AS savefilename,
+        ROW_NUMBER() OVER (ORDER BY p.product_id DESC) AS rnum
+        FROM product p
+        left join fileinfo f
+        on upper(f.ref_type) = 'PRODUCT'
+        and f.ref_id = p.product_id
+        and trim(upper(f.file_role)) = 'THUMB'
+        <where>
+            1=1
+            <include refid="product_search"/>
+        </where>
+        )
+        WHERE rnum <![CDATA[ >= ]]> #{startRow}
+        AND rnum <![CDATA[ <= ]]> #{endRow}
     </select>
 
+    <!-- 상품 수 (검색조건 포함) -->
+    <select id="product_count" resultType="int" parameterType="map">
+        SELECT NVL(COUNT(*), 0)
+        FROM product p
+        <where>
+            1=1
+            <include refid="product_search"/>
+        </where>
+    </select>
+
+
+    <select id="product_prev" parameterType="map" resultType="AdminProductRequestDto">
+        SELECT *
+        FROM product
+        WHERE product_id = (
+        SELECT MAX(product_id)
+        FROM product
+        WHERE product_id <![CDATA[ < ]]> #{product_id}
+        )
+    </select>
+
+    <select id="product_next" parameterType="map" resultType="AdminProductRequestDto">
+        SELECT *
+        FROM product
+        WHERE product_id = (
+        SELECT MIN(product_id)
+        FROM product
+        WHERE product_id <![CDATA[ > ]]> #{product_id}
+        )
+    </select>
+
+    <sql id="product_search">
+        <if test="field != null and field != '' and keyword != null and keyword != ''">
+            <choose>
+                <when test="field == 'product_name'">
+                    AND p.product_name LIKE '%' || #{keyword} || '%'
+                </when>
+                <when test="field == 'product_type'">
+                    AND p.product_type LIKE '%' || #{keyword} || '%'
+                </when>
+                <when test="field == 'price'">
+                    AND p.price LIKE '%' || #{keyword} || '%'
+                </when>
+            </choose>
+        </if>
+    </sql>
+<!--  재고관리   -->
+    <select id="select_stock_product_option" parameterType="int" resultType="ProductOptionDto">
+        select option_id, option_name from product_option where product_id=#{values}
+    </select>
+
+    <update id="stock_page_stock_upadate" parameterType="Stock_logDto">
+        update stock_log set quantity=#{quantity}, change_type=#{change_type}, created_at=sysdate where log_id=#{log_id} and product_id=#{product_id}
+    </update>
+    <update id="stock_page_product_update" parameterType="ProductDto">
+        update product set stock=#{stock} where product_id=#{product_id}
+    </update>
+    <update id="stock_page_product_option_update" parameterType="ProductOptionDto">
+        update product_option set stock=#{stock} where product_id=#{product_id} and option_id=#{option_id}
+    </update>
 </mapper>

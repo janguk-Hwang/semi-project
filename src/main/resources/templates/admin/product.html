@@ -45,67 +45,100 @@
       </tr>
       </thead>
 
-      <!-- 보여주기용 빈 행(디자인용) -->
+      <!--  등록된 상품들의 행 -->
       <tbody>
-      <tr>
+      <tr th:each="p:${list}">
         <td class="col-check"><input type="checkbox"></td>
-        <td class="col-img"><div class="img-box"></div></td>
-        <td class="col-name"></td>
-        <td class="col-cat"></td>
-        <td class="col-price"></td>
-        <td class="col-stock"></td>
-      </tr>
-      <tr>
-        <td class="col-check"><input type="checkbox"></td>
-        <td class="col-img"><div class="img-box"></div></td>
-        <td class="col-name"></td>
-        <td class="col-cat"></td>
-        <td class="col-price"></td>
-        <td class="col-stock"></td>
-      </tr>
-      <tr>
-        <td class="col-check"><input type="checkbox"></td>
-        <td class="col-img"><div class="img-box"></div></td>
-        <td class="col-name"></td>
-        <td class="col-cat"></td>
-        <td class="col-price"></td>
-        <td class="col-stock"></td>
-      </tr>
-      <tr>
-        <td class="col-check"><input type="checkbox"></td>
-        <td class="col-img"><div class="img-box"></div></td>
-        <td class="col-name"></td>
-        <td class="col-cat"></td>
-        <td class="col-price"></td>
-        <td class="col-stock"></td>
-      </tr>
-      <tr>
-        <td class="col-check"><input type="checkbox"></td>
-        <td class="col-img"><div class="img-box"></div></td>
-        <td class="col-name"></td>
-        <td class="col-cat"></td>
-        <td class="col-price"></td>
-        <td class="col-stock"></td>
+        <td class="col-img">
+          <img class="img-box"
+               th:src="@{/images/{f}(f=${p.savefilename})}"
+               alt="thumb">
+        </td>
+        <input type="hidden" name="product_id" th:value="${p.product_id}">
+        <td class="col-name" th:text="${p.product_name}"></td>
+        <td class="col-cat" th:text="${p.product_type}"></td>
+        <td class="col-price" th:text="${p.price}"></td>
+        <td class="col-stock" th:text="${p.stock}"></td>
       </tr>
       </tbody>
     </table>
   </section>
+  <form th:action="@{/admin/product}" method="get">
 
-  <!-- 페이지네이션(보여주기용) -->
-  <nav class="pm-pager" aria-label="Pagination">
-    <button class="page-btn disabled" type="button">‹</button>
+    <!-- 검색하면 보통 1페이지부터 -->
+    <input type="hidden" name="pageNum" value="1">
 
-    <button class="page-num is-active" type="button">1</button>
-    <button class="page-num" type="button">2</button>
-    <button class="page-num" type="button">3</button>
-    <button class="page-num" type="button">4</button>
-    <button class="page-num" type="button">5</button>
+    <!-- 검색 옵션(라디오) -->
+    <div class="search-options">
+      <label class="opt">
+        <input type="radio" name="field" value="product_name"
+               th:checked="${field == null || field == 'product_name'}">
+        상품명
+      </label>
+      <label class="opt">
+        <input type="radio" name="field" value="product_type"
+               th:checked="${field == 'product_type'}">
+        카테고리
+      </label>
+      <label class="opt">
+        <input type="radio" name="field" value="price"
+               th:checked="${field == 'price'}">
+        가격
+      </label>
+    </div>
 
-    <button class="page-btn" type="button">›</button>
+    <!-- 검색 바 -->
+    <div class="search-bar">
+      <input type="text" class="search-input" name="keyword"
+             th:value="${keyword}" placeholder="Search">
+      <button type="submit" class="search-btn">검색</button>
+    </div>
+
+  </form>
+
+
+
+  <!-- 페이지네이션 -->
+  <nav class="pager" aria-label="Pagination" th:if="${pageInfo.totalPageCount > 0}">
+
+    <!-- 이전 블록(‹) : startPageNum-1 로 이동 -->
+    <a class="pbtn"
+       th:classappend="${pageInfo.startPageNum == 1} ? ' disabled' : ''"
+       th:href="${pageInfo.startPageNum == 1} ? '#' :
+              @{/admin/product(pageNum=${pageInfo.startPageNum - 1},
+                            field=${field},
+                            keyword=${keyword})}">
+      ‹
+    </a>
+
+    <!-- 페이지 번호 -->
+    <a class="pnum"
+       th:each="p : ${#numbers.sequence(pageInfo.startPageNum, pageInfo.endPageNum)}"
+       th:text="${p}"
+       th:classappend="${p == pageInfo.pageNum} ? ' is-active' : ''"
+       th:href="@{/admin/product(pageNum=${p},
+                             field=${field},
+                             keyword=${keyword})}">
+    </a>
+
+    <!-- 다음 블록(›) : endPageNum+1 로 이동 -->
+    <a class="pbtn"
+       th:classappend="${pageInfo.endPageNum == pageInfo.totalPageCount} ? ' disabled' : ''"
+       th:href="${pageInfo.endPageNum == pageInfo.totalPageCount} ? '#' :
+              @{/admin/product(pageNum=${pageInfo.endPageNum + 1},
+                            field=${field},
+                            keyword=${keyword})}">
+      ›
+    </a>
+
   </nav>
 
 </div>
 <!-- footer -->
 <div th:replace="fragments/layout :: footer"></div>
+
+<script th:inline="javascript" th:if="${msg}">
+  alert([[${msg}]]);
+</script>
 </body>
 </html>

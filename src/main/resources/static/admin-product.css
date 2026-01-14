@@ -170,3 +170,95 @@
 .page-num.is-active{
     background: #f3f1ff;
 }
+/* 검색 옵션 라디오 */
+.search-options{
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    margin: 12px 0 8px;
+    padding-left: 6px;
+    color: #666;
+    font-size: 12px;
+}
+
+.search-options .opt{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.search-options input[type="radio"]{
+    accent-color: #2d7ff0;
+}
+
+/* 검색 바(그림처럼 길게 + 우측 버튼) */
+.search-bar{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.search-input{
+    flex: 1;
+    height: 40px;
+    border-radius: 999px;
+    border: 1px solid #e6e6e6;
+    padding: 0 14px;
+    outline: none;
+    background: #fff;
+    font-size: 13px;
+}
+
+.search-btn{
+    width: 74px;
+    height: 34px;
+    border: none;
+    border-radius: 999px;
+    background: #2d7ff0;
+    color: #fff;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+/* 페이지네이션 */
+.pager{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 14px;
+}
+
+.pbtn{
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 4px;
+    background: #e2e2e2;
+    color: #666;
+    font-weight: 900;
+}
+
+.pbtn.disabled{
+    opacity: .6;
+    cursor: default;
+}
+
+.pnum{
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    border: 1px solid #8e7bff;
+    background: #fff;
+    color: #6d5dff;
+    font-weight: 800;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.pnum.is-active{
+    background: #f3f1ff;
+}

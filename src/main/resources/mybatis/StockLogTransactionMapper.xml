@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.StockLogTransactionMapper">
+<select id="lockproductstock" parameterType="int" resultType="int">
+    select NVL(stock,0)
+    from product
+    where product_id =#{product_id}
+    for update
+</select>
+    <select id="lockoptionstock" parameterType="int" resultType="int">
+        select NVL(stock,0)
+        from product_option
+        where option_id=#{option_id}
+        for update
+    </select>
+    <update id="updateproductstock" parameterType="map">
+        update product
+        set stock=#{newstock}
+        where product_id=#{product_id}
+    </update>
+    <update id="updateoptionstock" parameterType="map">
+        update product_option
+        set stock=#{newstock}
+        where option_id=#{option_id}
+    </update>
+    <insert id="insertstocklog" parameterType="Stock_logDto">
+        insert into stock_log (log_id,change_type,quantity,created_at,option_id,product_id)
+        values(seq_stock_log.nextval,#{change_type},#{quantity},sysdate,#{option_id, jdbcType=NUMERIC},#{product_id})
+    </insert>
+</mapper>

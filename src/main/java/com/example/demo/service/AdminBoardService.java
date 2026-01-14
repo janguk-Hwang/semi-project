@@ -40,3 +40,4 @@ public class AdminBoardService {
     }
 
 }
+// 게시판 가져올때 게시판 태그로 가져오기

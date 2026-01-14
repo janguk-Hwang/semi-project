@@ -60,7 +60,11 @@
               <div class="order-section">
                   <div class="order-title">주문상품</div>
                   <div class="order-product">
-                      <img th:src="@{'/images/'+${order.savefilename}}" alt="대표이미지">
+<!--                      order.savefilename 에러 가드용 if-->
+                      <img th:if="${order != null and order.savefilename != null}"
+                           th:src="@{'/images/' + ${order.savefilename}}"
+                           alt="대표이미지">
+
                       <div>
                           <p class="product-name" th:text="${order.product_name}">상품명</p>
                           <p class="product-option" th:if="${order.option_name!=null}" th:text="${order.option_name}">옵션명</p>
@@ -101,6 +105,8 @@
               <input type="hidden" name="price" th:value="${order.unit_price}">
 
               <button type="submit" class="order-btn" id="order-btn">결제하기</button>
+              <button type="button" class="button" onclick="requestPayment()">결제창 열기</button>
+
           </div>
       </form>
   </div>
@@ -109,14 +115,52 @@
 <!-- footer삽입 -->
 <div th:replace="~{fragments/layout::footer}"></div>
 
-<!--<script th:inline="javascript">-->
-<!--    // &#45;&#45;&#45;&#45;&#45;&#45;  결제위젯 초기화 &#45;&#45;&#45;&#45;&#45;&#45;-->
-<!--    const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";-->
-<!--    const tossPayments = TossPayments(clientKey);-->
+<script th:inline="javascript">
+    const amountValue = /*[[${order.total_price}]]*/ 0;
+    const orderId = /*[[${order.order_id}]]*/ '';
+    const orderName = /*[[${order.product_name}]]*/ '상품';
+    const customername = /*[[${order.receiver}]]*/ '';
+    const phone = /*[[${order.phone}]]*/ '';
+    // ------  SDK 초기화 ------
+    // @docs https://docs.tosspayments.com/sdk/v2/js#토스페이먼츠-초기화
 
-<!--    document.getElementById('order-btn').addEventListener('click',function (){-->
-<!--        -->
-<!--    })-->
-<!--</script>-->
+    const clientKey = "test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq";
+    const customerKey = "8KJYxJnpZ_jaKeeDIOIbI";
+    const tossPayments = TossPayments(clientKey);
+    // 회원 결제
+    // @docs https://docs.tosspayments.com/sdk/v2/js#tosspaymentspayment
+    const payment = tossPayments.payment({ customerKey });
+    // 비회원 결제
+    // const payment = tossPayments.payment({customerKey: TossPayments.ANONYMOUS})
+
+    // ------ '결제하기' 버튼 누르면 결제창 띄우기 ------
+    // @docs https://docs.tosspayments.com/sdk/v2/js#paymentrequestpayment
+    async function requestPayment() {
+
+        // 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.
+        // 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하는 용도입니다.
+        await payment.requestPayment({
+            method: "CARD", // 카드 결제
+            amount: {
+                currency: "KRW",
+                value: amountValue,
+            },
+            orderId: orderId, // 고유 주문번호
+            orderName: orderName,
+            successUrl: window.location.origin + "/success", // 결제 요청이 성공하면 리다이렉트되는 URL
+            failUrl: window.location.origin + "/fail", // 결제 요청이 실패하면 리다이렉트되는 URL
+            customerEmail: "customer123@gmail.com",
+            customerName: customername,
+            customerMobilePhone: phone,
+            // 카드 결제에 필요한 정보
+            card: {
+                useEscrow: false,
+                flowMode: "DEFAULT", // 통합결제창 여는 옵션
+                useCardPoint: false,
+                useAppCardOnly: false,
+            },
+        });
+    }
+</script>
 </body>
 </html>

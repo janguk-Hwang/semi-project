@@ -9,11 +9,12 @@ import java.sql.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Stock_logDto {
+public class AdminStockPageRequestDto {
     private Integer log_id;
     private String change_type;
     private Integer quantity;
     private Date created_at;
     private Integer option_id;
     private Integer product_id;
+    private Integer stock;
 }

@@ -28,9 +28,9 @@
         <table class="sm-table">
             <thead>
             <tr>
-                <th class="col-check"></th>
                 <th class="col-img">상품 이미지</th>
                 <th class="col-name">상품명</th>
+                <th class="col-option">옵션</th>
                 <th class="col-price">가격</th>
                 <th class="col-control"></th>
                 <th class="col-stock">재고</th>
@@ -40,59 +40,34 @@
             <tbody>
             <!-- 예시 1행 (보여주기용) -->
             <tr>
-                <td class="col-check"><input type="checkbox"></td>
                 <td class="col-img"><div class="img-box"></div></td>
                 <td class="col-name"><div class="text-skeleton w-70"></div></td>
+                <td class="col-option">
+                    <div class="option-wrap">
+                        <select class="option-select">
+                            <option value="">옵션</option>
+                            <option>BLACK</option>
+                            <option>WHITE</option>
+                        </select>
+                    </div>
+                </td>
                 <td class="col-price"><div class="text-skeleton w-50"></div></td>
+
 
                 <td class="col-control">
                     <div class="qty-wrap">
-                        <button type="button" class="qty-btn disabled">‹</button>
-                        <span class="qty-val">6</span>
-                        <button type="button" class="qty-btn">›</button>
+                        <button type="button" class="qty-btn minus disabled">‹</button>
+                        <input class="qty-val" type="number" value="1" min="1" step="1" inputmode="numeric">
+                        <button type="button" class="qty-btn plus">›</button>
                     </div>
                     <div class="qty-actions">
-                        <button type="button" class="mini">입고</button>
-                        <button type="button" class="mini">출고</button>
+                        <button type="button" class="mini btn-in">입고</button>
+                        <button type="button" class="mini btn-out">출고</button>
                     </div>
                 </td>
-
                 <td class="col-stock"><span class="stock-val">6</span></td>
             </tr>
 
-            <!-- 빈 행들(레이아웃용) -->
-            <tr>
-                <td class="col-check"><input type="checkbox"></td>
-                <td class="col-img"><div class="img-box"></div></td>
-                <td class="col-name"></td>
-                <td class="col-price"></td>
-                <td class="col-control"></td>
-                <td class="col-stock"></td>
-            </tr>
-            <tr>
-                <td class="col-check"><input type="checkbox"></td>
-                <td class="col-img"><div class="img-box"></div></td>
-                <td class="col-name"></td>
-                <td class="col-price"></td>
-                <td class="col-control"></td>
-                <td class="col-stock"></td>
-            </tr>
-            <tr>
-                <td class="col-check"><input type="checkbox"></td>
-                <td class="col-img"><div class="img-box"></div></td>
-                <td class="col-name"></td>
-                <td class="col-price"></td>
-                <td class="col-control"></td>
-                <td class="col-stock"></td>
-            </tr>
-            <tr>
-                <td class="col-check"><input type="checkbox"></td>
-                <td class="col-img"><div class="img-box"></div></td>
-                <td class="col-name"></td>
-                <td class="col-price"></td>
-                <td class="col-control"></td>
-                <td class="col-stock"></td>
-            </tr>
             </tbody>
         </table>
     </section>
@@ -138,9 +113,98 @@
         <button class="page-num" type="button">5</button>
         <button class="page-btn" type="button">›</button>
     </nav>
-
 </div>
 <!-- footer -->
 <div th:replace="fragments/layout :: footer"></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        document.querySelectorAll("tr").forEach(row => {
+            const qtyInput = row.querySelector(".qty-val");
+            const minusBtn = row.querySelector(".qty-btn.minus");
+            const plusBtn  = row.querySelector(".qty-btn.plus");
+            const inBtn    = row.querySelector(".btn-in");
+            const outBtn   = row.querySelector(".btn-out");
+            const stockEl  = row.querySelector(".stock-val");
+
+            // 해당 row가 재고행이 아니면 패스
+            if (!qtyInput || !minusBtn || !plusBtn || !inBtn || !outBtn || !stockEl) return;
+
+            // 초기값 정리
+            setQty(safeInt(qtyInput.value, 1));
+            updateMinusDisabled();
+
+            // + / -
+            plusBtn.addEventListener("click", () => {
+                setQty(safeInt(qtyInput.value, 1) + 1);
+            });
+
+            minusBtn.addEventListener("click", () => {
+                setQty(Math.max(1, safeInt(qtyInput.value, 1) - 1));
+            });
+
+            // 직접 입력 (최소 1만 보장)
+            qtyInput.addEventListener("input", () => {
+                const v = safeInt(qtyInput.value, NaN);
+                if (Number.isNaN(v)) return;   // 지우는 중이면 일단 대기
+                setQty(Math.max(1, v));
+            });
+
+            qtyInput.addEventListener("blur", () => {
+                setQty(Math.max(1, safeInt(qtyInput.value, 1)));
+            });
+
+            // 입고: 제한 없음 (UI 재고만 증가)
+            inBtn.addEventListener("click", () => {
+                const qty = safeInt(qtyInput.value, 1);
+                const stock = safeInt(stockEl.textContent, 0);
+
+                const newStock = stock + qty;
+                stockEl.textContent = newStock;
+
+                // 필요하면 입력값 초기화
+                setQty(1);
+
+                // TODO: 여기서 서버로 입고 요청(fetch/ajax) 보내면 됨
+                // fetch('/admin/stock/in', { ...qty, productId... })
+            });
+
+            // 출고: 재고 부족하면 막기
+            outBtn.addEventListener("click", () => {
+                const qty = safeInt(qtyInput.value, 1);
+                const stock = safeInt(stockEl.textContent, 0);
+
+                if (stock < qty) {
+                    alert(`재고가 부족합니다. 현재 재고: ${stock}`);
+                    return;
+                }
+
+                const newStock = stock - qty;
+                stockEl.textContent = newStock;
+
+                setQty(1);
+
+                // TODO: 여기서 서버로 출고 요청(fetch/ajax) 보내면 됨
+            });
+
+            function safeInt(value, fallback) {
+                const n = parseInt(value, 10);
+                return Number.isNaN(n) ? fallback : n;
+            }
+
+            function setQty(v) {
+                qtyInput.value = v;
+                updateMinusDisabled();
+            }
+
+            function updateMinusDisabled() {
+                const v = safeInt(qtyInput.value, 1);
+                minusBtn.classList.toggle("disabled", v <= 1);
+            }
+        });
+
+    });
+</script>
 </body>
 </html>

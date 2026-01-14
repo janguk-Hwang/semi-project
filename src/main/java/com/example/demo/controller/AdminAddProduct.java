@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,9 +32,9 @@ public class AdminAddProduct {
 
     @PostMapping("/admin/product/new")
     public String addProduct(@Valid AdminProductDto dto,
-                             BindingResult bindingResult, Model model) throws IOException {
+                             BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
         if (bindingResult.hasErrors()) {
-            // ⚠️ addproduct에서 musician 리스트 쓰면 여기서 다시 model에 넣어야 함
+            //  addproduct에서 musician 리스트 쓰면 여기서 다시 model에 넣어야 함
             // model.addAttribute("musician", musicianService.list());
             return "admin/addproduct";
         }
@@ -45,6 +46,8 @@ public class AdminAddProduct {
 
         // dto에 product_id가 필요하면 세팅
         dto.setProduct_id(productId);
+        adminProductService.product_option_insert(dto);
+        //재고 로그 는 트랜잭션 처리 해서 사용 나중에 변경예정
         adminProductService.stock_insert(dto);
 
 
@@ -75,7 +78,7 @@ public class AdminAddProduct {
                 );
             }
         }
-
+        redirectAttributes.addFlashAttribute("msg","상품등록이 완료되었습니다!");
         return "redirect:/admin/product";
         }
     }
