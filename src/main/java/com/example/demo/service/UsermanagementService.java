@@ -29,6 +29,7 @@ public class UsermanagementService {
         result.put("list",list);
         result.put("pageInfo",info);
         return result;
+
     }
     public User_rolesDto isadmin(int member_id){
        return adminMapper.isadmin(member_id);
