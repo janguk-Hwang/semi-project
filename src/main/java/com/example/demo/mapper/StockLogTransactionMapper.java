@@ -12,4 +12,5 @@ public interface StockLogTransactionMapper {
     int updateproductstock(Map<String,Object> map);
     int updateoptionstock(Map<String,Object> map);
     int insertstocklog(Stock_logDto dto);
+    int select_option_id_by_name(Map<String,Object> map);
 }

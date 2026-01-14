@@ -29,4 +29,10 @@
         insert into stock_log (log_id,change_type,quantity,created_at,option_id,product_id)
         values(seq_stock_log.nextval,#{change_type},#{quantity},sysdate,#{option_id, jdbcType=NUMERIC},#{product_id})
     </insert>
+    <select id="select_option_id_by_name" parameterType="map" resultType="int">
+        select option_id
+        from product_option
+        where product_id = #{product_id}
+        and option_name = #{option_name}
+    </select>
 </mapper>

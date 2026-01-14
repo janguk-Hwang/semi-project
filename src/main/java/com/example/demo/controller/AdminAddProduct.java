@@ -4,7 +4,6 @@ import com.example.demo.dto.*;
 import com.example.demo.service.AdminProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.ssl.SslProperties;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,29 +31,21 @@ public class AdminAddProduct {
 
     @PostMapping("/admin/product/new")
     public String addProduct(@Valid AdminProductDto dto,
-                             BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
+                             BindingResult bindingResult,
+                             RedirectAttributes redirectAttributes) throws IOException {
+
         if (bindingResult.hasErrors()) {
-            //  addproduct에서 musician 리스트 쓰면 여기서 다시 model에 넣어야 함
-            // model.addAttribute("musician", musicianService.list());
             return "admin/addproduct";
         }
 
-        // 1) 상품/재고/옵션 먼저 저장 (productId 확보 목적)
-        // product_insert가 "생성된 product_id"를 리턴한다고 가정
-        adminProductService.product_insert(dto);
+        // ✅ AOP용 List 리턴값은 컨트롤러에서 굳이 받을 필요 없음
+        adminProductService.createProduct(dto);
+
+        // ✅ fileinfo 저장에 필요하므로 productId는 다시 조회
         int productId = adminProductService.product_select_id(dto.getProduct_name());
 
-        // dto에 product_id가 필요하면 세팅
-        dto.setProduct_id(productId);
-        adminProductService.product_option_insert(dto);
-        //재고 로그 는 트랜잭션 처리 해서 사용 나중에 변경예정
-        adminProductService.stock_insert(dto);
-
-
-        // 2) 파일 저장 + fileinfo insert
         List<MultipartFile> files = dto.getFile1();
         if (files != null && !files.isEmpty()) {
-
             for (int idx = 0; idx < files.size(); idx++) {
                 MultipartFile file = files.get(idx);
                 if (file == null || file.isEmpty()) continue;
@@ -65,11 +56,9 @@ public class AdminAddProduct {
                 String ext = orgname.substring(orgname.lastIndexOf("."));
                 String savename = UUID.randomUUID() + ext;
 
-                File saved = new File(UPLOADPATH + savename);
-                file.transferTo(saved);
+                file.transferTo(new File(UPLOADPATH + savename));
 
                 String role = (idx == 0) ? "THUMB" : "DETAIL";
-
                 adminProductService.insert_img(
                         new AdminFileinfoRequestDto(
                                 0, orgname, savename,
@@ -78,8 +67,11 @@ public class AdminAddProduct {
                 );
             }
         }
-        redirectAttributes.addFlashAttribute("msg","상품등록이 완료되었습니다!");
+
+        redirectAttributes.addFlashAttribute("msg", "상품등록이 완료되었습니다!");
         return "redirect:/admin/product";
-        }
     }
+
+
+}
 
