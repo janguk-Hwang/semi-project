@@ -17,7 +17,7 @@ import java.util.List;
 public class ArtistController {
 
     private final ArtistService artistService;
-    private final ArtistProfileService artistProfileService; // ✅ 추가
+    private final ArtistProfileService artistProfileService;
 
     @GetMapping("/artist/new")
     public String artistRegisterForm() {
@@ -28,7 +28,6 @@ public class ArtistController {
     public String artistRoot() {
         List<String> artistList = artistService.getAllArtists();
 
-        // 등록된 가수가 하나도 없으면 등록 폼으로 보내기
         if (artistList == null || artistList.isEmpty()) {
             return "redirect:/artist/new";
         }
@@ -41,7 +40,7 @@ public class ArtistController {
     @GetMapping("/artist/{name}")
     public String artistPage(@PathVariable("name") String name, Model model) {
 
-        // 1) 기존: 앨범 목록
+        // 1) 앨범 목록
         List<ArtistAlbumDto> albums = artistService.getArtistAlbums(name);
         model.addAttribute("albumList", albums);
         model.addAttribute("artistName", name);
@@ -50,21 +49,23 @@ public class ArtistController {
         List<String> artistList = artistService.getAllArtists();
         model.addAttribute("artistList", artistList);
 
-        // 3) 프로필(thumb+fanart+한글요약) 가져와서 모델에 담기
-        // DB에 없으면 TheAudioDB 호출 → 요약/번역 → upsert → 반환
+        // 3) MBID 확보
+        String artistMbid = null;
         try {
-            ArtistProfileDto profile = artistProfileService.getOrFetch(name);
-            model.addAttribute("profile", profile);
+            artistMbid = artistService.getArtistMbidByName(name);
+        } catch (Exception ignore) {
+        }
 
-            // fanart는 상단 배경으로 자주 쓰니 별도 키도 추가(템플릿 편의)
-            if (profile != null) {
-                model.addAttribute("artistFanart", profile.getFanartUrl());
-            }
+        // 4) 프로필: MBID 전달해서 TheAudioDB를 MBID 우선 조회
+        try {
+            ArtistProfileDto profile = artistProfileService.getOrFetch(name, artistMbid);
+            model.addAttribute("profile", profile);
+            model.addAttribute("artistFanart", profile != null ? profile.getFanartUrl() : null);
         } catch (Exception e) {
-            // 번역/외부 API 문제로 페이지가 아예 깨지지 않게 방어
             model.addAttribute("profile", null);
             model.addAttribute("artistFanart", null);
         }
+
         return "Artist/ArtistPage";
     }
 

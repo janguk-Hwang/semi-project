@@ -47,6 +47,27 @@ public class ArtistService {
         return videoId;
     }
 
+    public String getArtistMbidByName(String artistName) throws Exception {
+        if (artistName == null || artistName.isBlank()) return null;
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        String encodedName = URLEncoder.encode(artistName, StandardCharsets.UTF_8);
+        String artistUrl = BASE_URL + "/artist?query=" + encodedName + "&fmt=json";
+
+        Thread.sleep(1100);
+        ResponseEntity<String> artistResponse =
+                restTemplate.exchange(artistUrl, HttpMethod.GET, entity, String.class);
+
+        JsonNode artistsNode = objectMapper.readTree(artistResponse.getBody()).path("artists");
+        if (!artistsNode.isArray() || artistsNode.isEmpty()) return null;
+
+        return artistsNode.get(0).path("id").asText(null);
+    }
+
+
     @Autowired
     public ArtistService(ArtistMapper artistMapper, YouTubeSearchService youTubeSearchService) {
         this.artistMapper = artistMapper;
