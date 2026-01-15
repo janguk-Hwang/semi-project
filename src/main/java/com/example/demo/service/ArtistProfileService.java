@@ -40,8 +40,6 @@ public class ArtistProfileService {
         ArtistProfileDto fetched = theAudioDbClient.fetchByName(artistName);
         System.out.println("[PROFILE] fetched exists = " + (fetched != null));
         if (fetched == null) return cached;
-
-        // ✅ PK 보정
         fetched.setArtistName(artistName);
 
         System.out.println("[PROFILE] fetched.photoUrl = [" + fetched.getPhotoUrl() + "]");

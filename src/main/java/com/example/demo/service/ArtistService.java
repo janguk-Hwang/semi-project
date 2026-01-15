@@ -27,6 +27,7 @@ public class ArtistService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private static final String BASE_URL = "https://musicbrainz.org/ws/2";
+    private static final String DEFAULT_ALBUM_COVER = "/assets/album-placeholder.png";
     public List<String> getAllArtists() {
         return artistMapper.selectAllArtists();
     }
@@ -103,7 +104,6 @@ public class ArtistService {
      * 아티스트 앨범 목록: 캐시(DB) 있으면 DB에서, 없으면 MusicBrainz API 호출 후 저장
      */
     public List<ArtistAlbumDto> getArtistAlbums(String artistName) {
-
         // [STEP 0] DB에서 캐시된 데이터가 있는지 확인
         List<ArtistAlbumDto> dbAlbums = artistMapper.selectAlbumsByArtist(artistName);
         if (dbAlbums != null && !dbAlbums.isEmpty()) {
@@ -151,11 +151,8 @@ public class ArtistService {
                 JsonNode releases = objectMapper.readTree(releaseResponse.getBody()).path("releases");
                 for (JsonNode release : releases) {
                     String status = release.path("status").asText();
-                    String country = release.path("country").asText();
-                    String language = release.path("text-representation").path("language").asText();
-                    // 공식 한국반 필터링
-                    if ("Official".equalsIgnoreCase(status) && "KR".equalsIgnoreCase(country) && "kor".equalsIgnoreCase(language)) {
-
+                    // 공식 음반만
+                    if ("Official".equalsIgnoreCase(status)) {
                         Thread.sleep(1100);
                         String releaseId = release.path("id").asText();
                         String detailUrl = BASE_URL + "/release/" + releaseId + "?inc=recordings&fmt=json";
@@ -167,7 +164,14 @@ public class ArtistService {
                         albumDto.setTitle(detail.path("title").asText());
                         albumDto.setType(groupType);
                         albumDto.setReleaseDate(detail.path("date").asText());
-                        albumDto.setCoverImageUrl("https://coverartarchive.org/release/" + releaseId + "/front");
+                        String coverUrl = DEFAULT_ALBUM_COVER;
+                        JsonNode caa = detail.path("cover-art-archive");
+                        boolean hasArtwork = caa.path("artwork").asBoolean(false);
+                        boolean hasFront = caa.path("front").asBoolean(false);
+                        if (hasArtwork && hasFront) {
+                            coverUrl = "https://coverartarchive.org/release/" + releaseId + "/front";
+                        }
+                        albumDto.setCoverImageUrl(coverUrl);
 
                         List<TrackDto> trackList = new ArrayList<>();
                         JsonNode mediaArray = detail.path("media");

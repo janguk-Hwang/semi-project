@@ -2,7 +2,13 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Artist Profile</title>
+  <title th:text="${(artistInfo != null and artistInfo.musicianName != null and !artistInfo.musicianName.isBlank())
+                 ? artistInfo.musicianName
+                 : (artistName != null and !artistName.isBlank()) ? artistName
+                 : 'Artist'} + ' | Profile'">
+    Artist | Profile
+  </title>
+
   <link rel="stylesheet" th:href="@{/landing.css}">
   <link rel="stylesheet" th:href="@{/ArtistPage.css}">
 </head>
