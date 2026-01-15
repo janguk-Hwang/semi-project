@@ -11,4 +11,50 @@
     <select id="selectCurrentOrderId" resultType="int">
         select seq_orders.currval from dual
     </select>
+
+    <!--주문내역 조회 + 페이징처리-->
+    <select id="selectOrderListPaging" parameterType="map" resultType="OrderListDto">
+        select * from
+        (
+        select o.order_id,o.created_at,o.total_price,o.order_status,o.confirmed,
+        (
+        select p.product_name
+        from order_item oi join product p on oi.product_id=p.product_id
+        where oi.order_id=o.order_id and oi.order_item_id=(
+        select min(order_item_id) from order_item where order_id=o.order_id)) as represent_product_name,
+        (
+        select count(*) from order_item where order_id=o.order_id) as item_count,
+        ROW_NUMBER() OVER(order by o.created_at desc) rnum
+        from orders o where o.member_id=#{member_id}
+        )where rnum between #{startRow} and #{endRow}
+    </select>
+
+    <!--주문 총 개수 count + 페이징처리-->
+    <select id="countOrdersByMember" parameterType="int" resultType="int">
+        select count(*) from orders where member_id=#{member_id}
+    </select>
+
+    <!--주문 기본 정보 조회-->
+    <select id="selectOrderDetail" parameterType="map" resultType="OrderDetailDto">
+        select o.order_id,o.created_at,o.order_status,o.confirmed,o.total_price,o.address,u.phone
+        from orders o join users u on o.member_id=u.member_id
+        where o.order_id=#{order_id} and o.member_id=#{member_id}
+    </select>
+
+    <!--주문상품 목록 조회(+리뷰여부)-->
+    <select id="selectOrderDetailItems" parameterType="int" resultType="OrderDetailItemDto">
+        select oi.order_item_id, oi.product_id, p.product_name, f.savefilename, oi.option_id,
+        po.option_name, oi.quantity, oi.price, (oi.price*oi.quantity)as total_price,
+        (
+        select count(*) from review r
+        where r.order_id=oi.order_id and r.product_id=oi.product_id
+        and (r.option_id=oi.option_id or (r.option_id is null and oi.option_id is null))
+        ) as review_count
+        from order_item oi
+        join product p on oi.product_id=p.product_id
+        left join product_option po on oi.option_id=po.option_id
+        left join fileinfo f on ref_type='product' and ref_id=p.product_id and file_role='THUMB'
+        where oi.order_id=#{order_id}
+        order by oi.order_item_id
+    </select>
 </mapper>

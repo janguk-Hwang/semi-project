@@ -2,12 +2,15 @@ package com.example.demo.service;
 
 import com.example.demo.dto.*;
 import com.example.demo.mapper.*;
+import com.example.demo.pagination.PageInfo;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +21,43 @@ public class OrderService {
     private final ProductMapper productMapper;
     private final ProductOptionMapper productOptionMapper;
     private final CartMapper cartMapper;
+
+    //주문 상세 조회
+    public OrderDetailDto getOrderDetail(int order_id, int member_id){
+        Map<String,Object> map=new HashMap<>();
+        map.put("order_id",order_id);
+        map.put("member_id",member_id);
+        // 1. 주문 기본 정보 조회(본인 주문만)
+        OrderDetailDto order=ordersMapper.selectOrderDetail(map);
+        if(order==null){
+            throw new IllegalArgumentException("존재하지 않거나 접근 권한이 없는 주문입니다.");
+        }
+        // 2. 주문 상품 목록 조회
+        List<OrderDetailItemDto> items=ordersMapper.selectOrderDetailItems(order_id);
+        order.setItems(items);
+
+        return order;
+    }
+
+    //마이페이지 주문내역 조회 + 페이징처리
+    public Map<String,Object> getOrderListPaging(int member_id,int pageNum){
+        int totalRowCount=ordersMapper.countOrdersByMember(member_id);
+        PageInfo pageInfo=new PageInfo(pageNum,6,5,totalRowCount);
+
+        Map<String,Object> map=new HashMap<>();
+        map.put("startRow",pageInfo.getStartRow());
+        map.put("endRow",pageInfo.getEndRow());
+        map.put("member_id",member_id);
+        List<OrderListDto> list=ordersMapper.selectOrderListPaging(map);
+
+        Map<String,Object> result=new HashMap<>();
+        result.put("orderList",list);
+        result.put("pageInfo",pageInfo);
+        result.put("totalCount",totalRowCount);
+
+        return result;
+    }
+
     //장바구니 상품 주문 관련 공통 로직 -> 총주문금액 계산, 주문상품리스트, 배송정보
     private OrderPageDto buildOrderPage(List<OrderPageItemDto> items,UsersDto loginUser){
         int orderTotalPrice = 0;
@@ -149,11 +189,6 @@ public class OrderService {
             cartMapper.deleteCartItemsWhenOrders(dto.getCartIds());
         }
     }
-
-
-
-
-
     //상품상세(단일상품) 주문페이지에서 주문하기
     public void orderDirect(int member_id, OrderRequestDto orderRequestDto){
         //재고차감
@@ -196,58 +231,4 @@ public class OrderService {
         orderItemMapper.insertOrder(itemDto);
     }
 
-    //장바구니(여러상품) -> 주문페이지에서 주문하기
-    public void orderFromCart(int member_id,List<Integer> cartIds,String address){
-        // 1. 장바구니 -> 주문용데이터 조회
-        List<OrderRequestDto> items=cartMapper.selectOrderItemsFromCart(cartIds);
-        if(items ==null || items.isEmpty()){
-            throw new IllegalStateException("주문할 상품이 없습니다.");
-        }
-        int totalPrice=0;
-        // 2. 재고차감
-        for (OrderRequestDto item : items){
-            StockUpdateDto stockDto=new StockUpdateDto();
-            stockDto.setQuantity(item.getQuantity());
-            int updated;
-            if (item.getOption_id()!=null){
-                stockDto.setOption_id(item.getOption_id());
-                updated=productMapper.decreaseOptionStock(stockDto);
-                if(updated==0){
-                    throw new IllegalStateException("옵션 재고가 부족합니다.");
-                }
-                updated=productMapper.decreaseProductStockByOption(stockDto);
-                if(updated==0){
-                    throw new IllegalStateException("상품 재고가 부족합니다.");
-                }
-            } else {
-                stockDto.setProduct_id(item.getProduct_id());
-                updated=productMapper.decreaseProductStock(stockDto);
-                if(updated==0){
-                    throw new IllegalStateException("상품 재고가 부족합니다.");
-                }
-            }
-            totalPrice+=item.getPrice()*item.getQuantity();
-        }
-        // 3. orders생성
-        OrdersDto order=new OrdersDto();
-        order.setMember_id(member_id);
-        order.setOrder_status("ORDERED");
-        order.setTotal_price(totalPrice);
-        order.setAddress(address);
-        ordersMapper.insertOrder(order);
-        //orders주문번호 조회
-        int order_id=ordersMapper.selectCurrentOrderId();
-        // 4. order_item생성
-        for (OrderRequestDto item:items){
-            OrderItemDto orderItem=new OrderItemDto();
-            orderItem.setOrder_id(order_id);
-            orderItem.setProduct_id(item.getProduct_id());
-            orderItem.setOption_id(item.getOption_id());
-            orderItem.setQuantity(item.getQuantity());
-            orderItem.setPrice(item.getPrice());
-            orderItemMapper.insertOrder(orderItem);
-        }
-        // 5. 장바구니 삭제
-        cartMapper.deleteCartItemsWhenOrders(cartIds);
-    }
 }

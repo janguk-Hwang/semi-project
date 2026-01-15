@@ -14,9 +14,10 @@
   <div th:fragment="content" class="userMypage">
       <!--상단메뉴-->
     <section class="mypage-menu">
-      <a href="">주문/배송내역</a>
+      <a th:href="@{/mypage/orders}">주문/배송내역</a>
       <a th:href="@{/mypage/cart}">장바구니</a>
-      <a href="">상품 문의내역</a>
+      <a href="">상품 후기</a>
+      <a href="">게시글</a>
       <a href="">회원 정보 수정</a>
     </section>
     <section class="mypage-profile">
@@ -41,10 +42,10 @@
     </section>
       <!--상품관련-->
       <section class="mypage-product">
-          <a href="" class="mypage-card">주문/배송내역</a>
+          <a th:href="@{/mypage/orders}" class="mypage-card">주문/배송내역</a>
           <a th:href="@{/mypage/cart}" class="mypage-card">장바구니</a>
           <a href="" class="mypage-card">상품 문의내역</a>
-          <a href="" class="mypage-card">상품 Q&A</a>
+          <a href="" class="mypage-card">상품 후기</a>
       </section>
       <!--게시판관련-->
       <section class="mypage-community">

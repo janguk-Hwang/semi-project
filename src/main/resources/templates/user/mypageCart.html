@@ -114,6 +114,14 @@
 <!--content-->
 <th:block th:replace="~{fragments/layout::getMain(~{::content})}">
   <div th:fragment="content">
+    <!--상단메뉴-->
+    <section class="mypage-menu">
+      <a th:href="@{/mypage/orders}">주문/배송내역</a>
+      <a th:href="@{/mypage/cart}">장바구니</a>
+      <a href="">상품 후기</a>
+      <a href="">게시글</a>
+      <a href="">회원 정보 수정</a>
+    </section>
     <section class="cart-header">
       <h2>장바구니(<span th:text="${cartCount}">0</span>)</h2>
     </section>

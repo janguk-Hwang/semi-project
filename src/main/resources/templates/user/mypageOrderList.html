@@ -4,6 +4,73 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" th:href="@{/landing.css}">
     <title>user/mypageOrderList.html</title>
+    <style>
+        .mypage-container{
+            max-width: 900px;
+            margin: 40px auto;
+        }
+        .order-box{
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px;
+        }
+        .order-title{
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .order-table-header,
+        .order-row {
+            display: grid;
+            grid-template-columns: 120px 1fr 120px 120px;
+            align-items: center;
+            padding: 14px 0;
+        }
+        .order-table-header{
+            font-weight: bold;
+            border-bottom: 2px solid #ddd;
+        }
+        .order-row{
+            border-bottom: 1px solid #eee;
+        }
+        .order-product{
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        .order-price{
+            font-weight: 600;
+        }
+        .order-status{
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
+        }
+        .order-status span {
+            font-size: 13px;
+        }
+        .order-status button{
+            padding: 4px 8px;
+            font-size: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background: #eee;
+        }
+        .order-status button:hover{
+            background: #ddd;
+        }
+        .pagination{
+            text-align: center;
+            margin-top: 20px;
+        }
+        .pagination strong{
+            background: #333;
+            color: #fff;
+            border-radius: 50%;
+            padding: 4px 8px;
+        }
+    </style>
 </head>
 <body>
 <!--header-->
@@ -11,8 +78,81 @@
 
 <!--content-->
 <th:block th:replace="~{fragments/layout::getMain(~{::content})}">
-  <div th:fragment="content">
-
+  <div th:fragment="content" class="mypage-container">
+      <!--상단메뉴-->
+      <section class="mypage-menu">
+          <a th:href="@{/mypage/orders}">주문/배송내역</a>
+          <a th:href="@{/mypage/cart}">장바구니</a>
+          <a href="">상품 후기</a>
+          <a href="">게시글</a>
+          <a href="">회원 정보 수정</a>
+      </section>
+      <div class="order-box">
+          <div class="order-title">주문 / 배송 내역</div>
+          <!--테이블 헤더-->
+          <div class="order-table-header">
+              <div>일자</div>
+              <div>상품정보</div>
+              <div>가격</div>
+              <div>상태</div>
+          </div>
+          <!--주문목록-->
+          <div th:if="${#lists.isEmpty(orderList)}">
+              <p>주문 내역이 없습니다.</p>
+          </div>
+          <div th:if="${!#lists.isEmpty(orderList)}">
+              <div class="order-row" th:each="orders:${orderList}">
+                  <div th:text="${#dates.format(orders.created_at,'yyyy-MM-dd')}">주문일자</div>
+                  <div class="order-product">
+                      <a th:href="@{/mypage/orders/{id}(id=${orders.order_id})}">
+                          <span th:text="${orders.represent_product_name}">대표 상품명</span>
+                          <span th:if="${orders.item_count>1}">
+                              외 <span th:text="${orders.item_count - 1}">1</span>건
+                          </span>
+                      </a>
+                  </div>
+                  <div class="order-price"
+                       th:text="${#numbers.formatInteger(orders.total_price,0,'COMMA')}+'원'">가격</div>
+                  <!--상태 + 버튼-->
+                  <div class="order-status">
+                  <span th:switch="${orders.order_status}">
+                      <span th:case="'ORDERED'">주문 완료</span>
+                      <span th:case="'SHIPPING'">배송중</span>
+                      <span th:case="'DELIVERED'">배송 완료</span>
+                      <span th:case="'CANCELLED'">주문 취소</span>
+                  </span>
+                      <!--주문취소 버튼-->
+                      <form th:if="${orders.order_status=='ORDERED'}" method="post" th:action="@{/order/cancel}">
+                          <input type="hidden" name="order_id" th:value="${orders.order_id}">
+                          <button type="submit">주문 취소</button>
+                      </form>
+                      <!--구매확정 버튼-->
+                      <form th:if="${orders.order_status=='DELIVERED'&&orders.confirmed=='N'}"
+                            method="post" th:action="@{/order/confirm}">
+                          <input type="hidden" name="order_id" th:value="${orders.order_id}">
+                          <button type="submit">구매 확정</button>
+                      </form>
+                  </div>
+              </div>
+          </div>
+          <!--페이징-->
+          <div class="pagination" th:if="${pageInfo.totalPageCount > 1}">
+              <!--이전-->
+              <a th:if="${pageInfo.startPageNum > 1}" th:href="@{/mypage/orders(pageNum=${pageInfo.startPageNum - 1})}">
+                  &lt;
+              </a>
+              <!--페이지 번호-->
+              <span th:each="pagenum:${#numbers.sequence(pageInfo.startPageNum,pageInfo.endPageNum)}">
+                  <a th:if="${pagenum!=pageInfo.pageNum}" th:href="@{/mypage/orders(pageNum=${pagenum})}"
+                  th:text="${pagenum}"></a>
+                  <strong th:if="${pagenum==pageInfo.pageNum}" th:text="${pagenum}"></strong>
+              </span>
+              <!--다음-->
+              <a th:if="${pageInfo.endPageNum<pageInfo.totalPageCount}" th:href="@{/mypage/orders(pageNum=${pageInfo.endPageNum + 1})}">
+                  &gt;
+              </a>
+          </div>
+      </div>
   </div>
 </th:block>
 
