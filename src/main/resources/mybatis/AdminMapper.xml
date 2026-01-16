@@ -38,6 +38,12 @@
     <delete id="admindelete" parameterType="int">
         delete from users where member_id=#{member_id}
     </delete>
+    <select id="countmembers" resultType="int">
+        select count(*) from users
+    </select>
+    <select id="countboard" resultType="int">
+        select count(*) from board
+    </select>
     <sql id="search">
         <if test="field != null and field != '' and keyword != null and keyword != ''">
             <choose>

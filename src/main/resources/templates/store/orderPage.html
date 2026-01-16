@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <!-- 스크립트 추가 -->
+    <script src="https://js.tosspayments.com/v2/standard"></script>
+    <link rel="stylesheet" th:href="@{/landing.css}">
+    <title>store/orderPage.html</title>
+    <style>
+        .order-container{
+            max-width: 900px;
+            margin: 40px auto;
+        }
+        .order-box{
+            background: #f9f9f9;
+            padding: 30px;
+            border-radius: 10px;
+        }
+        .order-section{
+            margin-bottom: 30px;
+        }
+        .order-title{
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .order-product{
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .order-product img{
+            width: 100px;
+            border: 1px solid #ccc;
+        }
+        .order-summary{
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        .order-input input{
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+<!-- 헤더삽입 -->
+<div th:replace="~{fragments/layout::header}"></div>
+
+<!-- 메인 콘텐츠 영역: th:block으로 감싸서 중복 출력을 방지합니다 -->
+<th:block th:replace="~{fragments/layout::getMain(~{::content})}">
+  <div th:fragment="content" class="order-container">
+      <h2>ORDER</h2>
+      <hr>
+      <form method="post" th:action="@{/order/confirm}">
+          <div class="order-box">
+              <!--주문상품-->
+              <div class="order-section">
+                  <div class="order-title">주문상품</div>
+                  <div class="order-product" th:each="item:${order.items}">
+                      <img th:src="@{'/images/'+${item.savefilename}}" alt="대표이미지">
+                      <div>
+                          <p class="product-name" th:text="${item.product_name}">상품명</p>
+                          <p class="product-option" th:if="${item.option_name!=null}" th:text="${item.option_name}">옵션명</p>
+                          <p class="product-qty">
+                              <span th:text="${item.quantity}">1</span>개 /
+                          </p>
+                          <p class="product-price">
+                              <span th:text="${#numbers.formatInteger(item.total_price,0,'COMMA')}">0</span>원
+                          </p>
+                      </div>
+                  </div>
+                  <div class="order-summary">
+                      <span>상품 합계</span>
+                      <span th:text="${#numbers.formatInteger(order.order_total_price,0,'COMMA')}">0</span>원
+                  </div>
+              </div>
+              <!--배송정보-->
+              <div class="order-section">
+                  <div class="order-title">배송 정보</div>
+                  <div class="order-input">
+                      <label>수령인</label>
+                      <input type="text" name="receiver" th:value="${order.receiver}" required readonly>
+                  </div>
+                  <div class="order-input">
+                      <label>연락처</label>
+                      <input type="text" name="phone" th:value="${order.phone}" required pattern="[0-9]{10,11}" readonly>
+                  </div>
+                  <div class="order-input">
+                      <label>배송지</label>
+                      <input type="text" name="address" th:value="${order.address}" required>
+                  </div>
+              </div>
+
+              <!--hidden값들 : 주문상품들 전달-->
+              <div th:each="item,stat:${order.items}">
+                  <input type="hidden" th:name="|items[${stat.index}].product_id|"
+                         th:value="${item.product_id}">
+                  <input type="hidden" th:name="|items[${stat.index}].option_id|"
+                         th:value="${item.option_id}">
+                  <input type="hidden" th:name="|items[${stat.index}].quantity|"
+                         th:value="${item.quantity}">
+                  <input type="hidden" th:name="|items[${stat.index}].price|"
+                         th:value="${item.unit_price}">
+              </div>
+              <!--주문출처 전달 : DIRECT / CART-->
+              <input type="hidden" name="orderSource" th:value="${order.orderSource}">
+              <!--장바구니 주문일때만 cartIds 전달-->
+              <div th:if="${order.cartIds != null}">
+                  <input type="hidden" th:each="cid:${order.cartIds}" name="cartIds" th:value="${cid}">
+              </div>
+              <button type="submit" class="order-btn" id="order-btn">결제하기</button>
+<!--              <button type="button" class="order-btn" id="paybtn" onclick="requestPayment()">결제하기</button>-->
+          </div>
+      </form>
+  </div>
+</th:block>
+
+<!-- footer삽입 -->
+<div th:replace="~{fragments/layout::footer}"></div>
+
+<!--<script th:inline="javascript">-->
+<!--    // &#45;&#45;&#45;&#45;&#45;&#45;  결제위젯 초기화 &#45;&#45;&#45;&#45;&#45;&#45;-->
+<!--    const clientKey = "";-->
+<!--    const tossPayments = TossPayments(clientKey);-->
+
+<!--    document.getElementById('order-btn').addEventListener('click',function (e){-->
+<!--        e.preventDefault();-->
+
+<!--    })-->
+<!--</script>-->
+
+</body>
+</html>

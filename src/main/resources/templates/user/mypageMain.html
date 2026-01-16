@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/landing.css}">
+    <title>user/mypageMain.html</title>
+</head>
+<body>
+<!--header-->
+<div th:replace="~{fragments/layout::header}"></div>
+
+<!--content-->
+<th:block th:replace="~{fragments/layout::getMain(~{::content})}">
+  <div th:fragment="content" class="userMypage">
+      <!--상단메뉴-->
+    <section class="mypage-menu">
+      <a th:href="@{/mypage/orders}">주문/배송내역</a>
+      <a th:href="@{/mypage/cart}">장바구니</a>
+      <a href="">상품 후기</a>
+      <a href="">게시글</a>
+      <a href="">회원 정보 수정</a>
+    </section>
+    <section class="mypage-profile">
+        <div class="profile-left">
+            <div class="profile-icon">👤</div>
+            <p th:text="${session.loginUser.name}">닉네임</p>
+        </div>
+        <div class="profile-right">
+            <div>
+                <span>주문건</span>
+                <div>0건</div>
+            </div>
+            <div>
+                <span>문의건</span>
+                <div>0건</div>
+            </div>
+            <div>
+                <span>작성게시글</span>
+                <div>0건</div>
+            </div>
+        </div>
+    </section>
+      <!--상품관련-->
+      <section class="mypage-product">
+          <a th:href="@{/mypage/orders}" class="mypage-card">주문/배송내역</a>
+          <a th:href="@{/mypage/cart}" class="mypage-card">장바구니</a>
+          <a href="" class="mypage-card">상품 문의내역</a>
+          <a href="" class="mypage-card">상품 후기</a>
+      </section>
+      <!--게시판관련-->
+      <section class="mypage-community">
+          <a href="">작성 게시글</a>
+          <a href="">댓글/활동알림</a>
+      </section>
+  </div>
+</th:block>
+
+<!--footer-->
+<div th:replace="~{fragments/layout::footer}"></div>
+
+<script th:inline="javascript" th:if="${msg!=null}">
+    alert([[${msg}]]);
+</script>
+</body>
+</html>

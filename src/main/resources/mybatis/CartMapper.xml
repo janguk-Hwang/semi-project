@@ -3,6 +3,24 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.CartMapper">
+    <!--장바구니 상품 주문완료시 장바구니목록에서 상품 삭제-->
+    <delete id="deleteCartItemsWhenOrders" parameterType="list">
+        delete from cart where cart_id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--장바구니 주문용 조회쿼리-->
+    <select id="selectOrderItemsFromCart" parameterType="list" resultType="OrderRequestDto">
+        select c.product_id, c.option_id, c.quantity, p.price
+        from cart c join product p on c.product_id=p.product_id
+        where c.cart_id in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
     <insert id="insertCart" parameterType="CartDto">
         insert into cart(cart_id,quantity,created_at,member_id,product_id
         <if test="option_id != null">
@@ -15,4 +33,55 @@
         </if>
         )
     </insert>
+    
+    <select id="selectCartItem" parameterType="map" resultType="CartDto">
+        select cart_id,quantity,created_at,member_id,option_id,product_id from cart
+        where member_id=#{member_id} and product_id=#{product_id}
+        <if test="option_id != null">
+            and option_id=#{option_id}
+        </if>
+        <if test="option_id == null">
+            and option_id is null
+        </if>
+    </select>
+
+    <update id="updateCartQuantity" parameterType="CartDto">
+        update cart set quantity=quantity + #{quantity}
+        where cart_id=#{cart_id}
+    </update>
+
+    <select id="selectCartList" parameterType="int" resultType="CartListDto">
+        select c.cart_id, c.quantity,
+        p.product_id, p.product_name, p.price as product_price,
+        o.option_id, o.option_name,
+        f.savefilename as savefilename,
+
+        case
+        when c.option_id is not null then o.stock
+        else p.stock
+        end as stock
+
+        from cart c join product p on c.product_id=p.product_id
+        left join product_option o on c.option_id=o.option_id
+        left join fileinfo f on f.ref_type='product' and f.ref_id=p.product_id and f.file_role='THUMB'
+
+        where c.member_id=#{member_id}
+        order by c.cart_id desc
+    </select>
+
+    <update id="updateUserCartQuantity" parameterType="CartListDto">
+        update cart set quantity=#{quantity} where cart_id=#{cart_id}
+    </update>
+
+    <delete id="deleteCartItem" parameterType="CartListDto">
+        delete from cart where cart_id=#{cart_id} and member_id=#{member_id}
+    </delete>
+
+    <select id="countCartItems" parameterType="int" resultType="int">
+        select count(*) from cart where member_id=#{member_id}
+    </select>
+
+    <select id="selectCartIdsByMember" parameterType="int" resultType="int">
+        select cart_id  from cart where member_id=#{member_id}
+    </select>
 </mapper>

@@ -7,4 +7,12 @@
         select option_id, option_name, stock, product_id from product_option
         where product_id=#{product_id}
     </select>
+
+    <select id="selectOptionStock" parameterType="int" resultType="int">
+        select stock from product_option where option_id=#{option_id}
+    </select>
+
+    <select id="selectOptionById" parameterType="int" resultType="ProductOptionDto">
+        select option_id,option_name,stock from product_option where option_id=#{option_id}
+    </select>
 </mapper>

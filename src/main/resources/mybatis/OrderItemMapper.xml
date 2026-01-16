@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.OrderItemMapper">
+    <insert id="insertOrder" parameterType="OrderItemDto">
+        insert into order_item(order_item_id,quantity,price,order_id,product_id,option_id)
+        VALUES(seq_order_item.nextval,#{quantity},#{price},#{order_id},#{product_id},#{option_id, jdbcType=INTEGER})
+    </insert>
+
+    <!--장바구니 목록 선택한 상품만 조회-->
+    <select id="selectOrderItemsByCart" parameterType="map" resultType="OrderPageItemDto">
+        select c.cart_id, c.quantity, p.product_id, p.product_name, p.price as unit_price,
+        o.option_id, o.option_name, f.savefilename
+        from cart c
+        join product p on c.product_id=p.product_id
+        left join product_option o on c.option_id=o.option_id
+        left join fileinfo f on f.ref_type='product' and f.ref_id=p.product_id and f.file_role='THUMB'
+        where c.member_id=#{member_id} and c.cart_id in
+        <foreach collection="cartIds" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        order by c.cart_id desc
+    </select>
+
+    <!--장바구니 목록 전체선택 상품 조회-->
+    <select id="selectOrderItemByMember" parameterType="int" resultType="OrderPageItemDto">
+        select c.cart_id, c.quantity, p.product_id, p.product_name, p.price as unit_price,
+        o.option_id, o.option_name, f.savefilename
+        from cart c
+        join product p on c.product_id=p.product_id
+        left join product_option o on c.option_id=o.option_id
+        left join fileinfo f on f.ref_type='product' and f.ref_id=p.product_id and f.file_role='THUMB'
+        where c.member_id=#{member_id}
+        order by c.cart_id desc
+    </select>
+</mapper>
