@@ -11,6 +11,8 @@ import java.util.Map;
 
 @Mapper
 public interface OrdersMapper {
+    int updateOrderConfirmed(Map<String,Object> map);
+    boolean isConfirmableOrder(Map<String,Object> map);
     int updateOrderStatusToCancelled(Map<String, Object> map);
     boolean isCancelableOrder(Map<String, Object> map);
     OrdersDto selectByOrderId(int order_id);

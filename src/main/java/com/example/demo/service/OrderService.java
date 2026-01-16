@@ -22,6 +22,21 @@ public class OrderService {
     private final ProductOptionMapper productOptionMapper;
     private final CartMapper cartMapper;
 
+    //구매확정
+    public void confirmPhurchase(int order_id, int member_id){
+        Map<String,Object> map=new HashMap<>();
+        map.put("order_id",order_id);
+        map.put("member_id",member_id);
+        boolean confirmable=ordersMapper.isConfirmableOrder(map);
+        if(!confirmable){
+            throw new IllegalStateException("구매 확정이 불가능한 주문입니다.");
+        }
+        int updated=ordersMapper.updateOrderConfirmed(map);
+        if(updated==0){
+            throw new IllegalStateException("구매 확정 처리 실패");
+        }
+    }
+
     //주문취소
     public void cancelOrder(int order_id, int member_id){
         // 1. 주문취소 가능여부

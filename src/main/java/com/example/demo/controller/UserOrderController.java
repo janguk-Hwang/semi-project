@@ -51,7 +51,7 @@ public class UserOrderController {
         //주문취소 가능여부 체크(본인주문 + ORDERED상태)
         if(!orderService.isCancelableOrder(orderId,member_id)){
             ra.addFlashAttribute("msg","취소할 수 없는 주문입니다.");
-            return "redirect:/mypage/orders"+orderId;
+            return "redirect:/mypage/orders/"+orderId;
         }
         //취소대상 주문 정보 조회(상품목록 포함)
         OrderDetailDto order=orderService.getOrderDetail(orderId,member_id);
@@ -94,5 +94,23 @@ public class UserOrderController {
             ra.addFlashAttribute("msg","주문 취소 중 오류가 발생했습니다.");
             return "redirect:/mypage/orders/"+orderId;
         }
+    }
+
+    //구매확정
+    @PostMapping("/order/confirmed")
+    public String confirmOrder(@RequestParam("order_id") int order_id,
+                               HttpSession session, RedirectAttributes ra)  {
+        UsersDto loginUser=(UsersDto)session.getAttribute("loginUser");
+        if (loginUser==null){
+            ra.addFlashAttribute("msg","로그인이 필요합니다.");
+            return "redirect:/login";
+        }
+        try{
+            orderService.confirmPhurchase(order_id,loginUser.getMember_id());
+            ra.addFlashAttribute("msg","구매가 확정되었습니다.");
+        }catch (IllegalStateException e){
+            ra.addFlashAttribute("msg",e.getMessage());
+        }
+        return "redirect:/mypage/orders/"+order_id;
     }
 }

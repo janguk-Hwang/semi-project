@@ -139,7 +139,7 @@
                          th:href="@{/myorder/cancel/{id}(id=${orders.order_id})}" class="cancel-btn">주문 취소</a>
                       <!--구매확정 버튼-->
                       <form th:if="${orders.order_status=='DELIVERED'&&orders.confirmed=='N'}"
-                            method="post" th:action="@{/order/confirm}">
+                            method="post" th:action="@{/order/confirmed}">
                           <input type="hidden" name="order_id" th:value="${orders.order_id}">
                           <button type="submit">구매 확정</button>
                       </form>

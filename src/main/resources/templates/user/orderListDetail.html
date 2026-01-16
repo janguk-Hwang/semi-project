@@ -139,7 +139,7 @@
         <span>주문번호<b th:text="${order.order_id}"></b></span>
         <!--구매확정 버튼-->
         <form th:if="${order.order_status=='DELIVERED'&&order.confirmed=='N'}"
-              method="post" th:action="@{/order/confirm}">
+              method="post" th:action="@{/order/confirmed}">
           <input type="hidden" name="order_id" th:value="${order.order_id}">
           <button type="submit">구매 확정</button>
         </form>
@@ -166,7 +166,6 @@
             <span th:case="'DELIVERED'">배송 완료</span>
             <span th:case="'CANCELLED'">주문 취소</span>
           </span>
-        </div>
           <!--후기작성 버튼-->
           <form th:if="${order.confirmed=='Y'&&item.review_count==0}" method="post" th:action="@{/review/write}">
             <input type="hidden" name="order_id" th:value="${order.order_id}">
@@ -176,6 +175,7 @@
           </form>
           <!--이미 작성한 경우-->
           <span th:if="${item.review_count>0}">후기 작성 완료</span>
+        </div>
       </div>
       <!--주문정보-->
       <div class="order-info">
