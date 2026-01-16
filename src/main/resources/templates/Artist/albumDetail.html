@@ -2,8 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title th:text="${album.title} + ' - Album Detail'">Album Detail</title>
-
+  <title th:text="${album.title}">Album Detail</title>
   <link rel="stylesheet" th:href="@{/landing.css}">
   <link rel="stylesheet" th:href="@{/albumDetail.css}">
 </head>
@@ -80,6 +79,8 @@
             </div>
           </li>
         </ul>
+
+        <!-- [CHANGED] 플레이어는 1개만 두고, 클릭한 곡 아래로 '이동'시켜서 보여준다 -->
         <div class="yt-player-wrap" id="ytWrap" style="display:none;">
           <div class="yt-player-header">
             <span id="ytNowPlaying">재생 중</span>
@@ -113,9 +114,14 @@
     if (nowPlaying) nowPlaying.textContent = text || '재생 중';
   }
 
+  // [CHANGED] 클릭한 곡(li) 바로 아래로 플레이어를 이동시키는 함수
+  function movePlayerUnderTrack(trackItemEl) {
+    if (!trackItemEl) return;
+    trackItemEl.insertAdjacentElement('afterend', wrap); // 기존 위치에서 "이동"됨
+  }
+
   function openPlayer(videoId, titleText) {
     if (!videoId) return;
-    // start=0은 취향대로 조절 가능
     const src = `https://www.youtube.com/embed/${videoId}?autoplay=1&start=0&rel=0`;
     iframe.src = src;
     setNowPlaying(titleText || '재생 중');
@@ -126,7 +132,6 @@
     iframe.src = '';           // 재생 중지
     wrap.style.display = 'none';
     setNowPlaying('재생 중');
-    // 버튼 표시 상태 원복(필요 시)
     document.querySelectorAll('.btn-preview.is-playing').forEach(b => b.classList.remove('is-playing'));
   }
 
@@ -168,6 +173,10 @@
     if (!btn) return;
     if (btn.dataset.loading === '1') return;
 
+    // [CHANGED] "어떤 곡을 눌렀는지" 찾고, 플레이어를 그 곡 아래로 이동
+    const trackItem = btn.closest('.album-detail-track-item');
+    movePlayerUnderTrack(trackItem);
+
     const trackTitle = (btn.dataset.title || '').trim();
     const artistName = (btn.dataset.artist || '').trim();
     const displayTitle = artistName && trackTitle ? `${artistName} - ${trackTitle}` : (trackTitle || '재생 중');
@@ -190,6 +199,10 @@
     }
 
     setButtonLoading(btn, true);
+
+    // [CHANGED] 검색 중에도 "그 곡 아래"에서 영역이 보이게 유지
+    wrap.style.display = 'block';
+    iframe.src = ''; // 검색 중엔 비우기
     setNowPlaying(`${displayTitle} (검색 중...)`);
 
     try {
@@ -198,6 +211,7 @@
       if (!videoId) {
         alert('미리듣기 영상을 찾지 못했습니다');
         setNowPlaying('재생 중');
+        wrap.style.display = 'none';
         return;
       }
 
@@ -219,6 +233,22 @@
 <style>
   .btn-preview.disabled { opacity: 0.6; cursor: not-allowed; }
   .btn-preview.is-playing { font-weight: 700; }
+
+  /* [ADDED] 곡 아래에 붙었을 때 여백 */
+  .yt-player-wrap { margin: 12px 0 18px; }
+
+  /*
+    [ADDED][IMPORTANT]
+    albumDetail.css에 ytWrap이 하단 고정(fixed)으로 잡혀있다면,
+    아래가 그걸 "강제로 해제"해준다.
+    (원하면 이 3줄을 albumDetail.css로 옮겨도 됨)
+  */
+  #ytWrap {
+    position: static !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+  }
 </style>
 
 </body>
