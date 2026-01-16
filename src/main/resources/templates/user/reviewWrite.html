@@ -164,9 +164,9 @@
             <form method="post" action="" enctype="multipart/form-data">
                 <!--hidden값-->
                 <input type="hidden" name="order_id">
-                <input type="hidden" name="product_id" id="">
+                <input type="hidden" name="product_id">
                 <input type="hidden" name="option_id">
-                <input type="hidden" name="rating">
+                <input type="hidden" name="rating" id="ratingValue">
                 <!--별점-->
                 <div class="rating">
                     <span data-value="1">★</span>
@@ -175,7 +175,6 @@
                     <span data-value="4">★</span>
                     <span data-value="5">★</span>
                 </div>
-                <input type="hidden" name="rating" id="ratingValue">
                 <!--후기내용-->
                 <textarea id="content" name="content" maxlength="2000" placeholder="후기 내용을 작성해주세요."></textarea>
                 <div class="char-count">
@@ -200,18 +199,24 @@
 <div th:replace="~{fragments/layout::footer}"></div>
 
 <script>
-    //글자수 카운트
+
     const textarea=document.getElementById("content");
     const charCount=document.getElementById("charCount");
+    const stars=document.querySelectorAll(".rating span");
+    const ratingInput =document.getElementById("ratingValue");
+    const form=document.querySelector("form");
 
+    document.querySelector("form").addEventListener('submit',function (e){
+        if(!ratingInput.value){
+            alert("별점을 선택해주세요.");
+            e.preventDefault();
+        }
+    })
+    //글자수 카운트
     textarea.addEventListener('input',()=>{
         charCount.textContent=textarea.value.length;
     });
-
     //별점 처리
-    const stars=document.querySelectorAll(".rating span");
-    const ratingInput =document.getElementById("ratingValue");
-
     stars.forEach(star=>{
         star.addEventListener('click',()=>{
             const value=star.dataset.value;
