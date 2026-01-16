@@ -3,6 +3,13 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.AccountMapper">
+    <!--환불정보 update-->
+    <update id="updateAccount" parameterType="AccountDto">
+        update account set account=#{account},name=#{name},bank=#{bank}
+        where member_id=#{member_id}
+    </update>
+    
+    <!--회원가입시 계좌정보 insert-->
     <insert id="insertAccount" parameterType="AccountDto">
         insert into account(account_id,account,name,bank,member_id) values(seq_account.nextval,#{account},#{name},
         #{bank},#{member_id})
@@ -10,5 +17,11 @@
 
     <select id="selectmid" parameterType="String" resultType="int">
         select member_id from users where id=#{id}
+    </select>
+
+    <!--member_id로 계좌정보 조회(주문취소 시 조회)-->
+    <select id="selectAccountByMemberId" parameterType="int" resultType="AccountDto">
+        select account_id, account, name, bank, member_id
+        from account where member_id=${member_id}
     </select>
 </mapper>

@@ -8,6 +8,12 @@
         VALUES(seq_order_item.nextval,#{quantity},#{price},#{order_id},#{product_id},#{option_id, jdbcType=INTEGER})
     </insert>
 
+    <!--주문상품 조회(주문취소용)-->
+    <select id="selectOrderItemsByOrderId" parameterType="int" resultType="OrderItemDto">
+        select order_id,product_id,option_id,quantity,price
+        from order_item where order_id=#{order_id}
+    </select>
+
     <!--장바구니 목록 선택한 상품만 조회-->
     <select id="selectOrderItemsByCart" parameterType="map" resultType="OrderPageItemDto">
         select c.cart_id, c.quantity, p.product_id, p.product_name, p.price as unit_price,

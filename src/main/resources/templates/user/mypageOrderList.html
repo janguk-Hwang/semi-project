@@ -70,6 +70,19 @@
             border-radius: 50%;
             padding: 4px 8px;
         }
+        .cancel-btn{
+            display: inline-block;
+            padding: 4px 8px;
+            font-size: 12px;
+            border-radius: 4px;
+            background: #eee;
+            color: #000;
+            text-decoration: none;
+        }
+        .cancel-btn:hover{
+            background: #ddd;
+        }
+
     </style>
 </head>
 <body>
@@ -122,10 +135,8 @@
                       <span th:case="'CANCELLED'">주문 취소</span>
                   </span>
                       <!--주문취소 버튼-->
-                      <form th:if="${orders.order_status=='ORDERED'}" method="post" th:action="@{/order/cancel}">
-                          <input type="hidden" name="order_id" th:value="${orders.order_id}">
-                          <button type="submit">주문 취소</button>
-                      </form>
+                      <a th:if="${orders.order_status=='ORDERED'}"
+                         th:href="@{/myorder/cancel/{id}(id=${orders.order_id})}" class="cancel-btn">주문 취소</a>
                       <!--구매확정 버튼-->
                       <form th:if="${orders.order_status=='DELIVERED'&&orders.confirmed=='N'}"
                             method="post" th:action="@{/order/confirm}">
@@ -158,5 +169,6 @@
 
 <!--footer-->
 <div th:replace="~{fragments/layout::footer}"></div>
+
 </body>
 </html>

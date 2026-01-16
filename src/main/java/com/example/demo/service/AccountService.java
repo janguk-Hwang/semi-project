@@ -13,8 +13,15 @@ import java.util.Map;
 public class AccountService {
     private final AccountMapper accountMapper;
 
+    public int updateAccount(AccountDto dto){
+        return accountMapper.updateAccount(dto);
+    }
+
     public int insertAccount(AccountDto dto){
         return accountMapper.insertAccount(dto);
     }
 
+    public AccountDto selectAccountByMemberId(int member_id){
+        return accountMapper.selectAccountByMemberId(member_id);
+    }
 }

@@ -22,6 +22,70 @@ public class OrderService {
     private final ProductOptionMapper productOptionMapper;
     private final CartMapper cartMapper;
 
+    //주문취소
+    public void cancelOrder(int order_id, int member_id){
+        // 1. 주문취소 가능여부
+        Map<String,Object> map=new HashMap<>();
+        map.put("order_id",order_id);
+        map.put("member_id",member_id);
+        boolean cancelable=ordersMapper.isCancelableOrder(map);
+        if (!cancelable){
+            throw new IllegalStateException("취소할 수 없는 주문입니다.");
+        }
+        // 2. 주문상품 목록 조회
+        List<OrderItemDto> items=orderItemMapper.selectOrderItemsByOrderId(order_id);
+        if(items==null || items.isEmpty()){
+            throw new IllegalStateException("주문 상품 정보가 존재하지 않습니다.");
+        }
+        // 3. 재고복구
+        for(OrderItemDto item:items){
+            StockUpdateDto stockDto=new StockUpdateDto();
+            stockDto.setQuantity(item.getQuantity());
+            //옵션 있는 상품
+            if(item.getOption_id()!=null){
+                // 3-1. 옵션 재고 복구
+                stockDto.setOption_id(item.getOption_id());
+                int optionUpdated=productOptionMapper.increaseOptionStock(stockDto);
+                if(optionUpdated==0){
+                    throw new IllegalStateException("옵션 재고 복구 실패");
+                }
+                // 3-2. 상품 재고 복구
+                stockDto.setProduct_id(item.getProduct_id());
+                int productUpdated=productMapper.increaseProductStock(stockDto);
+                if(productUpdated==0){
+                    throw new IllegalStateException("상품 재고 복구 실패");
+                }
+            } else {
+                //옵션 없는 상품
+                stockDto.setProduct_id(item.getProduct_id());
+                int productUpdated=productMapper.increaseProductStock(stockDto);
+                if(productUpdated==0){
+                    throw new IllegalStateException("상품 재고 복구 실패");
+                }
+            }
+        }
+        // 4. 주문 상태 변경
+        int updated=ordersMapper.updateOrderStatusToCancelled(map);
+        if(updated==0){
+            throw new IllegalStateException("주문 상태 변경 실패");
+        }
+    }
+
+    //주문취소 가능여부 체크
+    public boolean isCancelableOrder(int order_id, int member_id){
+        OrdersDto order=ordersMapper.selectByOrderId(order_id);
+        if(order==null){
+            return false; //주문없음
+        }
+        if(order.getMember_id()!=member_id){
+            return false; //본인주문 아님
+        }
+        if(!"ORDERED".equals(order.getOrder_status())){
+            return false; //이미 취소 또는 배송중/완료
+        }
+        return true;
+    }
+
     //주문 상세 조회
     public OrderDetailDto getOrderDetail(int order_id, int member_id){
         Map<String,Object> map=new HashMap<>();

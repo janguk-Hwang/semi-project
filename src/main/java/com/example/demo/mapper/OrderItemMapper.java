@@ -9,6 +9,7 @@ import java.util.List;
 
 @Mapper
 public interface OrderItemMapper {
+    List<OrderItemDto> selectOrderItemsByOrderId(int order_id);
     int insertOrder(OrderItemDto dto);
     //선택 장바구니 상품 주문용
     List<OrderPageItemDto> selectOrderItemsByCart(@Param("member_id") int member_id,

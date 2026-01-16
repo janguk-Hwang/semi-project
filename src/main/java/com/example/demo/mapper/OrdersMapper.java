@@ -11,6 +11,9 @@ import java.util.Map;
 
 @Mapper
 public interface OrdersMapper {
+    int updateOrderStatusToCancelled(Map<String, Object> map);
+    boolean isCancelableOrder(Map<String, Object> map);
+    OrdersDto selectByOrderId(int order_id);
     int insertOrder(OrdersDto dto);
     int selectCurrentOrderId();
     List<OrderListDto> selectOrderListPaging(Map<String,Object> map);

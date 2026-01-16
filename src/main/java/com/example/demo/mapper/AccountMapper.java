@@ -5,6 +5,8 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface AccountMapper {
+    int updateAccount(AccountDto dto);
     int insertAccount(AccountDto dto);
     int selectmid(String id);
+    AccountDto selectAccountByMemberId(int member_id);
 }

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/landing.css}">
+    <title>user/orderCancel.html</title>
+  <style>
+    .cancel-container{
+      max-width: 720px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 12px;
+      padding: 32px;
+    }
+    .cancel-title{
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 28px;
+    }
+    .section{
+      margin-bottom: 32px;
+    }
+    .section-title{
+      margin-bottom: 32px;
+    }
+    .order-date{
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+    .order-item{
+      display: flex;
+      gap: 16px;
+      padding: 12px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .order-img{
+      width: 90px;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .order-text{
+      font-size: 14px;
+    }
+    .option-name{
+      color: #777;
+      margin-left: 6px;
+    }
+    .order-meta{
+      margin-top: 6px;
+      font-size: 13px;
+      color: #555;
+    }
+    .form-row{
+      margin-bottom: 14px;
+    }
+    .form-row input,
+    .form-row select{
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+    .btn-area{
+      text-align: center;
+      margin-top: 20px;
+    }
+    .btn-submit{
+      padding: 12px 24px;
+      background: #333;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .btn-submit:hover{
+      background: #111;
+    }
+  </style>
+</head>
+<body>
+<!--header-->
+<div th:replace="~{fragments/layout::header}"></div>
+
+<!--content-->
+<th:block th:replace="~{fragments/layout::getMain(~{::content})}">
+  <div th:fragment="content" class="cancel-container">
+    <div class="cancel-title">주문 취소 / 환불 정보</div>
+    <!--취소상품 정보-->
+    <div class="section">
+      <div class="section-title">취소 상품 정보</div>
+      <div class="order-info">
+        <p class="order-date">
+          주문일자 :
+          <span th:text="${#dates.format(order.created_at,'yyyy-MM-dd')}"></span>
+        </p>
+        <div class="order-item" th:each="item:${order.items}">
+          <img th:src="@{'/images/'+${item.savefilename}}" alt="대표이미지" class="order-img">
+          <div class="order-text">
+            <div>
+              <strong th:text="${item.product_name}">상품명</strong>
+              <span class="option-name" th:if="${item.option_id!=null}" th:text="${item.option_name}">옵션명</span>
+            </div>
+            <div class="order-meta">
+              수량 <span th:text="${item.quantity}"></span> /
+              <span th:text="${#numbers.formatInteger(item.price * item.quantity,0,'COMMA')}"></span>원
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+      <!--환불계좌정보 + 취소확정-->
+      <form method="post" th:action="@{/myorder/cancel}">
+        <input type="hidden" name="order_id" th:value="${order.order_id}">
+        <div class="section">
+          <div class="section-title">환불 계좌 정보</div>
+          <!--은행 선택-->
+          <div class="form-row">
+            <select name="bank" required>
+              <option value="">은행 선택</option>
+              <option value="국민" th:selected="${account.bank=='국민'}">국민은행</option>
+              <option value="농협" th:selected="${account.bank=='농협'}">농협은행</option>
+              <option value="신한" th:selected="${account.bank=='신한'}">신한은행</option>
+              <option value="우리" th:selected="${account.bank=='우리'}">우리은행</option>
+              <option value="카카오" th:selected="${account.bank=='카카오'}">카카오뱅크</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <input type="text" name="account" placeholder="계좌번호" th:value="${account.account}">
+          </div>
+          <div class="form-row">
+            <input type="text" name="name" placeholder="예금주" th:value="${account.name}">
+          </div>
+        </div>
+          <div class="btn-area">
+            <button type="submit" class="btn-submit">주문 취소 확정</button>
+          </div>
+        <!--취소(돌아가기)-->
+        <a th:href="@{/mypage/orders/{id}(id=${order.order_id})}" class="btn-submit">취소</a>
+      </form>
+    </div>
+</th:block>
+
+<!--footer-->
+<div th:replace="~{fragments/layout::footer}"></div>
+
+<script th:inline="javascript" th:if="${msg}">
+  alert([[${msg}]]);
+</script>
+</body>
+</html>

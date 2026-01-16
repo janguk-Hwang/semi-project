@@ -47,7 +47,7 @@ public class AuthController {
         }else{
             httpSession.setAttribute("loginUser", dto);
             httpSession.setAttribute("member_id",dto.getMember_id());
-            return "redirect:/";
+            return "redirect:/home";
         }
     }
 

@@ -3,6 +3,11 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.ProductMapper">
+    <!--주문취소 : 상품 재고 증가(옵션없는경우)-->
+    <update id="increaseProductStock" parameterType="StockUpdateDto">
+        update product set stock=stock+#{quantity} where product_id=#{product_id}
+    </update>
+
     <!--옵션있는 상품의 상품테이블 재고 업데이트-->
     <update id="decreaseProductStockByOption" parameterType="StockUpdateDto">
         update product set stock=stock-#{quantity} where product_id=

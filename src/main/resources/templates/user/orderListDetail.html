@@ -104,6 +104,18 @@
       margin-top: 25px;
       text-align: right;
     }
+    .btn-back{
+      display: inline-block;
+      padding: 10px 18px;
+      border-radius: 6px;
+      background: #eee;
+      color: #000;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .btn-back:hover{
+      background: #ddd;
+    }
   </style>
 </head>
 <body>
@@ -147,8 +159,14 @@
         </div>
         <div th:text="${item.quantity}">수량</div>
         <div th:text="${#numbers.formatInteger(item.total_price,0,'COMMA')}+' 원'">가격</div>
-        <div>
-          <span th:text="${order.order_status}">상태</span>
+        <div class="order-status">
+          <span th:switch="${order.order_status}">
+            <span th:case="'ORDERED'">주문 완료</span>
+            <span th:case="'SHIPPING'">배송중</span>
+            <span th:case="'DELIVERED'">배송 완료</span>
+            <span th:case="'CANCELLED'">주문 취소</span>
+          </span>
+        </div>
           <!--후기작성 버튼-->
           <form th:if="${order.confirmed=='Y'&&item.review_count==0}" method="post" th:action="@{/review/write}">
             <input type="hidden" name="order_id" th:value="${order.order_id}">
@@ -158,7 +176,6 @@
           </form>
           <!--이미 작성한 경우-->
           <span th:if="${item.review_count>0}">후기 작성 완료</span>
-        </div>
       </div>
       <!--주문정보-->
       <div class="order-info">
@@ -171,10 +188,13 @@
       </div>
       <!--주문 취소 버튼-->
       <div class="order-action">
-        <form th:if="${order.order_status=='ORDERED'}" method="post" th:action="@{/order/cancel}">
-          <input type="hidden" name="order_id" th:value="${order.order_id}">
-          <button type="submit">주문 취소</button>
-        </form>
+        <a th:if="${order.order_status=='ORDERED'}" method="post"
+              th:href="@{/myorder/cancel/{id}(id=${order.order_id})}" class="cancel-btn">
+          주문 취소
+        </a>
+      </div>
+      <div class="btn-area">
+        <a th:href="@{/mypage/orders}" class="btn-back">뒤로가기</a>
       </div>
     </div>
   </div>
@@ -182,5 +202,9 @@
 
 <!--footer-->
 <div th:replace="~{fragments/layout::footer}"></div>
+
+<script th:inline="javascript" th:if="${msg}">
+  alert([[${msg}]]);
+</script>
 </body>
 </html>

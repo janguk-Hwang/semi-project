@@ -3,11 +3,30 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.OrdersMapper">
+    <!--주문취소 : 상태변경-->
+    <update id="updateOrderStatusToCancelled" parameterType="map">
+        update orders set order_status='CANCELLED'
+        where order_id=#{order_id} and order_status='ORDERED' and member_id=#{member_id}
+    </update>
+
+    <!--주문취소 가능여부 확인(가능:1/불가능:0)-->
+    <select id="isCancelableOrder" parameterType="map" resultType="boolean">
+        select case when count(*) > 0 then 1 else 0 end
+        from orders where order_id=#{order_id} and member_id=#{member_id} and order_status='ORDERED'
+    </select>
+
+    <!--order_id로 조회-->
+    <select id="selectByOrderId" parameterType="int" resultType="OrdersDto">
+        select order_id, member_id, order_status, address
+        from orders where order_id=#{order_id}
+    </select>
+
+    <!--주문 추가-->
     <insert id="insertOrder" parameterType="OrdersDto">
         insert into orders(order_id,order_status,total_price,address,created_at,member_id)
         VALUES(seq_orders.nextval,#{order_status},#{total_price},#{address},sysdate,#{member_id})
     </insert>
-
+    <!--이전주문id 조회-->
     <select id="selectCurrentOrderId" resultType="int">
         select seq_orders.currval from dual
     </select>
