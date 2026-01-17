@@ -1,0 +1,226 @@
+/* ===============================
+   관리자 대시보드 공통
+================================ */
+#homeContent {
+    padding: 40px;
+    background: #f7f7f7;
+    min-height: 100vh;
+    font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
+}
+
+/* ===============================
+   관리자 탭
+================================ */
+.admin-tabs {
+    display: flex;
+    gap: 24px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 30px;
+}
+
+.admin-tabs .tab {
+    padding: 10px 0;
+    font-size: 15px;
+    color: #666;
+    text-decoration: none;
+    position: relative;
+}
+
+.admin-tabs .tab.is-active {
+    color: #000;
+    font-weight: 600;
+}
+
+.admin-tabs .tab.is-active::after {
+    content: '';
+    position: absolute;
+    bottom: -11px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #000;
+}
+
+/* ===============================
+   패널 레이아웃
+================================ */
+.panel {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+/* ===============================
+   카드 공통
+================================ */
+.card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+}
+
+.card-wide {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 24px;
+}
+
+/* ===============================
+   회원 요약
+================================ */
+.member-summary {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.member-summary .avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: #f1f1f1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+}
+
+.member-summary .label {
+    font-size: 14px;
+    color: #777;
+}
+
+.member-summary .value {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+/* ===============================
+   테이블
+================================ */
+.mini-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.mini-table th {
+    text-align: left;
+    font-size: 13px;
+    color: #666;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.mini-table td {
+    padding: 12px 0;
+    font-size: 14px;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+/* ===============================
+   버튼
+================================ */
+.btn {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn.ghost {
+    background: #eee;
+    color: #333;
+}
+
+.btn.dark {
+    background: #333;
+    color: #fff;
+}
+
+/* ===============================
+   그리드
+================================ */
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+/* ===============================
+   통계
+================================ */
+.stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+}
+
+.stat strong {
+    font-size: 26px;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.stat-row div {
+    text-align: center;
+}
+
+.stat-row span {
+    display: block;
+    font-size: 13px;
+    color: #777;
+}
+
+.stat-row strong {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+/* ===============================
+   색상 강조
+================================ */
+.red {
+    color: #e74c3c;
+}
+
+.blue {
+    color: #3498db;
+}
+
+/* ===============================
+   매출 차트
+================================ */
+.sales {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sales span {
+    font-size: 12px;
+    color: #888;
+}
+
+.sales strong {
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.chart-placeholder {
+    margin-top: 20px;
+    height: 160px;
+    background: linear-gradient(135deg, #f1f1f1, #fafafa);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    color: #bbb;
+}

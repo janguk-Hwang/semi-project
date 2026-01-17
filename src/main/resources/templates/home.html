@@ -1,11 +1,25 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>home</title>
+    <link rel="stylesheet" th:href="@{/landing.css}">
 </head>
 <body>
-<h1>project</h1>
-<h2>김보경 왔다감.</h2>
+
+<!-- header -->
+<div th:replace="~{fragments/layout :: header}"></div>
+
+<!-- main content -->
+<div th:replace="~{fragments/layout :: getMain(~{::#homeContent})}">
+    <div id="homeContent">
+        <h1>메인 홈 화면</h1>
+        <p>여기는 home.html의 본문 영역입니다.</p>
+    </div>
+</div>
+
+<!-- footer -->
+<div th:replace="~{fragments/layout :: footer}"></div>
+
 </body>
 </html>

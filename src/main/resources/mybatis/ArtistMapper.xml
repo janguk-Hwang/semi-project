@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.ArtistMapper">
+    <!-- 아티스트 이름으로 저장된 앨범 목록 조회 -->
+    <select id="selectAlbumsByArtist" resultType="ArtistAlbumDto">
+        SELECT album_mbid as albumMBID, title, album_type as type,
+        release_date as releaseDate, cover_image_url as coverImageUrl
+        FROM artist_albums
+        WHERE artist_name = #{artistName}
+        ORDER BY release_date DESC
+    </select>
+
+    <insert id="insertAlbums">
+        INSERT INTO artist_albums (album_mbid, artist_name, title, album_type, release_date, cover_image_url)
+        VALUES (#{album.albumMBID}, #{name}, #{album.title}, #{album.type}, #{album.releaseDate}, #{album.coverImageUrl})
+    </insert>
+
+    <!-- 트랙 저장 시 앨범 ID와 트랙 정보를 함께 저장하도록 수정 -->
+    <insert id="insertTrack">
+        INSERT INTO album_tracks (album_mbid, track_number, track_title)
+        VALUES (#{albumMbid}, #{track.number}, #{track.title})
+    </insert>
+
+    <select id="selectAllArtists" resultType="String">
+        SELECT DISTINCT artist_name FROM artist_albums ORDER BY artist_name
+    </select>
+
+    <select id="selectTracksByAlbum" resultType="TrackDto">
+        SELECT
+        track_number AS "number",
+        track_title  AS title,
+        youtube_video_id AS youtubeVideoId
+        FROM album_tracks
+        WHERE album_mbid = #{albumMbid}
+        ORDER BY TO_NUMBER(track_number) ASC
+    </select>
+
+    <select id="selectAlbumByMbid" resultType="ArtistAlbumDto">
+        SELECT
+        album_mbid       AS albumMBID,
+        artist_name      AS artistName,
+        title            AS title,
+        album_type       AS type,
+        release_date     AS releaseDate,
+        cover_image_url  AS coverImageUrl
+        FROM artist_albums
+        WHERE album_mbid = #{albumMbid}
+    </select>
+
+    <update id="updateYoutubeVideoId">
+        UPDATE album_tracks
+        SET youtube_video_id = #{youtubeVideoId}
+        WHERE album_mbid = #{albumMbid}
+        AND track_number = #{trackNo}
+    </update>
+
+    <select id="selectArtistProfile" resultType="com.example.demo.dto.ArtistProfileDto">
+        SELECT
+        artist_name    AS artistName,
+        artist_mbid    AS artistMbid,
+        photo_url      AS photoUrl,
+        fanart_url     AS fanartUrl,
+        bio_raw_en     AS bioRawEn,
+        bio_summary_en AS bioSummaryEn,
+        bio_summary_ko AS bioSummaryKo
+        FROM artist_profile
+        WHERE artist_name = #{artistName}
+    </select>
+
+    <update id="upsertArtistProfile">
+        MERGE INTO artist_profile t
+        USING (
+        SELECT
+        #{artistName, jdbcType=VARCHAR}      AS artist_name,
+        #{artistMbid, jdbcType=VARCHAR}      AS artist_mbid,
+
+        #{photoUrl, jdbcType=VARCHAR}        AS photo_url,
+        #{fanartUrl, jdbcType=VARCHAR}       AS fanart_url,
+
+        #{bioRawEn, jdbcType=CLOB}           AS bio_raw_en,
+        #{bioSummaryEn, jdbcType=VARCHAR}    AS bio_summary_en,
+        #{bioSummaryKo, jdbcType=VARCHAR}    AS bio_summary_ko
+        FROM dual
+        ) s
+        ON (t.artist_name = s.artist_name)
+        WHEN MATCHED THEN UPDATE SET
+        t.artist_mbid = s.artist_mbid,
+        t.photo_url = s.photo_url,
+        t.fanart_url = s.fanart_url,
+        t.bio_raw_en = s.bio_raw_en,
+        t.bio_summary_en = s.bio_summary_en,
+        t.bio_summary_ko = s.bio_summary_ko
+        WHEN NOT MATCHED THEN INSERT
+        (artist_name, artist_mbid, photo_url, fanart_url,
+        bio_raw_en, bio_summary_en, bio_summary_ko)
+        VALUES
+        (s.artist_name, s.artist_mbid, s.photo_url, s.fanart_url,
+        s.bio_raw_en, s.bio_summary_en, s.bio_summary_ko)
+    </update>
+
+
+
+</mapper>

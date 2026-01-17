@@ -1,0 +1,136 @@
+/* 기본 초기화 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Pretendard', sans-serif;
+}
+html, body {
+    height: 100%;
+}
+body {
+    background-color: #f8f8f8;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+a {
+    text-decoration: none;
+    color: inherit;
+}
+li {
+    list-style: none;
+}
+
+/* 중앙 정렬을 위한 핵심 컨테이너 */
+.container {
+    max-width: 1200px; /* 원하는 중앙 너비 */
+    margin: 0 auto;    /* 좌우 마진 자동 (중앙 정렬) */
+    width: 100%;
+    padding: 0 20px;   /* 화면이 작아졌을 때 양옆 최소 여백 */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 헤더 디자인 */
+#header {
+    width: 100%;
+    height: 80px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+}
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #d32f2f;
+}
+.nav-links {
+    display: flex;
+    gap: 30px;
+    font-weight: 500;
+}
+.auth-buttons {
+    display: flex;
+    gap: 10px;
+}
+.btn-auth {
+    padding: 5px 15px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* 콘텐츠 영역 */
+#content {
+    width: 100%;
+    padding: 40px 0;
+    flex: 1;
+}
+/* content 내부 container는 flex-direction을 세로로 변경 (배너와 그리드가 위아래로 배치되도록) */
+#content .container {
+    display: block;
+}
+
+/* 메인 배너 및 그리드 */
+.main-banner {
+    width: 100%;
+    height: 450px;
+    background: #333;
+    color: white;
+    display: flex;
+    align-items: flex-end;
+    padding: 40px;
+    margin-bottom: 40px;
+    border-radius: 8px;
+}
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 0.7fr;
+    gap: 20px;
+}
+.card {
+    background: white;
+    padding: 20px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+}
+.card h3 {
+    border-bottom: 2px solid #d32f2f;
+    display: inline-block;
+    margin-bottom: 15px;
+}
+
+/* 푸터 디자인 */
+#footer {
+    width: 100%;
+    padding: 50px 0;
+    background-color: #263238;
+    color: #ffffff;
+}
+.footer-info p {
+    font-size: 13px;
+    color: #cfd8dc;
+    margin-top: 10px;
+}
+.subscribe-box {
+    display: flex;
+    margin-top: 10px;
+}
+.footer-subscribe input {
+    padding: 8px;
+    border: none;
+    border-radius: 4px 0 0 4px;
+    width: 200px;
+}
+.footer-subscribe button {
+    padding: 8px 15px;
+    border: none;
+    background: #455a64;
+    color: white;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+}

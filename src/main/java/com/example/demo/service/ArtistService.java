@@ -1,0 +1,241 @@
+package com.example.demo.service;
+
+import com.example.demo.dto.ArtistAlbumDto;
+import com.example.demo.dto.TrackDto;
+import com.example.demo.dto.TrackMetaDto;
+import com.example.demo.mapper.ArtistMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+@Service
+public class ArtistService {
+    private final ArtistMapper artistMapper;
+    private final YouTubeSearchService youTubeSearchService;
+    private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final String BASE_URL = "https://musicbrainz.org/ws/2";
+    private static final String DEFAULT_ALBUM_COVER = "/assets/album-placeholder.png";
+    public List<String> getAllArtists() {
+        return artistMapper.selectAllArtists();
+    }
+
+    public String YoutubeVideoId(String albumMbid, int trackNo) {
+        String cached = artistMapper.selectYoutubeVideoId(albumMbid, trackNo);
+        if (cached != null && !cached.isBlank()) return cached;
+
+        TrackMetaDto meta = artistMapper.selectTrackMeta(albumMbid, trackNo);
+        if (meta == null) return null;
+
+        String q = meta.getArtistName() + " " + meta.getTrackTitle() + " official audio";
+        String videoId = youTubeSearchService.findTopVideoId(q);
+        if (videoId == null || videoId.isBlank()) return null;
+
+        artistMapper.updateYoutubeVideoId(albumMbid, trackNo, videoId);
+        return videoId;
+    }
+
+    public String getArtistMbidByName(String artistName) throws Exception {
+        if (artistName == null || artistName.isBlank()) return null;
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        String encodedName = URLEncoder.encode(artistName, StandardCharsets.UTF_8);
+        String artistUrl = BASE_URL + "/artist?query=" + encodedName + "&fmt=json";
+
+        Thread.sleep(1100);
+        ResponseEntity<String> artistResponse =
+                restTemplate.exchange(artistUrl, HttpMethod.GET, entity, String.class);
+
+        JsonNode artistsNode = objectMapper.readTree(artistResponse.getBody()).path("artists");
+        if (!artistsNode.isArray() || artistsNode.isEmpty()) return null;
+
+        return artistsNode.get(0).path("id").asText(null);
+    }
+
+
+    @Autowired
+    public ArtistService(ArtistMapper artistMapper, YouTubeSearchService youTubeSearchService) {
+        this.artistMapper = artistMapper;
+        this.youTubeSearchService = youTubeSearchService;
+        // SSL 및 연결 안정성을 위한 Apache HttpClient 설정
+        CloseableHttpClient httpClient = HttpClients.custom().build();
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
+        this.restTemplate = new RestTemplate(factory);
+    }
+
+    /**
+     * 앨범 상세: DB에서 앨범 + 트랙 조회
+     * (선택) youtube_video_id가 비어있으면 YouTube 검색으로 채우고 DB에 저장(캐싱)
+     */
+    public ArtistAlbumDto getAlbumDetail(String albumMBID) {
+        // 1) 앨범 1개 조회 (DB)
+        ArtistAlbumDto album = artistMapper.selectAlbumByMbid(albumMBID);
+        if (album == null) return null;
+
+        // 2) 트랙 목록 조회 (DB)
+        List<TrackDto> tracks = artistMapper.selectTracksByAlbum(albumMBID);
+        album.setTracks(tracks);
+
+        // 3) (선택) youtubeVideoId 자동 채우기 + DB 저장(캐싱)
+        if (tracks != null && !tracks.isEmpty()) {
+            String artistName = album.getArtistName();
+            if (artistName == null) artistName = "";
+
+            for (TrackDto t : tracks) {
+                String current = t.getYoutubeVideoId();
+
+                if (current == null || current.isBlank()) {
+                    // 검색 쿼리 구성
+                    String title = (t.getTitle() == null) ? "" : t.getTitle();
+                    String q = (artistName + " " + title + " official audio").trim();
+
+                    // YouTube에서 videoId 찾기
+                    String videoId = youTubeSearchService.findTopVideoId(q);
+
+                    // 찾았으면 DTO에 세팅 + DB에 캐싱
+                    if (videoId != null && !videoId.isBlank()) {
+                        t.setYoutubeVideoId(videoId);
+
+                        // album_tracks.youtube_video_id 업데이트 (캐싱)
+                        artistMapper.updateYoutubeVideoId(albumMBID, Integer.parseInt(t.getNumber()), videoId);
+                    }
+                }
+            }
+        }
+
+        return album;
+    }
+
+    /**
+     * 아티스트 앨범 목록: 캐시(DB) 있으면 DB에서, 없으면 MusicBrainz API 호출 후 저장
+     */
+    public List<ArtistAlbumDto> getArtistAlbums(String artistName) {
+        // [STEP 0] DB에서 캐시된 데이터가 있는지 확인
+        List<ArtistAlbumDto> dbAlbums = artistMapper.selectAlbumsByArtist(artistName);
+        if (dbAlbums != null && !dbAlbums.isEmpty()) {
+            System.out.println(">>> [DB Cache] DB에서 데이터를 성공적으로 불러왔습니다: " + artistName);
+            for (ArtistAlbumDto album : dbAlbums) {
+                album.setTracks(artistMapper.selectTracksByAlbum(album.getAlbumMBID()));
+            }
+            return dbAlbums;
+        }
+
+        // [STEP 1] DB에 데이터가 없으므로 API 호출 시작
+        System.out.println("========== [API Request] 외부 API 호출 시작: " + artistName + " ==========");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        List<ArtistAlbumDto> albums = new ArrayList<>();
+
+        try {
+            // 아티스트 검색
+            String encodedName = URLEncoder.encode(artistName, StandardCharsets.UTF_8);
+            String artistUrl = BASE_URL + "/artist?query=" + encodedName + "&fmt=json";
+
+            Thread.sleep(1100);
+            ResponseEntity<String> artistResponse = restTemplate.exchange(artistUrl, HttpMethod.GET, entity, String.class);
+            JsonNode artistsNode = objectMapper.readTree(artistResponse.getBody()).path("artists");
+
+            if (!artistsNode.isArray() || artistsNode.isEmpty()) return albums;
+            String artistMbid = artistsNode.get(0).path("id").asText();
+
+            // Release Group 조회
+            Thread.sleep(1100);
+            String groupUrl = BASE_URL + "/release-group?artist=" + artistMbid + "&fmt=json";
+            ResponseEntity<String> groupResponse = restTemplate.exchange(groupUrl, HttpMethod.GET, entity, String.class);
+            JsonNode groups = objectMapper.readTree(groupResponse.getBody()).path("release-groups");
+            for (JsonNode group : groups) {
+                String groupMbid = group.path("id").asText();
+                String groupType = group.path("primary-type").asText();
+                // 판본 조회
+                Thread.sleep(1100);
+                String releaseUrl = BASE_URL + "/release?release-group=" + groupMbid + "&fmt=json";
+                ResponseEntity<String> releaseResponse = restTemplate.exchange(releaseUrl, HttpMethod.GET, entity, String.class);
+                JsonNode releases = objectMapper.readTree(releaseResponse.getBody()).path("releases");
+                for (JsonNode release : releases) {
+                    String status = release.path("status").asText();
+                    // 공식 음반만
+                    if ("Official".equalsIgnoreCase(status)) {
+                        Thread.sleep(1100);
+                        String releaseId = release.path("id").asText();
+                        String detailUrl = BASE_URL + "/release/" + releaseId + "?inc=recordings&fmt=json";
+                        ResponseEntity<String> detailResponse = restTemplate.exchange(detailUrl, HttpMethod.GET, entity, String.class);
+                        JsonNode detail = objectMapper.readTree(detailResponse.getBody());
+
+                        ArtistAlbumDto albumDto = new ArtistAlbumDto();
+                        albumDto.setAlbumMBID(releaseId);
+                        albumDto.setTitle(detail.path("title").asText());
+                        albumDto.setType(groupType);
+                        albumDto.setReleaseDate(detail.path("date").asText());
+                        String coverUrl = DEFAULT_ALBUM_COVER;
+                        JsonNode caa = detail.path("cover-art-archive");
+                        boolean hasArtwork = caa.path("artwork").asBoolean(false);
+                        boolean hasFront = caa.path("front").asBoolean(false);
+                        if (hasArtwork && hasFront) {
+                            coverUrl = "https://coverartarchive.org/release/" + releaseId + "/front";
+                        }
+                        albumDto.setCoverImageUrl(coverUrl);
+
+                        List<TrackDto> trackList = new ArrayList<>();
+                        JsonNode mediaArray = detail.path("media");
+                        if (mediaArray.isArray() && mediaArray.size() > 0) {
+                            JsonNode tracks = mediaArray.get(0).path("tracks");
+                            for (JsonNode track : tracks) {
+                                TrackDto dto = new TrackDto();
+                                dto.setNumber(track.path("number").asText());
+                                dto.setTitle(track.path("title").asText());
+                                // youtubeVideoId는 여기서는 비워둠(나중에 DB에서 채우거나 수동 등록)
+                                trackList.add(dto);
+                            }
+                        }
+                        albumDto.setTracks(trackList);
+                        albums.add(albumDto);
+
+                        // [INSERT 로직]
+                        try {
+                            // 1) 앨범 저장
+                            int albumInsertResult = artistMapper.insertAlbums(artistName, albumDto);
+                            if (albumInsertResult > 0) {
+                                System.out.println(">>> [DB SUCCESS] 앨범 정보 저장 완료: " + albumDto.getTitle());
+                                // 2) 트랙 저장
+                                int trackSuccessCount = 0;
+                                for (TrackDto t : trackList) {
+                                    int trackInsertResult = artistMapper.insertTrack(albumDto.getAlbumMBID(), t);
+                                    if (trackInsertResult > 0) trackSuccessCount++;
+                                }
+                                if (trackSuccessCount > 0) {
+                                    System.out.println(">>> [DB SUCCESS] " + albumDto.getTitle() + " - 수록곡 " + trackSuccessCount + "곡 저장 완료.");
+                                }
+                            }
+                        } catch (Exception e) {
+                            System.err.println(">>> [DB SKIP] 저장 실패 (중복 데이터 등): " + e.getMessage());
+                        }
+                        break; // 조건 만족하는 release 하나 찾았으면 다음 그룹으로
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("!!! 서비스 처리 중 오류: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return albums;
+    }
+}

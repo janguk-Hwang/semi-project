@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${(artistInfo != null and artistInfo.musicianName != null and !artistInfo.musicianName.isBlank())
+                 ? artistInfo.musicianName
+                 : (artistName != null and !artistName.isBlank()) ? artistName
+                 : 'Artist'} + ' | Profile'">
+    Artist | Profile
+  </title>
+
+  <link rel="stylesheet" th:href="@{/landing.css}">
+  <link rel="stylesheet" th:href="@{/ArtistPage.css}">
+</head>
+<body>
+
+<!-- 공통 헤더 -->
+<div th:replace="~{fragments/layout :: header}"></div>
+
+<!-- 메인 컨텐츠 -->
+<div th:replace="~{fragments/layout :: getMain(~{::#artistContent})}">
+  <div id="artistContent">
+
+    <!-- 1. 아티스트 선택 탭 -->
+    <nav class="artist-nav" th:if="${artistList != null}">
+      <ul>
+        <li th:each="artist : ${artistList}">
+          <a th:href="@{/artist/{name}(name=${artist})}"
+             th:text="${artist}"
+             th:classappend="${artist == artistName} ? 'active'">
+            Artist Name
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- 2. 아티스트 프로필 영역 (팬아트 위, 아래에 대표+소개) -->
+    <section class="artist-profile-section">
+
+      <!-- 2-1) 상단 팬아트 배너 -->
+      <div class="artist-hero"
+           th:classappend="${artistFanart == null or artistFanart.isBlank()} ? 'hero-fallback' : ''"
+           th:style="${artistFanart != null and !artistFanart.isBlank()} ? 'background-image:url(' + ${artistFanart} + ');' : ''">
+      </div>
+
+      <!-- 2-2) 제목 바(Artist 1 | Artist 1 Profile 같은 줄) -->
+      <div class="artist-titlebar">
+        <div class="artist-title-left">
+          <span class="artist-title-main" th:text="${artistName}">Artist 1</span>
+          <span class="artist-title-sub" th:text="Profile">Artist 1 Profile</span>
+        </div>
+      </div>
+
+      <!-- 2-3) 대표 이미지 + 소개글 -->
+      <div class="artist-profile-row">
+
+        <!-- 대표 이미지(왼쪽) -->
+        <div class="artist-photo">
+          <img
+                  th:src="${(profile != null and profile.photoUrl != null and !profile.photoUrl.isBlank()) ? profile.photoUrl
+              : (artistInfo != null and artistInfo.musicianPhoto != null and !artistInfo.musicianPhoto.isBlank()) ? artistInfo.musicianPhoto
+              : '/img/no-artist.png'}"
+                  onerror="this.onerror=null; this.src='/img/no-artist.png';"
+                  alt="Artist">
+        </div>
+
+        <!-- 소개글(오른쪽) -->
+        <div class="artist-bio">
+          <h3 class="artist-bio-title"
+              th:text="${(artistInfo != null and artistInfo.musicianName != null and !artistInfo.musicianName.isBlank())
+                    ? 'About ' + artistInfo.musicianName
+                    : 'About ' + artistName}">
+            About Artist
+          </h3>
+
+          <p class="artist-bio-text"
+             th:text="${(profile != null and profile.bioSummaryKo != null and !profile.bioSummaryKo.isBlank()) ? profile.bioSummaryKo
+                : (artistInfo != null and artistInfo.musicianDescription != null and !artistInfo.musicianDescription.isBlank()) ? artistInfo.musicianDescription
+                : '소개글이 없습니다.'}">
+            소개글이 여기에 들어갑니다.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 3. 하단 앨범 및 곡 정보 -->
+    <h2 class="album-section-title">ALBUM / SINGLE</h2>
+
+    <div th:if="${albumList == null or albumList.isEmpty()}" style="text-align: center; padding: 50px;">
+      <p>등록된 공식 앨범 정보가 없습니다.</p>
+    </div>
+
+    <div class="album-grid" th:if="${albumList != null and !albumList.isEmpty()}">
+      <a th:each="album : ${albumList}"
+         th:href="@{/artist/album/{albumId}(albumId=${album.albumMBID})}"
+         class="album-link"
+         style="text-decoration:none; color:inherit;">
+
+        <div class="album-card">
+          <span class="badge" th:text="${album.type}">Album</span>
+
+          <img th:src="${album.coverImageUrl}"
+               class="album-img"
+               alt="Album Cover">
+
+          <h3 th:text="${album.title}"
+              style="margin: 10px 0 5px; font-size: 1.1em;">
+            앨범 제목
+          </h3>
+
+          <p th:text="${album.releaseDate}"
+             style="font-size: 0.8em; color: #999;">
+            2024-01-01
+          </p>
+
+          <ul class="track-list" th:if="${album.tracks != null}">
+            <li th:each="track : ${album.tracks}" class="track-item">
+              <span th:text="${track.number}"
+                    style="font-weight: bold; width: 20px; display: inline-block;">
+                1
+              </span>
+              <span th:text="${track.title}">곡 제목</span>
+            </li>
+          </ul>
+
+        </div>
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<!-- 공통 푸터 -->
+<div th:replace="~{fragments/layout :: footer}"></div>
+
+</body>
+</html>
